@@ -1,0 +1,16 @@
+{
+    "sections": {
+        "main": {
+            "type": "main-article",
+            "settings": {
+                "show_date": true,
+                "show_author": true,
+                "show_tags": true,
+                "show_share": true
+            }
+        }
+    },
+    "order": [
+        "main"
+    ]
+}

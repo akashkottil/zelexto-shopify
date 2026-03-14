@@ -1,0 +1,87 @@
+{% comment %}
+  ZELEXTO THEME — snippets/price.liquid
+  Displays product price with compare-at price and sale badge.
+  Accepts: product, variant (optional), show_badge (true/false)
+{% endcomment %}
+
+{%- liquid
+  assign target = variant | default: product.selected_or_first_available_variant
+  assign compare_price = target.compare_at_price
+  assign current_price = target.price
+  assign price_varies = product.price_varies
+
+  if compare_price > current_price
+    assign on_sale = true
+    assign savings = compare_price | minus: current_price
+    assign savings_pct = savings | times: 100 | divided_by: compare_price | round
+  else
+    assign on_sale = false
+  endif
+-%}
+
+<div class="price{% if on_sale %} price--on-sale{% endif %}{% if target.available == false %} price--sold-out{% endif %}">
+
+  {%- if show_badge != false and on_sale -%}
+    <span class="badge badge--sale" aria-label="{{ 'product.sale_badge' | t: savings: savings_pct | append: '%' }}">
+      -{{ savings_pct }}%
+    </span>
+  {%- endif -%}
+
+  <div class="price__values">
+    <span class="price__current" aria-label="{{ 'product.price' | t }}">
+      {%- if price_varies and variant == blank -%}
+        <span class="price__from">{{ 'product.from' | t }}</span>
+      {%- endif -%}
+      {{ current_price | money }}
+    </span>
+
+    {%- if on_sale -%}
+      <s class="price__compare" aria-label="{{ 'product.compare_at_price' | t }}">
+        {{ compare_price | money }}
+      </s>
+    {%- endif -%}
+  </div>
+
+</div>
+
+<style>
+  .price {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .price__values {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .price__current {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+  }
+
+  .price--on-sale .price__current {
+    color: var(--color-accent);
+  }
+
+  .price__compare {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-decoration: line-through;
+  }
+
+  .price__from {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-normal);
+    text-transform: lowercase;
+    margin-right: 2px;
+  }
+
+  /* Compact version for cards */
+  .price--compact .price__current { font-size: var(--font-size-md); }
+</style>

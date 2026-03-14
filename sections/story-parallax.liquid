@@ -1,0 +1,195 @@
+{% comment %}
+  ZELEXTO THEME — sections/story-parallax.liquid
+  Three layered depth parallax section.
+  Layers: background image, midground graphic, foreground UI cards.
+  Uses CSS transform via theme-animations.js rAF loop and data-parallax attribute.
+{% endcomment %}
+
+{%- liquid
+  assign enable_anim = section.settings.enable_animation
+-%}
+
+<section
+  class="story-parallax"
+  id="story-parallax-{{ section.id }}"
+  style="--parallax-section-height: {{ section.settings.section_height }}px; background-color: {{ section.settings.bg_color }};">
+
+  <!-- Layer 1: Background (slowest parallax) -->
+  {%- if section.settings.bg_image -%}
+    <div class="story-parallax__layer story-parallax__layer--bg animate-parallax" data-parallax="0.15" aria-hidden="true">
+      <img
+        src="{{ section.settings.bg_image | image_url: width: 1920 }}"
+        srcset="{{ section.settings.bg_image | image_url: width: 1100 }} 1100w,
+                {{ section.settings.bg_image | image_url: width: 1920 }} 1920w"
+        sizes="100vw"
+        alt=""
+        width="1920"
+        height="{{ 1920 | divided_by: section.settings.bg_image.aspect_ratio | round }}"
+        loading="lazy"
+        decoding="async">
+    </div>
+  {%- endif -%}
+
+  <!-- Layer 2: Midground graphic -->
+  {%- if section.settings.mid_image -%}
+    <div class="story-parallax__layer story-parallax__layer--mid animate-parallax" data-parallax="0.08" aria-hidden="true">
+      <img
+        src="{{ section.settings.mid_image | image_url: width: 800 }}"
+        alt=""
+        width="800"
+        height="{{ 800 | divided_by: section.settings.mid_image.aspect_ratio | round }}"
+        loading="lazy"
+        decoding="async">
+    </div>
+  {%- endif -%}
+
+  <!-- Overlay -->
+  <div class="story-parallax__overlay" style="opacity: {{ section.settings.overlay_opacity | times: 0.01 }};"></div>
+
+  <!-- Layer 3: Foreground content (no parallax — stays fixed) -->
+  <div class="story-parallax__content container">
+
+    {%- if section.settings.heading != blank -%}
+      <div class="story-parallax__headline{% if enable_anim %} animate-fade-in{% endif %}"
+        {% if enable_anim %}data-animate="animate-fade-in"{% endif %}
+        style="color: {{ section.settings.text_color }};">
+        {%- if section.settings.eyebrow -%}
+          <p class="story-parallax__eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        <h2 class="story-parallax__heading">{{ section.settings.heading }}</h2>
+        {%- if section.settings.subheading -%}
+          <p class="story-parallax__subheading">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <!-- Foreground UI cards (blocks) -->
+    {%- if section.blocks.size > 0 -%}
+      <div class="story-parallax__cards" data-stagger>
+        {%- for block in section.blocks -%}
+          <div
+            class="story-parallax__card{% if enable_anim %} animate-scale-in{% endif %}"
+            {% if enable_anim %}data-animate="animate-scale-in"{% endif %}
+            {{ block.shopify_attributes }}>
+            {%- if block.settings.icon != blank -%}
+              <div class="story-parallax__card-icon">
+                {%- render 'icon', name: block.settings.icon, size: 24 -%}
+              </div>
+            {%- endif -%}
+            <strong class="story-parallax__card-title">{{ block.settings.title }}</strong>
+            {%- if block.settings.text -%}
+              <p class="story-parallax__card-text">{{ block.settings.text }}</p>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+<style>
+  .story-parallax {
+    position: relative;
+    height: var(--parallax-section-height, 600px);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .story-parallax__layer {
+    position: absolute;
+    inset: -20%;
+    z-index: 0;
+  }
+
+  .story-parallax__layer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .story-parallax__layer--bg { z-index: 0; }
+  .story-parallax__layer--mid { z-index: 1; }
+
+  .story-parallax__overlay {
+    position: absolute; inset: 0;
+    z-index: 2;
+    background: #000;
+  }
+
+  .story-parallax__content {
+    position: relative;
+    z-index: 3;
+    color: var(--color-bg);
+    padding-block: var(--space-16);
+    width: 100%;
+  }
+
+  .story-parallax__headline { max-width: 700px; margin-inline: auto; text-align: center; margin-bottom: var(--space-10); }
+  .story-parallax__eyebrow { font-size: var(--font-size-xs); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.75; margin-bottom: var(--space-3); }
+  .story-parallax__heading { font-size: clamp(2rem, 5vw, 4rem); margin-bottom: var(--space-4); }
+  .story-parallax__subheading { font-size: var(--font-size-lg); opacity: 0.85; line-height: var(--line-height-relaxed); }
+
+  .story-parallax__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .story-parallax__card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius-card);
+    padding: var(--space-5);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .story-parallax__card-icon { opacity: 0.85; }
+  .story-parallax__card-title { font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); }
+  .story-parallax__card-text { font-size: var(--font-size-sm); opacity: 0.8; margin: 0; }
+
+  /* On mobile: disable parallax motion, keep visual depth */
+  @media (max-width: 768px) {
+    .story-parallax { height: auto; min-height: 400px; }
+    .story-parallax__layer { inset: 0; }
+    .story-parallax__cards { grid-template-columns: 1fr; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Story — Parallax",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "bg_image", "label": "Background layer image" },
+    { "type": "image_picker", "id": "mid_image", "label": "Midground layer image" },
+    { "type": "color", "id": "bg_color", "label": "Fallback background color", "default": "#0f0c29" },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay darkness", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 50 },
+    { "type": "range", "id": "section_height", "label": "Section height", "min": 400, "max": 900, "step": 50, "unit": "px", "default": 600 },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
+    { "type": "header", "content": "Animation" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "blocks": [{
+    "type": "card",
+    "name": "UI Card",
+    "limit": 4,
+    "settings": [
+      { "type": "select", "id": "icon", "label": "Icon", "options": [{"value":"star","label":"Star"},{"value":"shield","label":"Shield"},{"value":"truck","label":"Truck"},{"value":"check","label":"Check"},{"value":"heart","label":"Heart"}], "default": "star" },
+      { "type": "text", "id": "title", "label": "Title", "default": "Feature" },
+      { "type": "text", "id": "text", "label": "Description" }
+    ]
+  }],
+  "max_blocks": 4,
+  "presets": [{ "name": "Story — Parallax", "settings": { "heading": "A layered visual story" }, "blocks": [{"type":"card","settings":{"title":"50K+ Customers","text":"Trusted worldwide."}},{"type":"card","settings":{"title":"4.9★ Rating","text":"Exceptional quality."}}] }]
+}
+{% endschema %}

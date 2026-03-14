@@ -1,0 +1,104 @@
+{% comment %}
+  ZELEXTO THEME — snippets/breadcrumb.liquid
+  Breadcrumb navigation with BreadcrumbList JSON-LD.
+{% endcomment %}
+
+<nav class="breadcrumb" aria-label="{{ 'general.breadcrumb' | t | default: 'Breadcrumb' }}">
+  <ol class="breadcrumb__list" role="list">
+
+    <li class="breadcrumb__item">
+      <a href="{{ routes.root_url }}" class="breadcrumb__link">{{ shop.name }}</a>
+    </li>
+
+    {%- case template.name -%}
+
+      {%- when 'collection' -%}
+        <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+          <span>{{ collection.title }}</span>
+        </li>
+
+      {%- when 'product' -%}
+        {%- if collection -%}
+          <li class="breadcrumb__item">
+            <a href="{{ collection.url }}" class="breadcrumb__link">{{ collection.title }}</a>
+          </li>
+        {%- endif -%}
+        <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+          <span>{{ product.title }}</span>
+        </li>
+
+      {%- when 'article' -%}
+        <li class="breadcrumb__item">
+          <a href="{{ blog.url }}" class="breadcrumb__link">{{ blog.title }}</a>
+        </li>
+        <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+          <span>{{ article.title }}</span>
+        </li>
+
+      {%- when 'blog' -%}
+        <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+          <span>{{ blog.title }}</span>
+        </li>
+
+      {%- when 'page' -%}
+        <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+          <span>{{ page.title }}</span>
+        </li>
+
+      {%- when 'search' -%}
+        <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+          <span>{{ 'search.title' | t | default: 'Search' }}</span>
+        </li>
+
+    {%- endcase -%}
+
+  </ol>
+</nav>
+
+<style>
+  .breadcrumb {
+    padding-block: var(--space-3);
+  }
+
+  .breadcrumb__list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+  }
+
+  .breadcrumb__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .breadcrumb__item:not(:last-child)::after {
+    content: '/';
+    color: var(--color-border);
+    font-size: var(--font-size-xs);
+  }
+
+  .breadcrumb__link {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .breadcrumb__link:hover { color: var(--color-primary); }
+
+  .breadcrumb__item--active {
+    color: var(--color-text);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .breadcrumb__item--active span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+  }
+</style>

@@ -1,0 +1,98 @@
+{% comment %}
+  ZELEXTO THEME — sections/story-intro.liquid
+  Two-column: image on one side, text on the other.
+{% endcomment %}
+
+{%- liquid
+  assign enable_anim = section.settings.enable_animation
+  assign img_side    = section.settings.image_side | default: 'left'
+-%}
+
+<section class="story-intro section" id="story-intro-{{ section.id }}" style="background-color: {{ section.settings.bg_color }};">
+  <div class="container">
+    <div class="story-intro__grid story-intro__grid--{{ img_side }}">
+
+      <!-- Image -->
+      <div class="story-intro__media{% if enable_anim %} {% if img_side == 'left' %}animate-slide-left{% else %}animate-slide-right{% endif %}{% endif %}"
+        {% if enable_anim %}data-animate="{% if img_side == 'left' %}animate-slide-left{% else %}animate-slide-right{% endif %}"{% endif %}>
+        {%- if section.settings.image != blank -%}
+          <div class="story-intro__image-wrap">
+            <img
+              src="{{ section.settings.image | image_url: width: 680 }}"
+              srcset="{{ section.settings.image | image_url: width: 400 }} 400w,
+                      {{ section.settings.image | image_url: width: 680 }} 680w"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              alt="{{ section.settings.image.alt | escape | default: section.settings.heading }}"
+              width="680"
+              height="{{ 680 | divided_by: section.settings.image.aspect_ratio | round }}"
+              loading="lazy"
+              decoding="async"
+              class="story-intro__image">
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Text -->
+      <div class="story-intro__text{% if enable_anim %} animate-fade-in{% endif %}"
+        {% if enable_anim %}data-animate="animate-fade-in" style="--animation-delay: 150ms;"{% endif %}>
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="story-intro__eyebrow" style="color: {{ section.settings.accent_color }};">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        <h2 class="story-intro__heading" style="color: {{ section.settings.text_color }};">{{ section.settings.heading }}</h2>
+        {%- if section.settings.description != blank -%}
+          <div class="story-intro__description" style="color: {{ section.settings.desc_color }};">{{ section.settings.description }}</div>
+        {%- endif -%}
+        {%- if section.settings.button_label != blank -%}
+          <a href="{{ section.settings.button_url | default: '#' }}" class="btn btn--primary" style="margin-top: var(--space-6);">
+            {{ section.settings.button_label }}
+          </a>
+        {%- endif -%}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .story-intro { overflow: hidden; }
+  .story-intro__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-16);
+    align-items: center;
+  }
+  .story-intro__grid--right { direction: rtl; }
+  .story-intro__grid--right > * { direction: ltr; }
+  @media (max-width: 768px) {
+    .story-intro__grid { grid-template-columns: 1fr; gap: var(--space-8); direction: ltr !important; }
+    .story-intro__grid > * { direction: ltr !important; }
+  }
+  .story-intro__image-wrap { border-radius: var(--radius-card); overflow: hidden; }
+  .story-intro__image { width: 100%; height: auto; }
+  .story-intro__eyebrow { font-size: var(--font-size-xs); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-3); }
+  .story-intro__heading { font-size: clamp(2rem, 4vw, 3.25rem); margin-bottom: var(--space-5); line-height: 1.12; }
+  .story-intro__description { font-size: var(--font-size-lg); line-height: var(--line-height-relaxed); }
+</style>
+
+{% schema %}
+{
+  "name": "Story — Intro",
+  "tag": "section",
+  "settings": [
+    { "type": "select", "id": "image_side", "label": "Image position", "options": [{"value":"left","label":"Left"},{"value":"right","label":"Right"}], "default": "left" },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#ffffff" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "color", "id": "accent_color", "label": "Eyebrow color", "default": "#e63946" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Our story" },
+    { "type": "color", "id": "text_color", "label": "Heading color", "default": "#111827" },
+    { "type": "richtext", "id": "description", "label": "Description" },
+    { "type": "color", "id": "desc_color", "label": "Description color", "default": "#6b7280" },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_url", "label": "Button URL" },
+    { "type": "header", "content": "Animation" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "presets": [{ "name": "Story — Intro", "settings": { "heading": "Our story" } }]
+}
+{% endschema %}

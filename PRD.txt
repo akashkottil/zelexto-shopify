@@ -1,0 +1,688 @@
+SHOPIFY THEME PRODUCT REQUIREMENTS DOCUMENT
+PROJECT NAME: Zelexto-Shopify – CONVERSION-FIRST SHOPIFY THEME
+VERSION: 1.0
+DOCUMENT TYPE: PRODUCT REQUIREMENTS DOCUMENT (PRD)
+FORMAT: PLAIN TEXT
+
+=====================================================================
+SECTION 1 — PRODUCT OVERVIEW
+=====================================================================
+
+1.1 THEME GOAL
+
+The goal of this project is to build a premium, conversion-optimized, reusable Shopify theme that:
+
+• Maximizes ecommerce conversion rates
+• Is fully compatible with Shopify Online Store 2.0
+• Requires zero third-party apps for essential functionality
+• Supports advanced features via custom apps developed by our platform
+• Can be sold on the Shopify Theme Store and private marketplaces
+• Serves as the base theme for our own ecommerce stores
+
+The theme must prioritize:
+
+• Performance
+• Conversion optimization
+• Scalability
+• Modular architecture
+• Merchant usability
+
+The theme should achieve:
+
+• PageSpeed score above 90
+• Lighthouse performance above 90
+• Minimal JavaScript dependency
+• Mobile-first performance
+
+---------------------------------------------------------------------
+
+1.2 TARGET USERS
+
+Primary users:
+
+Shopify merchants who want a high-converting store without installing many apps.
+
+Examples:
+
+• DTC brands
+• Fashion stores
+• Beauty brands
+• Electronics stores
+• Lifestyle products
+• Home decor
+• Dropshipping businesses
+• Subscription brands
+
+Merchant skill level:
+
+• Beginner merchants
+• Intermediate store owners
+• Advanced Shopify developers
+
+---------------------------------------------------------------------
+
+1.3 TYPES OF STORES SUPPORTED
+
+The theme must support:
+
+• Single product stores
+• Small catalog stores
+• Large catalog stores
+• Fashion brands
+• Beauty brands
+• Digital product stores
+• Subscription stores
+• Wholesale-ready stores
+
+---------------------------------------------------------------------
+
+1.4 CONVERSION-FIRST DESIGN PHILOSOPHY
+
+Every component must be designed around conversion rate optimization.
+
+Core CRO principles:
+
+• Clear CTAs
+• Trust signals
+• Scarcity messaging
+• Urgency indicators
+• Social proof
+• Reduced checkout friction
+• Mobile-first shopping
+• Fast loading pages
+
+---------------------------------------------------------------------
+
+1.5 SHOPIFY COMPATIBILITY
+
+Theme must support:
+
+• Shopify Online Store 2.0
+• JSON templates
+• Sections everywhere
+• App blocks
+• Theme app extensions
+• Shopify metafields
+• Shopify metaobjects
+
+=====================================================================
+SECTION 2 — THEME ARCHITECTURE
+=====================================================================
+
+2.1 CORE TECHNOLOGY
+
+Theme stack:
+
+• Liquid
+• HTML
+• CSS
+• JavaScript (Vanilla JS preferred)
+• JSON templates
+
+---------------------------------------------------------------------
+
+2.2 ARCHITECTURE PRINCIPLES
+
+The theme must be:
+
+• Modular
+• Reusable
+• Maintainable
+• Performance optimized
+• Scalable
+
+All UI components must be built as reusable sections or snippets.
+
+---------------------------------------------------------------------
+
+2.3 FOLDER STRUCTURE
+
+/theme-root
+|
+|-- layout
+|-- templates
+|-- sections
+|-- snippets
+|-- assets
+|-- config
+|-- locales
+
+---------------------------------------------------------------------
+
+2.4 FOLDER PURPOSES
+
+/layout
+
+Contains the main layout files.
+
+Example:
+
+theme.liquid
+
+Purpose:
+
+Defines the HTML skeleton of the site including:
+
+• head
+• header
+• footer
+• scripts
+
+---------------------------------------------------------------------
+
+/templates
+
+Contains page templates.
+
+Examples:
+
+product.json
+collection.json
+page.json
+blog.json
+article.json
+cart.json
+search.json
+404.json
+
+---------------------------------------------------------------------
+
+/sections
+
+Reusable dynamic sections.
+
+Examples:
+
+hero-banner.liquid
+featured-products.liquid
+product-gallery.liquid
+product-recommendations.liquid
+testimonials.liquid
+
+Sections must support dynamic configuration via JSON schema.
+
+---------------------------------------------------------------------
+
+/snippets
+
+Reusable components.
+
+Examples:
+
+product-card.liquid
+price.liquid
+variant-selector.liquid
+icon.liquid
+rating-stars.liquid
+
+---------------------------------------------------------------------
+
+/assets
+
+Static resources.
+
+Examples:
+
+theme.js
+theme.css
+component-cart.js
+component-product.js
+
+Images and fonts also stored here.
+
+---------------------------------------------------------------------
+
+/config
+
+Theme configuration.
+
+Examples:
+
+settings_schema.json
+settings_data.json
+
+---------------------------------------------------------------------
+
+/locales
+
+Translation support.
+
+Example:
+
+en.default.json
+
+=====================================================================
+SECTION 3 — COMPLETE PAGE STRUCTURE
+=====================================================================
+
+Pages required:
+
+• Homepage
+• Collection page
+• Product page
+• Cart page
+• Search page
+• Blog page
+• Article page
+• Customer account pages
+• Login/Register
+• Order tracking page
+• Policy pages
+• 404 page
+
+Each page must support dynamic sections.
+
+---------------------------------------------------------------------
+
+3.1 HOMEPAGE
+
+Template:
+
+index.json
+
+Sections:
+
+• hero banner
+• featured collections
+• featured products
+• testimonials
+• brand logos
+• promotional banners
+• blog posts
+
+---------------------------------------------------------------------
+
+3.2 COLLECTION PAGE
+
+Template:
+
+collection.json
+
+Components:
+
+• product grid
+• filters
+• sorting
+• pagination
+• collection banner
+
+---------------------------------------------------------------------
+
+3.3 PRODUCT PAGE
+
+Template:
+
+product.json
+
+Components:
+
+• product gallery
+• variant selector
+• product info
+• add to cart
+• reviews
+• related products
+
+---------------------------------------------------------------------
+
+3.4 CART PAGE
+
+Template:
+
+cart.json
+
+Features:
+
+• cart items
+• quantity update
+• remove item
+• coupon display
+• shipping estimate
+
+---------------------------------------------------------------------
+
+3.5 SEARCH PAGE
+
+Template:
+
+search.json
+
+Features:
+
+• predictive search
+• search suggestions
+• product results
+• blog results
+
+---------------------------------------------------------------------
+
+3.6 BLOG PAGE
+
+Template:
+
+blog.json
+
+Displays article list.
+
+---------------------------------------------------------------------
+
+3.7 ARTICLE PAGE
+
+Template:
+
+article.json
+
+Displays individual blog posts.
+
+---------------------------------------------------------------------
+
+3.8 CUSTOMER ACCOUNT
+
+Templates:
+
+customers/account
+customers/orders
+customers/addresses
+
+---------------------------------------------------------------------
+
+3.9 LOGIN / REGISTER
+
+Templates:
+
+customers/login
+customers/register
+
+---------------------------------------------------------------------
+
+3.10 404 PAGE
+
+Template:
+
+404.json
+
+Purpose:
+
+Display helpful navigation for lost users.
+
+=====================================================================
+SECTION 4 — HOMEPAGE STRUCTURE
+=====================================================================
+
+The homepage must include:
+
+1 Announcement bar
+2 Hero banner
+3 Featured collections
+4 Best sellers
+5 Trending products
+6 Promotional banners
+7 Testimonials
+8 Trust badges
+9 Instagram feed
+10 Email signup
+11 Blog preview
+
+Each section must be configurable via theme editor.
+
+=====================================================================
+SECTION 5 — PRODUCT PAGE (HIGH CONVERSION DESIGN)
+=====================================================================
+
+Product page sections:
+
+• Product gallery
+• Product information
+• Variant selector
+• Price display
+• Discount display
+• Stock indicator
+• Delivery estimate
+• Trust badges
+• Product description
+• Product tabs
+• Reviews section
+• Related products
+• Frequently bought together
+
+Features built in theme:
+
+• image zoom
+• variant swatches
+• sticky add to cart
+• delivery estimate
+
+Features powered by apps:
+
+• reviews
+• bundles
+• upsells
+• subscriptions
+
+=====================================================================
+SECTION 6 — CART SYSTEM
+=====================================================================
+
+Cart features:
+
+• Ajax cart
+• Slide cart drawer
+• Cart page
+• Cart persistence
+• Save for later
+• Cart notes
+• Shipping estimator
+• Free shipping progress bar
+
+Cart must update dynamically using JavaScript.
+
+=====================================================================
+SECTION 7 — CHECKOUT OPTIMIZATION
+=====================================================================
+
+Theme should display:
+
+• trust badges
+• COD messaging
+• delivery estimate
+• payment icons
+
+These should appear near the add-to-cart button.
+
+=====================================================================
+SECTION 8 — BUILT-IN FEATURES
+=====================================================================
+
+Features implemented directly in theme:
+
+• Mega menu
+• Predictive search
+• Product filters
+• Product sorting
+• Lazy loading images
+• Responsive layouts
+• Breadcrumb navigation
+• Sticky add-to-cart
+• Quick view modal
+• Variant swatches
+• Size guide modal
+
+=====================================================================
+SECTION 9 — FEATURES BUILT AS CUSTOM APPS
+=====================================================================
+
+Features implemented via our apps:
+
+Wishlist
+Product reviews
+Loyalty program
+Referral system
+Upsell engine
+Cross sell engine
+Bundle builder
+Subscription products
+Abandoned cart recovery
+Back-in-stock alerts
+Advanced analytics
+AI recommendations
+Product quizzes
+Advanced discounts
+Preorders
+Order tracking
+Affiliate system
+Email marketing
+SMS marketing
+Push notifications
+
+Theme must support these via:
+
+• App blocks
+• App embed blocks
+• Metafields
+• API endpoints
+
+=====================================================================
+SECTION 10 — APP INTEGRATION ARCHITECTURE
+=====================================================================
+
+Communication methods:
+
+• Shopify App Proxy
+• Webhooks
+• Shopify Admin API
+• Storefront API
+• Metafields
+• Theme app extensions
+
+Data flow:
+
+Theme → App Proxy → App Backend → Shopify API → Response → Theme
+
+=====================================================================
+SECTION 11 — CONVERSION RATE OPTIMIZATION
+=====================================================================
+
+CRO triggers used in theme:
+
+Scarcity messaging
+Urgency countdown
+Social proof badges
+Trust badges
+Free shipping progress
+Cart reminders
+Discount badges
+
+These must appear on:
+
+• product page
+• cart
+• homepage banners
+
+=====================================================================
+SECTION 12 — PERFORMANCE OPTIMIZATION
+=====================================================================
+
+Performance strategies:
+
+• Lazy loading images
+• Code splitting
+• Minimal JavaScript
+• Critical CSS
+• Image compression
+• Asset minification
+
+Target metrics:
+
+Lighthouse score above 90.
+
+=====================================================================
+SECTION 13 — SEO OPTIMIZATION
+=====================================================================
+
+SEO features:
+
+• Product schema
+• Article schema
+• Breadcrumb schema
+• Open Graph tags
+• Meta tags
+• Structured data
+
+=====================================================================
+SECTION 14 — THEME CUSTOMIZATION OPTIONS
+=====================================================================
+
+Merchants must be able to customize:
+
+• colors
+• typography
+• layout width
+• section spacing
+• banners
+• product cards
+• cart behavior
+
+All settings configurable via theme editor.
+
+=====================================================================
+SECTION 15 — DESIGN SYSTEM
+=====================================================================
+
+Define consistent design tokens:
+
+Typography scale
+Spacing scale
+Grid system
+Button styles
+Icon set
+Color variables
+
+=====================================================================
+SECTION 16 — ADMIN & MERCHANT EXPERIENCE
+=====================================================================
+
+Merchant onboarding must include:
+
+• demo content
+• prebuilt templates
+• onboarding checklist
+• documentation
+
+=====================================================================
+SECTION 17 — FUTURE SCALABILITY
+=====================================================================
+
+Theme must support:
+
+• additional sections
+• new app integrations
+• expanded blocks
+• modular upgrades
+
+=====================================================================
+SECTION 18 — CODING STANDARDS
+=====================================================================
+
+Liquid conventions:
+
+• modular snippets
+• descriptive naming
+
+JavaScript:
+
+• ES6 modules
+• minimal dependencies
+
+CSS:
+
+• BEM methodology
+
+Accessibility:
+
+• WCAG 2.1 compliance
+• keyboard navigation
+• aria labels
+
+=====================================================================
+
+END OF DOCUMENT

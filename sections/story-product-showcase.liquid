@@ -1,0 +1,90 @@
+{% comment %}
+  ZELEXTO THEME — sections/story-product-showcase.liquid
+  Product grid with staggered reveal animation.
+  Hover: card elevation + image zoom.
+{% endcomment %}
+
+{%- liquid
+  assign enable_anim = section.settings.enable_animation
+  assign collection = collections[section.settings.collection]
+-%}
+
+<section
+  class="story-product-showcase section"
+  id="story-products-{{ section.id }}"
+  style="background-color: {{ section.settings.bg_color }};">
+
+  <div class="container">
+
+    <div class="section-header{% if enable_anim %} animate-fade-in{% endif %}"
+      {% if enable_anim %}data-animate="animate-fade-in"{% endif %}>
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="section-header__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="section-header__title">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="section-header__subtitle">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="story-products__grid grid grid--products" data-stagger>
+      {%- if collection != blank and collection.products.size > 0 -%}
+        {%- for product in collection.products limit: section.settings.products_to_show -%}
+          {%- render 'product-card',
+            product: product,
+            animation: 'animate-slide-up',
+            animation_delay: forloop.index0 | times: 60 -%}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..section.settings.products_to_show) -%}
+          <div class="product-card product-card--placeholder animate-slide-up" data-animate="animate-slide-up" style="--animation-delay: {{ forloop.index0 | times: 60 }}ms;">
+            <div class="product-card__media ratio-portrait">
+              <div class="product-card__no-image">{{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}</div>
+            </div>
+            <div class="product-card__body">
+              <p class="product-card__title">Sample product {{ i }}</p>
+              <div class="product-card__price"><span class="price__current">$99.00</span></div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_view_all and collection != blank -%}
+      <div class="story-products__footer" style="text-align: center; margin-top: var(--space-10);">
+        <a href="{{ collection.url }}" class="btn btn--secondary btn--lg">
+          {{ 'general.view_all' | t }}
+          {%- render 'icon', name: 'arrow-right', size: 16 -%}
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+<style>
+  .story-product-showcase { padding-block: var(--section-padding); }
+  .story-products__footer { padding-top: var(--space-4); }
+  .product-card--placeholder { opacity: 0.6; pointer-events: none; }
+</style>
+
+{% schema %}
+{
+  "name": "Story — Product Showcase",
+  "tag": "section",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "products_to_show", "label": "Products to show", "min": 2, "max": 12, "step": 1, "default": 4 },
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#ffffff" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Featured products" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading" },
+    { "type": "checkbox", "id": "show_view_all", "label": "Show 'View all' button", "default": true },
+    { "type": "header", "content": "Animation" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "presets": [{ "name": "Story — Product Showcase", "settings": { "heading": "Featured products" } }]
+}
+{% endschema %}

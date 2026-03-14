@@ -1,0 +1,272 @@
+/* =================================================================
+   ZELEXTO THEME — theme-animations.css
+   GPU-only animations: transform + opacity only
+   No layout-triggering properties (no top/left/width/height)
+   ================================================================= */
+
+/* -----------------------------------------------------------------
+   1. ANIMATION DEFAULTS
+   Properties intentionally use CSS vars so merchant can tune speed.
+   ----------------------------------------------------------------- */
+[data-animate] {
+    --animation-delay: 0ms;
+}
+
+/* -----------------------------------------------------------------
+   2. FADE IN
+   ----------------------------------------------------------------- */
+.animate-fade-in {
+    opacity: 0;
+    transition:
+        opacity var(--animation-duration, 600ms) var(--animation-easing, cubic-bezier(0.16, 1, 0.3, 1)) var(--animation-delay, 0ms);
+    will-change: opacity;
+}
+
+.animate-fade-in.animate-visible {
+    opacity: 1;
+}
+
+/* -----------------------------------------------------------------
+   3. SLIDE UP
+   ----------------------------------------------------------------- */
+.animate-slide-up {
+    opacity: 0;
+    transform: translateY(32px);
+    transition:
+        opacity var(--animation-duration, 600ms) var(--animation-easing, cubic-bezier(0.16, 1, 0.3, 1)) var(--animation-delay, 0ms),
+        transform var(--animation-duration, 600ms) var(--animation-easing, cubic-bezier(0.16, 1, 0.3, 1)) var(--animation-delay, 0ms);
+    will-change: transform, opacity;
+}
+
+.animate-slide-up.animate-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* -----------------------------------------------------------------
+   4. SLIDE LEFT
+   ----------------------------------------------------------------- */
+.animate-slide-left {
+    opacity: 0;
+    transform: translateX(-48px);
+    transition:
+        opacity var(--animation-duration, 600ms) var(--animation-easing, cubic-bezier(0.16, 1, 0.3, 1)) var(--animation-delay, 0ms),
+        transform var(--animation-duration, 600ms) var(--animation-easing, cubic-bezier(0.16, 1, 0.3, 1)) var(--animation-delay, 0ms);
+    will-change: transform, opacity;
+}
+
+.animate-slide-left.animate-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* -----------------------------------------------------------------
+   5. SLIDE RIGHT
+   ----------------------------------------------------------------- */
+.animate-slide-right {
+    opacity: 0;
+    transform: translateX(48px);
+    transition:
+        opacity var(--animation-duration, 600ms) var(--animation-easing, cubic-bezier(0.16, 1, 0.3, 1)) var(--animation-delay, 0ms),
+        transform var(--animation-duration, 600ms) var(--animation-easing, cubic-bezier(0.16, 1, 0.3, 1)) var(--animation-delay, 0ms);
+    will-change: transform, opacity;
+}
+
+.animate-slide-right.animate-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* -----------------------------------------------------------------
+   6. SCALE IN
+   ----------------------------------------------------------------- */
+.animate-scale-in {
+    opacity: 0;
+    transform: scale(0.92);
+    transition:
+        opacity var(--animation-duration, 600ms) var(--animation-easing, cubic-bezier(0.16, 1, 0.3, 1)) var(--animation-delay, 0ms),
+        transform var(--animation-duration, 600ms) var(--animation-easing, cubic-bezier(0.16, 1, 0.3, 1)) var(--animation-delay, 0ms);
+    will-change: transform, opacity;
+}
+
+.animate-scale-in.animate-visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* -----------------------------------------------------------------
+   7. PARALLAX LAYER
+   Translate Y driven by JS via CSS custom property --parallax-offset
+   ----------------------------------------------------------------- */
+.animate-parallax {
+    transform: translateY(var(--parallax-offset, 0px));
+    transition: transform 0.1s linear;
+    will-change: transform;
+}
+
+/* Reduce parallax on mobile — 50% less movement */
+@media (max-width: 768px) {
+    .animate-parallax {
+        --parallax-multiplier: 0.5;
+    }
+}
+
+/* -----------------------------------------------------------------
+   8. STAGGER DELAYS (for grid/list children)
+   Use data-stagger-delay on parent, children get incremental delays
+   ----------------------------------------------------------------- */
+[data-stagger]>*:nth-child(1) {
+    --animation-delay: 0ms;
+}
+
+[data-stagger]>*:nth-child(2) {
+    --animation-delay: 80ms;
+}
+
+[data-stagger]>*:nth-child(3) {
+    --animation-delay: 160ms;
+}
+
+[data-stagger]>*:nth-child(4) {
+    --animation-delay: 240ms;
+}
+
+[data-stagger]>*:nth-child(5) {
+    --animation-delay: 320ms;
+}
+
+[data-stagger]>*:nth-child(6) {
+    --animation-delay: 400ms;
+}
+
+[data-stagger]>*:nth-child(7) {
+    --animation-delay: 480ms;
+}
+
+[data-stagger]>*:nth-child(8) {
+    --animation-delay: 560ms;
+}
+
+/* -----------------------------------------------------------------
+   9. REMOVE will-change AFTER ANIMATION COMPLETES
+   Applied via JS: transitionend event adds .animate-done class
+   ----------------------------------------------------------------- */
+.animate-done {
+    will-change: auto;
+}
+
+/* -----------------------------------------------------------------
+   10. PREFERS-REDUCED-MOTION
+   Overrides ALL animations/transitions globally.
+   This is non-negotiable for accessibility.
+   ----------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    /* Ensure animated elements jump to their visible state instantly */
+    .animate-fade-in,
+    .animate-slide-up,
+    .animate-slide-left,
+    .animate-slide-right,
+    .animate-scale-in {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+}
+
+/* -----------------------------------------------------------------
+   11. GRADIENT ANIMATION (Hero background)
+   Pure CSS, no JS needed. Only runs when hero section has setting.
+   ----------------------------------------------------------------- */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.animate-gradient {
+    background-size: 200% 200%;
+    animation: gradientShift 8s ease infinite;
+}
+
+/* -----------------------------------------------------------------
+   12. HOVER ANIMATIONS (cards, CTAs)
+   Lightweight — GPU-accelerated transform only
+   ----------------------------------------------------------------- */
+
+/* Card lift on hover */
+.hover-lift {
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+}
+
+/* Image zoom on hover — parent must have overflow:hidden */
+.hover-zoom .card__image,
+.hover-zoom img {
+    transition: transform var(--transition-slow);
+    will-change: transform;
+}
+
+.hover-zoom:hover .card__image,
+.hover-zoom:hover img {
+    transform: scale(1.06);
+}
+
+/* -----------------------------------------------------------------
+   13. GRADIENT ANIMATION KEYFRAMES (No JS needed)
+   ----------------------------------------------------------------- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Used for critical above-fold elements that animate without IntersectionObserver */
+.animate-hero-headline {
+    animation: fadeInUp 0.8s var(--animation-easing, cubic-bezier(0.16, 1, 0.3, 1)) 0.1s both;
+}
+
+.animate-hero-subhead {
+    animation: fadeInUp 0.8s var(--animation-easing, cubic-bezier(0.16, 1, 0.3, 1)) 0.25s both;
+}
+
+.animate-hero-cta {
+    animation: fadeInUp 0.8s var(--animation-easing, cubic-bezier(0.16, 1, 0.3, 1)) 0.4s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .animate-hero-headline,
+    .animate-hero-subhead,
+    .animate-hero-cta {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}

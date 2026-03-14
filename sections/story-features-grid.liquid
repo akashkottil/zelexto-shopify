@@ -1,0 +1,167 @@
+{% comment %}
+  ZELEXTO THEME — sections/story-features-grid.liquid
+  Icon + headline + description grid with staggered reveal.
+{% endcomment %}
+
+{%- liquid
+  assign enable_anim = section.settings.enable_animation
+%}
+
+<section
+  class="story-features-grid section"
+  id="story-fg-{{ section.id }}"
+  style="background-color: {{ section.settings.bg_color }};">
+
+  <div class="container">
+
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="section-header{% if enable_anim %} animate-fade-in{% endif %}"
+        {% if enable_anim %}data-animate="animate-fade-in"{% endif %}>
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="section-header__eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        <h2 class="section-header__title" style="color: {{ section.settings.text_color }};">{{ section.settings.heading }}</h2>
+        {%- if section.settings.subheading != blank -%}
+          <p class="section-header__subtitle">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="sfg__grid sfg__grid--{{ section.settings.columns }}" data-stagger>
+      {%- for block in section.blocks -%}
+        <div class="sfg__item{% if enable_anim %} animate-slide-up{% endif %}"
+          {% if enable_anim %}data-animate="animate-slide-up"{% endif %}
+          {{ block.shopify_attributes }}>
+
+          {%- if block.settings.icon != blank -%}
+            <div class="sfg__icon" style="background-color: {{ block.settings.icon_bg }}; color: {{ block.settings.icon_color }};">
+              {%- render 'icon', name: block.settings.icon, size: 28 -%}
+            </div>
+          {%- endif -%}
+
+          <h3 class="sfg__title" style="color: {{ section.settings.text_color }};">{{ block.settings.title }}</h3>
+
+          {%- if block.settings.description != blank -%}
+            <p class="sfg__description">{{ block.settings.description }}</p>
+          {%- endif -%}
+
+          {%- if block.settings.link_label != blank and block.settings.link_url != blank -%}
+            <a href="{{ block.settings.link_url }}" class="sfg__link">
+              {{ block.settings.link_label }}
+              {%- render 'icon', name: 'arrow-right', size: 14 -%}
+            </a>
+          {%- endif -%}
+
+        </div>
+      {%- endfor -%}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .story-features-grid { padding-block: var(--section-padding); }
+
+  .sfg__grid {
+    display: grid;
+    gap: var(--space-6);
+  }
+  .sfg__grid--2 { grid-template-columns: repeat(2, 1fr); }
+  .sfg__grid--3 { grid-template-columns: repeat(3, 1fr); }
+  .sfg__grid--4 { grid-template-columns: repeat(4, 1fr); }
+
+  @media (max-width: 1024px) {
+    .sfg__grid--4 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .sfg__grid--2,
+    .sfg__grid--3,
+    .sfg__grid--4 { grid-template-columns: 1fr; }
+  }
+
+  .sfg__item {
+    padding: var(--space-6);
+    background: var(--color-surface);
+    border-radius: var(--radius-card);
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
+  }
+  .sfg__item:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+
+  .sfg__icon {
+    width: 56px; height: 56px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-surface);
+    margin-bottom: var(--space-2);
+  }
+
+  .sfg__title { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); }
+
+  .sfg__description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+    flex: 1;
+    margin: 0;
+  }
+
+  .sfg__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+    text-decoration: none;
+    margin-top: auto;
+    transition: gap var(--transition-fast);
+  }
+  .sfg__link:hover { gap: var(--space-2); }
+</style>
+
+{% schema %}
+{
+  "name": "Story — Features Grid",
+  "tag": "section",
+  "settings": [
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#ffffff" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Why choose us?" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#111827" },
+    { "type": "select", "id": "columns", "label": "Columns", "options": [{"value":"2","label":"2"},{"value":"3","label":"3"},{"value":"4","label":"4"}], "default": "3" },
+    { "type": "header", "content": "Animation" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "blocks": [{
+    "type": "feature",
+    "name": "Feature",
+    "limit": 8,
+    "settings": [
+      { "type": "select", "id": "icon", "label": "Icon", "options": [{"value":"star","label":"Star"},{"value":"shield","label":"Shield"},{"value":"truck","label":"Shipping"},{"value":"heart","label":"Heart"},{"value":"check","label":"Check"},{"value":"refresh","label":"Returns"},{"value":"mail","label":"Mail"}], "default": "star" },
+      { "type": "color", "id": "icon_bg", "label": "Icon background", "default": "#f3f4f6" },
+      { "type": "color", "id": "icon_color", "label": "Icon color", "default": "#1a1a1a" },
+      { "type": "text", "id": "title", "label": "Title", "default": "Feature title" },
+      { "type": "textarea", "id": "description", "label": "Description", "default": "Describe this feature briefly." },
+      { "type": "text", "id": "link_label", "label": "Link label" },
+      { "type": "url", "id": "link_url", "label": "Link URL" }
+    ]
+  }],
+  "max_blocks": 8,
+  "presets": [{
+    "name": "Story — Features Grid",
+    "settings": { "heading": "Why choose us?" },
+    "blocks": [
+      {"type":"feature","settings":{"icon":"truck","title":"Free Shipping","description":"Free shipping on all orders over $50."}},
+      {"type":"feature","settings":{"icon":"shield","title":"Secure Payments","description":"SSL encrypted checkout for your safety."}},
+      {"type":"feature","settings":{"icon":"refresh","title":"Easy Returns","description":"30-day hassle-free return policy."}}
+    ]
+  }]
+}
+{% endschema %}

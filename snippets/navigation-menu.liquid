@@ -1,0 +1,179 @@
+{% comment %}
+  ZELEXTO THEME — snippets/navigation-menu.liquid
+  Desktop multi-level navigation with mega menu support.
+  Accepts: menu (linklist object, defaults to main-menu)
+{% endcomment %}
+
+{%- liquid
+  assign nav_menu = menu | default: linklists['main-menu']
+-%}
+
+<nav
+  class="nav-desktop hide-mobile"
+  aria-label="{{ 'navigation.open_menu' | t }}">
+  <ul class="nav-desktop__list" role="list">
+    {%- for link in nav_menu.links -%}
+      {%- liquid
+        assign has_children = false
+        if link.links.size > 0
+          assign has_children = true
+        endif
+      -%}
+      <li
+        class="nav-desktop__item{% if has_children %} nav-desktop__item--has-children{% endif %}{% if link.current %} nav-desktop__item--active{% endif %}"
+        data-nav-item>
+
+        <a
+          href="{{ link.url }}"
+          class="nav-desktop__link"
+          {% if link.current %}aria-current="page"{% endif %}
+          {% if has_children %}
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="mega-menu-{{ link.handle }}"
+          {% endif %}>
+          {{ link.title }}
+          {%- if has_children -%}
+            {%- render 'icon', name: 'chevron-down', size: 14, class: 'nav-chevron' -%}
+          {%- endif -%}
+        </a>
+
+        {%- if has_children -%}
+          {%- render 'mega-menu', menu_item: link -%}
+        {%- endif -%}
+
+      </li>
+    {%- endfor -%}
+  </ul>
+</nav>
+
+<style>
+  .nav-desktop__list {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: var(--space-1);
+  }
+
+  .nav-desktop__item {
+    position: relative;
+  }
+
+  .nav-desktop__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    text-decoration: none;
+    border-radius: var(--radius);
+    white-space: nowrap;
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast);
+  }
+
+  .nav-desktop__link:hover,
+  .nav-desktop__item--active > .nav-desktop__link {
+    background-color: var(--color-surface);
+    color: var(--color-primary);
+  }
+
+  .nav-desktop__link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .nav-chevron {
+    transition: transform var(--transition-fast);
+    flex-shrink: 0;
+  }
+
+  /* Mega menu open state */
+  .nav-desktop__item--has-children:hover > .nav-desktop__link .nav-chevron,
+  .nav-desktop__item--has-children.is-open > .nav-desktop__link .nav-chevron {
+    transform: rotate(180deg);
+  }
+
+  .nav-desktop__item--has-children:hover > .mega-menu,
+  .nav-desktop__item--has-children.is-open > .mega-menu {
+    display: grid;
+    opacity: 1;
+    pointer-events: auto;
+  }
+</style>
+
+<script>
+  // Desktop navigation — keyboard accessibility
+  (function () {
+    'use strict';
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    function init() {
+      const navItems = document.querySelectorAll('.nav-desktop__item--has-children');
+
+      navItems.forEach(item => {
+        const trigger = item.querySelector('.nav-desktop__link');
+        const megaMenu = item.querySelector('.mega-menu');
+        if (!trigger || !megaMenu) return;
+
+        // Keyboard: open on Enter/Space, navigate with arrows
+        trigger.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const isOpen = item.classList.toggle('is-open');
+            trigger.setAttribute('aria-expanded', isOpen.toString());
+            if (isOpen) {
+              // Focus first link in mega menu
+              const firstLink = megaMenu.querySelector('a');
+              if (firstLink) firstLink.focus();
+            }
+          }
+          if (e.key === 'Escape') {
+            item.classList.remove('is-open');
+            trigger.setAttribute('aria-expanded', 'false');
+            trigger.focus();
+          }
+        });
+
+        // ESC closes mega menu when focus is inside it
+        megaMenu.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            item.classList.remove('is-open');
+            trigger.setAttribute('aria-expanded', 'false');
+            trigger.focus();
+          }
+        });
+
+        // Close when focus leaves the nav item
+        item.addEventListener('focusout', (e) => {
+          // Check if focus moved outside this nav item
+          setTimeout(() => {
+            if (!item.contains(document.activeElement)) {
+              item.classList.remove('is-open');
+              trigger.setAttribute('aria-expanded', 'false');
+            }
+          }, 50);
+        });
+      });
+
+      // Close all mega menus on outside click
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.nav-desktop__item--has-children')) {
+          navItems.forEach(item => {
+            item.classList.remove('is-open');
+            const trigger = item.querySelector('.nav-desktop__link');
+            if (trigger) trigger.setAttribute('aria-expanded', 'false');
+          });
+        }
+      });
+    }
+  })();
+</script>

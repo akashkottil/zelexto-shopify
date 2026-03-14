@@ -1,0 +1,228 @@
+{% comment %}
+  ZELEXTO THEME — sections/header.liquid
+  Sticky site header with transparent overlay option, mega menu,
+  mobile hamburger, search/cart/account icons.
+{% endcomment %}
+
+{%- liquid
+  assign sticky = section.settings.header_sticky
+  assign transparent = section.settings.header_transparent
+  assign logo_width = section.settings.logo_width | default: 140
+  assign nav_menu = linklists[section.settings.nav_menu] | default: linklists['main-menu']
+-%}
+
+<header
+  class="site-header{% if sticky %} site-header--sticky{% endif %}{% if transparent %} site-header--transparent{% endif %}"
+  id="site-header"
+  role="banner"
+  data-header>
+
+  <div class="container">
+    <div class="header-inner">
+
+      <!-- Hamburger — mobile only -->
+      <button
+        class="header-icon-btn hide-desktop"
+        type="button"
+        aria-label="{{ 'navigation.open_menu' | t }}"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-mobile-menu-open>
+        {%- render 'icon', name: 'menu', size: 22 -%}
+      </button>
+
+      <!-- Logo -->
+      <div class="header-logo" style="--logo-width: {{ logo_width }}px;">
+        <a href="{{ routes.root_url }}" class="header-logo__link" aria-label="{{ shop.name }}">
+          {%- if section.settings.logo -%}
+            <img
+              src="{{ section.settings.logo | image_url: width: logo_width | times: 2 }}"
+              srcset="{{ section.settings.logo | image_url: width: logo_width }} 1x,
+                      {{ section.settings.logo | image_url: width: logo_width | times: 2 }} 2x"
+              alt="{{ shop.name }}"
+              width="{{ logo_width }}"
+              height="{{ section.settings.logo.height | times: logo_width | divided_by: section.settings.logo.width | round }}"
+              loading="eager"
+              decoding="sync"
+              class="header-logo__img">
+          {%- else -%}
+            <span class="header-logo__text">{{ shop.name }}</span>
+          {%- endif -%}
+        </a>
+      </div>
+
+      <!-- Desktop navigation -->
+      {%- render 'navigation-menu', menu: nav_menu -%}
+
+      <!-- Header icons (search, account, cart, locale) -->
+      {%- render 'header-icons' -%}
+
+    </div>
+  </div>
+
+</header>
+
+<!-- Mobile menu — rendered outside header for proper stacking -->
+{%- render 'mobile-menu' -%}
+
+<style>
+  .site-header {
+    position: relative;
+    width: 100%;
+    z-index: var(--z-sticky);
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .site-header--sticky {
+    position: sticky;
+    top: 0;
+  }
+
+  .site-header--transparent {
+    position: absolute;
+    background-color: transparent;
+    border-bottom-color: transparent;
+  }
+
+  /* Becomes solid when scrolled past threshold */
+  .site-header--transparent.is-scrolled {
+    background-color: var(--color-bg);
+    border-bottom-color: var(--color-border);
+    box-shadow: var(--shadow);
+  }
+
+  /* Solid on scroll for sticky headers */
+  .site-header--sticky.is-scrolled {
+    box-shadow: var(--shadow);
+  }
+
+  /* Inner layout */
+  .header-inner {
+    display: flex;
+    align-items: center;
+    height: var(--header-height);
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 768px) {
+    .header-inner { height: var(--header-height-mobile); }
+  }
+
+  /* Logo */
+  .header-logo {
+    flex-shrink: 0;
+  }
+
+  .header-logo__link {
+    display: block;
+    text-decoration: none;
+  }
+
+  .header-logo__img {
+    width: var(--logo-width);
+    height: auto;
+    display: block;
+  }
+
+  .header-logo__text {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-xl);
+    color: var(--color-text);
+    white-space: nowrap;
+  }
+
+  /* Nav fills the middle */
+  .nav-desktop {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Icons go to the right */
+  .header-icons {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+</style>
+
+<script>
+  (function () {
+    'use strict';
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    function init() {
+      const header = document.getElementById('site-header');
+      if (!header) return;
+
+      const isTransparent = header.classList.contains('site-header--transparent');
+      const isSticky = header.classList.contains('site-header--sticky');
+      if (!isTransparent && !isSticky) return;
+
+      // Use IntersectionObserver to detect scroll position (Performance: no scroll listener)
+      // We observe a 1px sentinel element at the top of the page
+      const sentinel = document.createElement('div');
+      sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:1px;pointer-events:none;';
+      document.body.prepend(sentinel);
+
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          const scrolled = !entry.isIntersecting;
+          header.classList.toggle('is-scrolled', scrolled);
+        },
+        { threshold: 0 }
+      );
+
+      obs.observe(sentinel);
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo width",
+      "min": 60,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "default": 140
+    },
+    {
+      "type": "link_list",
+      "id": "nav_menu",
+      "label": "Navigation menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "header_sticky",
+      "label": "Sticky header",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "header_transparent",
+      "label": "Transparent header on hero",
+      "info": "Header becomes transparent when placed directly above a hero section",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,15 @@
+{
+    "sections": {
+        "main": {
+            "type": "main-product",
+            "settings": {
+                "show_vendor": true,
+                "show_rating": true,
+                "enable_tabs": true
+            }
+        }
+    },
+    "order": [
+        "main"
+    ]
+}

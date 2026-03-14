@@ -1,0 +1,59 @@
+{% comment %}
+  ZELEXTO THEME — snippets/rating-stars.liquid
+  Displays star rating. Accepts: rating (number 0-5), count (integer)
+{% endcomment %}
+
+{%- liquid
+  assign rating_val = rating | default: 0 | times: 1.0
+  assign full_stars = rating_val | floor
+  assign partial = rating_val | minus: full_stars
+  assign empty_stars = 5 | minus: full_stars
+  if partial > 0
+    assign empty_stars = empty_stars | minus: 1
+  endif
+-%}
+
+<div class="rating-stars" aria-label="{{ rating_val }} out of 5 stars" role="img">
+  <span class="rating-stars__icons" aria-hidden="true">
+    {%- for i in (1..full_stars) -%}
+      {%- render 'icon', name: 'star-filled', size: 14 -%}
+    {%- endfor -%}
+    {%- if partial > 0 -%}
+      <span class="rating-stars__partial" style="--partial-fill: {{ partial | times: 100 | round }}%;">
+        {%- render 'icon', name: 'star-filled', size: 14 -%}
+      </span>
+    {%- endif -%}
+    {%- if empty_stars > 0 -%}
+      {%- for i in (1..empty_stars) -%}
+        {%- render 'icon', name: 'star', size: 14 -%}
+      {%- endfor -%}
+    {%- endif -%}
+  </span>
+  {%- if count -%}
+    <span class="rating-stars__count">({{ count }})</span>
+  {%- endif -%}
+</div>
+
+<style>
+  .rating-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: #f59e0b;
+  }
+  .rating-stars__icons {
+    display: flex;
+    gap: 1px;
+  }
+  .rating-stars__partial {
+    position: relative;
+    display: inline-flex;
+    overflow: hidden;
+    width: calc(var(--partial-fill));
+  }
+  .rating-stars__count {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    margin-left: 2px;
+  }
+</style>

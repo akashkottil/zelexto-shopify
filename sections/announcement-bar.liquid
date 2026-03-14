@@ -1,0 +1,178 @@
+{% comment %}
+  ZELEXTO THEME — sections/announcement-bar.liquid
+  Dismissible scrolling announcement bar.
+{% endcomment %}
+
+{%- if section.settings.show_bar -%}
+<div
+  class="announcement-bar"
+  id="announcement-bar"
+  style="--announcement-bg: {{ section.settings.bg_color }};
+         --announcement-text: {{ section.settings.text_color }};"
+  role="region"
+  aria-label="Announcement">
+
+  <div class="announcement-bar__inner">
+    {%- if section.settings.text != blank -%}
+      <p class="announcement-bar__text">
+        {%- if section.settings.url != blank -%}
+          <a href="{{ section.settings.url }}" class="announcement-bar__link">
+        {%- endif -%}
+          {{ section.settings.text }}
+        {%- if section.settings.url != blank -%}
+          </a>
+        {%- endif -%}
+      </p>
+    {%- endif -%}
+  </div>
+
+  {%- if section.settings.show_dismiss -%}
+    <button
+      class="announcement-bar__close"
+      type="button"
+      aria-label="{{ 'general.close' | t }}"
+      data-announcement-close>
+      {%- render 'icon', name: 'close', size: 14 -%}
+    </button>
+  {%- endif -%}
+
+</div>
+
+<style>
+  .announcement-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--announcement-bg, var(--color-primary));
+    color: var(--announcement-text, #ffffff);
+    padding: var(--space-2) var(--space-6);
+    position: relative;
+    min-height: 40px;
+  }
+
+  .announcement-bar__inner {
+    flex: 1;
+    text-align: center;
+  }
+
+  .announcement-bar__text {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .announcement-bar__link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .announcement-bar__close {
+    position: absolute;
+    right: var(--space-4);
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: var(--space-1);
+    border-radius: var(--radius);
+    opacity: 0.7;
+    transition: opacity var(--transition-fast);
+  }
+  .announcement-bar__close:hover { opacity: 1; }
+
+  [dir="rtl"] .announcement-bar__close { right: auto; left: var(--space-4); }
+</style>
+
+<script>
+  (function () {
+    'use strict';
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    function init() {
+      const bar = document.getElementById('announcement-bar');
+      const closeBtn = bar && bar.querySelector('[data-announcement-close]');
+      if (!bar || !closeBtn) return;
+
+      // Check if previously dismissed
+      const dismissedKey = 'announcement-dismissed-{{ section.settings.text | md5 }}';
+      if (sessionStorage.getItem(dismissedKey)) {
+        bar.style.display = 'none';
+        return;
+      }
+
+      closeBtn.addEventListener('click', () => {
+        bar.style.maxHeight = bar.offsetHeight + 'px';
+        bar.style.overflow = 'hidden';
+        requestAnimationFrame(() => {
+          bar.style.transition = 'max-height 0.3s ease, opacity 0.3s ease';
+          bar.style.maxHeight = '0';
+          bar.style.opacity = '0';
+          bar.addEventListener('transitionend', () => bar.remove(), { once: true });
+        });
+        sessionStorage.setItem(dismissedKey, '1');
+      });
+    }
+  })();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_bar",
+      "label": "Show announcement bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Announcement text",
+      "default": "🎉 Free shipping on orders over $50 — Shop now"
+    },
+    {
+      "type": "url",
+      "id": "url",
+      "label": "Link URL"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dismiss",
+      "label": "Allow dismissal",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar",
+      "settings": {
+        "text": "🎉 Free shipping on orders over $50 — Shop now",
+        "show_bar": true
+      }
+    }
+  ]
+}
+{% endschema %}

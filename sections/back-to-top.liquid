@@ -1,0 +1,79 @@
+{% comment %}
+  ZELEXTO THEME — sections/back-to-top.liquid
+  Floating button that appears after the user scrolls down.
+  Uses IntersectionObserver - no scroll listener.
+{% endcomment %}
+
+<button
+  class="back-to-top"
+  id="back-to-top"
+  type="button"
+  aria-label="{{ 'general.back_to_top' | t | default: 'Back to top' }}"
+  hidden>
+  {%- render 'icon', name: 'arrow-down', size: 18 -%}
+</button>
+
+<style>
+  .back-to-top {
+    position: fixed;
+    bottom: var(--space-6);
+    right: var(--space-6);
+    z-index: var(--z-sticky);
+    width: 48px; height: 48px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(20px) rotate(180deg);
+    opacity: 0;
+    transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-fast);
+    will-change: transform, opacity;
+  }
+
+  .back-to-top.is-visible {
+    opacity: 1;
+    transform: translateY(0) rotate(180deg);
+  }
+
+  .back-to-top:hover {
+    background: var(--color-primary-dark, var(--color-primary));
+    transform: translateY(-2px) rotate(180deg);
+  }
+
+  .back-to-top:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+  }
+
+  [dir="rtl"] .back-to-top { right: auto; left: var(--space-6); }
+</style>
+
+<script>
+  (function () {
+    'use strict';
+    const btn = document.getElementById('back-to-top');
+    if (!btn) return;
+
+    // Use IntersectionObserver on a sentinel at 200px from top
+    const sentinel = document.createElement('div');
+    sentinel.style.cssText = 'position:absolute;top:400px;left:0;width:1px;height:1px;pointer-events:none;';
+    document.body.prepend(sentinel);
+
+    const obs = new IntersectionObserver(([entry]) => {
+      const show = !entry.isIntersecting;
+      btn.hidden = false;
+      btn.classList.toggle('is-visible', show);
+    }, { threshold: 0 });
+
+    obs.observe(sentinel);
+
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+</script>
