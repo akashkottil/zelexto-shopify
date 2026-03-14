@@ -1,0 +1,451 @@
+{% comment %}
+  ZELEXTO THEME — sections/main-collection.liquid
+  Collection grid with sidebar filters and sort controls.
+  Mobile: filter drawer using <dialog>.
+{% endcomment %}
+
+{%- liquid
+  assign products_per_page = section.settings.products_per_page | default: 24
+  assign layout_type       = section.settings.layout | default: 'grid'
+  assign show_filters      = section.settings.enable_filtering
+  assign show_sorting      = section.settings.enable_sorting
+  assign enable_anim       = section.settings.enable_animation
+
+  assign active_filter_count = 0
+  for filter in collection.filters
+    for value in filter.active_values
+      assign active_filter_count = active_filter_count | plus: 1
+    endfor
+    if filter.type == 'price_range'
+      if filter.min_value.value or filter.max_value.value
+        assign active_filter_count = active_filter_count | plus: 1
+      endif
+    endif
+  endfor
+-%}
+
+<div class="collection-page" id="collection-section" data-section-id="{{ section.id }}">
+  <div class="container">
+
+    <!-- Collection header banner -->
+    {%- if section.settings.show_header -%}
+      <div class="collection-header">
+        {%- if collection.image -%}
+          <div class="collection-header__bg">
+            <img
+              src="{{ collection.image | image_url: width: 1600 }}"
+              alt="{{ collection.image.alt | escape | default: collection.title }}"
+              width="1600" height="400"
+              loading="lazy"
+              decoding="async"
+              class="collection-header__image">
+            <div class="collection-header__overlay"></div>
+          </div>
+        {%- endif -%}
+        <div class="collection-header__content">
+          {%- render 'breadcrumb' -%}
+          <h1 class="collection-header__title">{{ collection.title }}</h1>
+          {%- if collection.description != blank -%}
+            <div class="collection-header__desc">{{ collection.description }}</div>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    <!-- Toolbar: count, filters toggle, sort, view -->
+    <div class="collection-toolbar">
+      <div class="collection-toolbar__left">
+
+        {%- if show_filters -%}
+          <!-- Mobile filter trigger -->
+          <button
+            type="button"
+            class="btn btn--ghost btn--sm collection-toolbar__filter-btn"
+            id="filter-drawer-trigger"
+            aria-controls="filter-drawer"
+            aria-expanded="false">
+            {%- render 'icon', name: 'filter', size: 16 -%}
+            {{ 'collection.filters.title' | t | default: 'Filters' }}
+            {%- if active_filter_count > 0 -%}
+              <span class="collection-toolbar__filter-count" id="filter-count">{{ active_filter_count }}</span>
+            {%- else -%}
+              <span class="collection-toolbar__filter-count" id="filter-count" hidden>0</span>
+            {%- endif -%}
+          </button>
+        {%- endif -%}
+
+        <p class="collection-toolbar__count" aria-live="polite">
+          {{ 'collection.product_count' | t: count: collection.products_count | default: collection.products_count | append: ' products' }}
+        </p>
+      </div>
+
+      <div class="collection-toolbar__right">
+
+        <!-- Sort -->
+        {%- if show_sorting -%}
+          <div class="collection-toolbar__sort">
+            <label for="sort-select" class="visually-hidden">{{ 'collection.sort.label' | t | default: 'Sort by' }}</label>
+            <select id="sort-select" class="form-select collection-sort">
+              {%- for option in collection.sort_options -%}
+                <option
+                  value="{{ option.value }}"
+                  {% if option.value == collection.sort_by %}selected{% endif %}>
+                  {{ option.name }}
+                </option>
+              {%- endfor -%}
+            </select>
+          </div>
+        {%- endif -%}
+
+        <!-- Grid / List view toggle -->
+        <div class="collection-view-toggle" role="group" aria-label="{{ 'collection.view' | t | default: 'View' }}">
+          <button
+            type="button"
+            class="view-toggle-btn is-active"
+            data-view="grid"
+            aria-label="{{ 'collection.grid_view' | t | default: 'Grid view' }}"
+            aria-pressed="true">
+            {%- render 'icon', name: 'grid', size: 16 -%}
+          </button>
+          <button
+            type="button"
+            class="view-toggle-btn"
+            data-view="list"
+            aria-label="{{ 'collection.list_view' | t | default: 'List view' }}"
+            aria-pressed="false">
+            {%- render 'icon', name: 'list', size: 16 -%}
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Main content: sidebar + grid -->
+    <div class="collection-layout{% if show_filters %} collection-layout--with-sidebar{% endif %}">
+
+      <!-- Desktop sidebar filters -->
+      {%- if show_filters -%}
+        <aside class="collection-sidebar" id="collection-sidebar" aria-label="{{ 'collection.filters.label' | t | default: 'Collection filters' }}">
+          {%- render 'filter-sidebar', collection: collection, section: section -%}
+        </aside>
+      {%- endif -%}
+
+      <!-- Products grid -->
+      <div class="collection-main">
+
+        <!-- Loading overlay -->
+        <div class="collection-loading" id="collection-loading" hidden>
+          <div class="collection-loading__spinner"></div>
+        </div>
+
+        <!-- Grid -->
+        <div
+          class="collection-grid grid grid--products{% if layout_type == 'list' %} collection-grid--list{% endif %}"
+          id="collection-products"
+          data-collection-products>
+
+          {%- if collection.products.size > 0 -%}
+            {%- for product in collection.products -%}
+              {%- render 'product-card',
+                product: product,
+                animation: 'animate-slide-up',
+                animation_delay: forloop.index0 | modulo: 8 | times: 60 -%}
+            {%- endfor -%}
+          {%- else -%}
+            <div class="collection-empty">
+              <div class="collection-empty__icon">{%- render 'icon', name: 'search', size: 48 -%}</div>
+              <h2 class="collection-empty__title">{{ 'collection.empty.title' | t | default: 'No products found' }}</h2>
+              <p class="collection-empty__text">{{ 'collection.empty.subtitle' | t | default: 'Try changing or removing your filters.' }}</p>
+              {%- if active_filter_count > 0 -%}
+                <a href="{{ collection.url }}" class="btn btn--primary">{{ 'collection.filters.clear_all' | t | default: 'Clear all filters' }}</a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+        </div>
+
+        <!-- Pagination -->
+        {%- if paginate.pages > 1 -%}
+          <div class="collection-pagination" id="collection-pagination">
+            {%- if paginate.previous -%}
+              <a href="{{ paginate.previous.url }}" class="btn btn--ghost">
+                {%- render 'icon', name: 'chevron-left', size: 16 -%}
+                {{ 'general.previous' | t | default: 'Previous' }}
+              </a>
+            {%- endif -%}
+
+            <div class="pagination-pages">
+              {%- for part in paginate.parts -%}
+                {%- if part.is_link -%}
+                  <a href="{{ part.url }}" class="pagination-page">{{ part.title }}</a>
+                {%- else -%}
+                  {%- if part.title == paginate.current_page -%}
+                    <span class="pagination-page is-current" aria-current="page">{{ part.title }}</span>
+                  {%- else -%}
+                    <span class="pagination-page pagination-page--ellipsis">{{ part.title }}</span>
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+
+            {%- if paginate.next -%}
+              <a href="{{ paginate.next.url }}" class="btn btn--ghost">
+                {{ 'general.next' | t | default: 'Next' }}
+                {%- render 'icon', name: 'chevron-right', size: 16 -%}
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Mobile filter drawer -->
+{%- if show_filters -%}
+  <dialog class="filter-drawer" id="filter-drawer" aria-label="{{ 'collection.filters.title' | t | default: 'Filters' }}">
+    <div class="filter-drawer__header">
+      <h2 class="filter-drawer__title">{{ 'collection.filters.title' | t | default: 'Filters' }}</h2>
+      <button type="button" class="btn filter-drawer__close" aria-label="{{ 'general.close' | t }}" id="filter-drawer-close">
+        {%- render 'icon', name: 'close', size: 20 -%}
+      </button>
+    </div>
+    <div class="filter-drawer__body">
+      {%- render 'filter-sidebar', collection: collection, section: section -%}
+    </div>
+  </dialog>
+
+  <script>
+    (function () {
+      'use strict';
+      const trigger = document.getElementById('filter-drawer-trigger');
+      const drawer  = document.getElementById('filter-drawer');
+      const closeBtn = document.getElementById('filter-drawer-close');
+
+      if (!trigger || !drawer) return;
+
+      trigger.addEventListener('click', () => {
+        drawer.showModal();
+        document.body.style.overflow = 'hidden';
+        trigger.setAttribute('aria-expanded', 'true');
+      });
+
+      function closeDrawer() {
+        drawer.close();
+        document.body.style.overflow = '';
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+
+      closeBtn?.addEventListener('click', closeDrawer);
+      drawer.addEventListener('click', (e) => { if (e.target === drawer) closeDrawer(); });
+
+      // After filter applies on mobile, close the drawer
+      if (window.ThemeEvents) {
+        window.ThemeEvents.on('collection:filtered', closeDrawer);
+      }
+    })();
+  </script>
+{%- endif -%}
+
+<style>
+  /* Collection header */
+  .collection-header {
+    position: relative;
+    min-height: 200px;
+    background: var(--color-surface);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    margin-bottom: var(--space-6);
+    display: flex;
+    align-items: flex-end;
+  }
+  .collection-header__bg { position: absolute; inset: 0; }
+  .collection-header__image { width: 100%; height: 100%; object-fit: cover; }
+  .collection-header__overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); }
+  .collection-header__content {
+    position: relative; z-index: 1;
+    padding: var(--space-6);
+    color: #fff;
+  }
+  .collection-header__title { font-size: clamp(1.75rem, 4vw, 3rem); margin-bottom: var(--space-2); color: inherit; }
+  .collection-header__desc { font-size: var(--font-size-sm); opacity: 0.85; max-width: 600px; }
+
+  /* Toolbar */
+  .collection-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-6);
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+  .collection-toolbar__left { display: flex; align-items: center; gap: var(--space-3); }
+  .collection-toolbar__right { display: flex; align-items: center; gap: var(--space-3); }
+  .collection-toolbar__count { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+  .collection-toolbar__filter-count {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px;
+    background: var(--color-primary); color: #fff;
+    font-size: 10px; font-weight: 700;
+    border-radius: var(--radius-full);
+    margin-left: var(--space-1);
+  }
+
+  /* Sort */
+  .collection-sort { min-width: 160px; }
+
+  /* View toggle */
+  .collection-view-toggle { display: flex; gap: var(--space-1); }
+  .view-toggle-btn {
+    width: 36px; height: 36px;
+    background: none; border: 1px solid var(--color-border);
+    border-radius: var(--radius); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--color-text-secondary);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+  }
+  .view-toggle-btn.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+
+  /* Layout */
+  .collection-layout { display: grid; gap: var(--space-8); }
+  .collection-layout--with-sidebar { grid-template-columns: 260px 1fr; }
+
+  @media (max-width: 1024px) {
+    .collection-layout--with-sidebar { grid-template-columns: 1fr; }
+    .collection-sidebar { display: none; }
+  }
+
+  /* Sidebar */
+  .collection-sidebar { background: var(--color-bg); }
+
+  /* Collection main */
+  .collection-main { position: relative; }
+
+  /* Loading */
+  .collection-loading {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.7);
+    z-index: 2;
+    border-radius: var(--radius-card);
+  }
+  .collection-loading__spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-primary);
+    border-radius: var(--radius-full);
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Grid */
+  .collection-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop | default: 4 }}, 1fr);
+    gap: var(--space-grid);
+    transition: opacity var(--transition-base);
+  }
+
+  .collection-grid--list {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 1024px) {
+    .collection-grid { grid-template-columns: repeat({{ section.settings.columns_tablet | default: 3 }}, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .collection-grid { grid-template-columns: repeat({{ section.settings.columns_mobile | default: 2 }}, 1fr); }
+  }
+
+  /* Empty state */
+  .collection-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: var(--space-16);
+    display: flex; flex-direction: column; align-items: center; gap: var(--space-4);
+    color: var(--color-text-secondary);
+  }
+  .collection-empty__icon { opacity: 0.3; }
+  .collection-empty__title { font-size: var(--font-size-xl); color: var(--color-text); }
+
+  /* Pagination */
+  .collection-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-10);
+    flex-wrap: wrap;
+  }
+  .pagination-pages { display: flex; gap: var(--space-1); }
+  .pagination-page {
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  }
+  .pagination-page:hover { background: var(--color-surface); }
+  .pagination-page.is-current { background: var(--color-primary); border-color: var(--color-primary); color: #fff; font-weight: var(--font-weight-bold); }
+  .pagination-page--ellipsis { border: none; cursor: default; }
+
+  /* Mobile filter drawer */
+  .filter-drawer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    top: auto;
+    width: 100%;
+    max-width: 100%;
+    max-height: 90vh;
+    border: none; border-radius: var(--radius-card) var(--radius-card) 0 0;
+    padding: 0;
+    overflow: hidden;
+    background: var(--color-bg);
+  }
+  .filter-drawer::backdrop { background: rgba(0,0,0,0.5); }
+  .filter-drawer[open] { animation: filter-drawer-in 0.3s ease; }
+  @keyframes filter-drawer-in {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .filter-drawer__header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky; top: 0; background: var(--color-bg); z-index: 1;
+  }
+  .filter-drawer__title { font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin: 0; }
+  .filter-drawer__body { padding: var(--space-4) var(--space-5); overflow-y: auto; max-height: calc(90vh - 60px); }
+
+  @media (min-width: 1025px) {
+    .collection-toolbar__filter-btn { display: none; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Collection page",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "select", "id": "columns_desktop", "label": "Columns (desktop)", "options": [{"value":"3","label":"3"},{"value":"4","label":"4"},{"value":"5","label":"5"}], "default": "4" },
+    { "type": "select", "id": "columns_tablet", "label": "Columns (tablet)", "options": [{"value":"2","label":"2"},{"value":"3","label":"3"}], "default": "3" },
+    { "type": "select", "id": "columns_mobile", "label": "Columns (mobile)", "options": [{"value":"1","label":"1"},{"value":"2","label":"2"}], "default": "2" },
+    { "type": "header", "content": "Filtering & Sorting" },
+    { "type": "checkbox", "id": "enable_filtering", "label": "Enable filtering", "default": true },
+    { "type": "checkbox", "id": "show_filter_count", "label": "Show product count per filter", "default": true },
+    { "type": "checkbox", "id": "enable_sorting", "label": "Enable sorting", "default": true },
+    { "type": "header", "content": "Header banner" },
+    { "type": "checkbox", "id": "show_header", "label": "Show collection header", "default": true },
+    { "type": "header", "content": "Animation" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable card animations", "default": true }
+  ],
+  "presets": [{ "name": "Collection page" }]
+}
+{% endschema %}

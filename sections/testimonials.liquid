@@ -1,0 +1,180 @@
+{% comment %}
+  ZELEXTO THEME — sections/testimonials.liquid
+  Customer quote grid. Animated cards with star ratings.
+{% endcomment %}
+
+{%- liquid
+  assign enable_anim = section.settings.enable_animation
+-%}
+
+<section class="testimonials section" id="testimonials-{{ section.id }}" style="background-color: {{ section.settings.bg_color }};">
+  <div class="container">
+
+    <div class="section-header{% if enable_anim %} animate-fade-in{% endif %}" {% if enable_anim %}data-animate="animate-fade-in"{% endif %}>
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="section-header__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      <h2 class="section-header__title" style="color: {{ section.settings.text_color }};">{{ section.settings.heading }}</h2>
+    </div>
+
+    <div class="testimonials__grid testimonials__grid--{{ section.settings.columns }}" data-stagger>
+      {%- for block in section.blocks -%}
+        <blockquote
+          class="testimonial-card{% if enable_anim %} animate-slide-up{% endif %}"
+          {% if enable_anim %}data-animate="animate-slide-up"{% endif %}
+          {{ block.shopify_attributes }}>
+
+          <!-- Stars -->
+          {%- if block.settings.rating > 0 -%}
+            <div class="testimonial-card__stars" aria-label="{{ block.settings.rating }} out of 5 stars">
+              {%- for i in (1..5) -%}
+                <span class="star{% if i <= block.settings.rating %} star--filled{% endif %}" aria-hidden="true">★</span>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          <!-- Quote -->
+          <p class="testimonial-card__quote">{{ block.settings.quote }}</p>
+
+          <!-- Author -->
+          <footer class="testimonial-card__author">
+            {%- if block.settings.avatar != blank -%}
+              <img
+                src="{{ block.settings.avatar | image_url: width: 80 }}"
+                alt="{{ block.settings.author }}"
+                width="40" height="40"
+                loading="lazy"
+                decoding="async"
+                class="testimonial-card__avatar">
+            {%- else -%}
+              <div class="testimonial-card__avatar-placeholder" aria-hidden="true">
+                {{ block.settings.author | slice: 0, 1 | upcase }}
+              </div>
+            {%- endif -%}
+            <div>
+              <strong class="testimonial-card__name">{{ block.settings.author }}</strong>
+              {%- if block.settings.location != blank -%}
+                <span class="testimonial-card__location">{{ block.settings.location }}</span>
+              {%- endif -%}
+            </div>
+          </footer>
+
+        </blockquote>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.cta_label != blank -%}
+      <div style="text-align: center; margin-top: var(--space-10);">
+        <a href="{{ section.settings.cta_url | default: '#' }}" class="btn btn--secondary">
+          {{ section.settings.cta_label }}
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+<style>
+  .testimonials { padding-block: var(--section-padding); }
+
+  .testimonials__grid {
+    display: grid;
+    gap: var(--space-6);
+  }
+  .testimonials__grid--2 { grid-template-columns: repeat(2, 1fr); }
+  .testimonials__grid--3 { grid-template-columns: repeat(3, 1fr); }
+
+  @media (max-width: 1024px) {
+    .testimonials__grid--3 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .testimonials__grid--2,
+    .testimonials__grid--3 { grid-template-columns: 1fr; }
+  }
+
+  .testimonial-card {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: var(--space-6);
+    display: flex; flex-direction: column; gap: var(--space-4);
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
+    margin: 0;
+  }
+  .testimonial-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+
+  .testimonial-card__stars { display: flex; gap: 2px; }
+  .star { font-size: 18px; color: var(--color-border); }
+  .star--filled { color: #f59e0b; }
+
+  .testimonial-card__quote {
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text);
+    font-style: italic;
+    flex: 1;
+    margin: 0;
+  }
+  .testimonial-card__quote::before { content: '"'; }
+  .testimonial-card__quote::after  { content: '"'; }
+
+  .testimonial-card__author { display: flex; align-items: center; gap: var(--space-3); }
+
+  .testimonial-card__avatar {
+    width: 44px; height: 44px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .testimonial-card__avatar-placeholder {
+    width: 44px; height: 44px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: var(--font-weight-bold); font-size: var(--font-size-md);
+    flex-shrink: 0;
+  }
+
+  .testimonial-card__name { display: block; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); }
+  .testimonial-card__location { display: block; font-size: var(--font-size-xs); color: var(--color-text-secondary); }
+</style>
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "tag": "section",
+  "settings": [
+    { "type": "color", "id": "bg_color", "label": "Section background", "default": "#f9fafb" },
+    { "type": "color", "id": "text_color", "label": "Heading color", "default": "#111827" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text", "default": "What customers say" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Loved by thousands" },
+    { "type": "select", "id": "columns", "label": "Columns", "options": [{"value":"2","label":"2"},{"value":"3","label":"3"}], "default": "3" },
+    { "type": "text", "id": "cta_label", "label": "CTA button label" },
+    { "type": "url", "id": "cta_url", "label": "CTA button URL" },
+    { "type": "header", "content": "Animation" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "blocks": [{
+    "type": "testimonial",
+    "name": "Testimonial",
+    "settings": [
+      { "type": "textarea", "id": "quote", "label": "Quote", "default": "This product completely changed my life. Excellent quality!" },
+      { "type": "text", "id": "author", "label": "Author name", "default": "Jane D." },
+      { "type": "text", "id": "location", "label": "Location", "default": "New York, USA" },
+      { "type": "range", "id": "rating", "label": "Star rating", "min": 1, "max": 5, "step": 1, "default": 5 },
+      { "type": "image_picker", "id": "avatar", "label": "Avatar image" }
+    ]
+  }],
+  "max_blocks": 12,
+  "presets": [{
+    "name": "Testimonials",
+    "settings": { "heading": "Loved by thousands" },
+    "blocks": [
+      {"type":"testimonial","settings":{"quote":"Best purchase I've ever made. Shipping was fast!","author":"Sarah K.","location":"Los Angeles","rating":5}},
+      {"type":"testimonial","settings":{"quote":"Incredible quality. Will definitely order again.","author":"Michael T.","location":"Chicago","rating":5}},
+      {"type":"testimonial","settings":{"quote":"Exactly as described, arrived quickly. 5 stars!","author":"Emma L.","location":"London","rating":5}}
+    ]
+  }]
+}
+{% endschema %}

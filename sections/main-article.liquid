@@ -1,0 +1,236 @@
+{% comment %}
+  ZELEXTO THEME — sections/main-article.liquid
+  Article (blog post) reader: title, author, date, tags, content, share, related.
+{% endcomment %}
+
+<article
+  class="article-page"
+  id="article-{{ article.id }}"
+  itemscope
+  itemtype="https://schema.org/BlogPosting">
+
+  <div class="container article-page__container">
+
+    <!-- Header -->
+    <header class="article-header">
+      {%- render 'breadcrumb' -%}
+
+      {%- if article.tags.size > 0 -%}
+        <div class="article-header__tags">
+          {%- for tag in article.tags -%}
+            <a href="{{ blog.url }}/tagged/{{ tag | handleize }}" class="blog-card__tag">{{ tag }}</a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      <h1 class="article-header__title" itemprop="name">{{ article.title }}</h1>
+
+      <div class="article-header__meta">
+        {%- if section.settings.show_date -%}
+          <time class="article-header__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}" itemprop="datePublished">
+            {%- render 'icon', name: 'clock', size: 14 -%}
+            {{ article.published_at | date: '%B %d, %Y' }}
+          </time>
+        {%- endif -%}
+        {%- if section.settings.show_author -%}
+          <span class="article-header__author" itemprop="author">
+            {%- render 'icon', name: 'user', size: 14 -%}
+            {{ article.author }}
+          </span>
+        {%- endif -%}
+        {%- if article.read_time != blank -%}
+          <span class="article-header__read-time">{{ article.read_time }} min read</span>
+        {%- endif -%}
+      </div>
+    </header>
+
+    <!-- Featured image -->
+    {%- if section.settings.show_featured_image and article.image -%}
+      <div class="article-featured-image">
+        <img
+          src="{{ article.image | image_url: width: 1000 }}"
+          srcset="{{ article.image | image_url: width: 700 }} 700w,
+                  {{ article.image | image_url: width: 1000 }} 1000w"
+          sizes="(max-width: 768px) 100vw, 780px"
+          alt="{{ article.image.alt | escape | default: article.title }}"
+          width="1000"
+          height="{{ 1000 | divided_by: article.image.aspect_ratio | round }}"
+          loading="eager"
+          decoding="sync"
+          class="article-featured-image__img"
+          itemprop="image">
+      </div>
+    {%- endif -%}
+
+    <!-- Article body -->
+    <div class="article-body rte" itemprop="articleBody">
+      {{ article.content }}
+    </div>
+
+    <!-- Footer: share, tags, prev/next -->
+    <footer class="article-footer">
+
+      {%- if section.settings.show_tags and article.tags.size > 0 -%}
+        <div class="article-footer__tags">
+          <strong>{{ 'blog.tagged_in' | t | default: 'Tagged:' }}</strong>
+          {%- for tag in article.tags -%}
+            <a href="{{ blog.url }}/tagged/{{ tag | handleize }}" class="blog-card__tag">{{ tag }}</a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_share -%}
+        <div class="article-footer__share">
+          <strong>{{ 'general.share' | t | default: 'Share:' }}</strong>
+          <a href="https://twitter.com/intent/tweet?text={{ article.title | url_encode }}&url={{ shop.url }}{{ article.url | url_encode }}" class="share-link" target="_blank" rel="noopener" aria-label="Share on Twitter">
+            {%- render 'icon', name: 'twitter', size: 18 -%}
+          </a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url }}{{ article.url | url_encode }}" class="share-link" target="_blank" rel="noopener" aria-label="Share on Facebook">
+            {%- render 'icon', name: 'facebook', size: 18 -%}
+          </a>
+          <a href="https://pinterest.com/pin/create/button/?url={{ shop.url }}{{ article.url | url_encode }}&media={{ article.image | image_url: width: 1200 | url_encode }}&description={{ article.title | url_encode }}" class="share-link" target="_blank" rel="noopener" aria-label="Share on Pinterest">
+            {%- render 'icon', name: 'pinterest', size: 18 -%}
+          </a>
+        </div>
+      {%- endif -%}
+
+      <!-- Prev / Next articles -->
+      <nav class="article-nav" aria-label="{{ 'blog.article_navigation' | t | default: 'Article navigation' }}">
+        {%- if blog.previous_article -%}
+          <a href="{{ blog.previous_article }}" class="article-nav__link article-nav__link--prev">
+            {%- render 'icon', name: 'chevron-left', size: 16 -%}
+            {{ 'blog.prev_article' | t | default: 'Previous article' }}
+          </a>
+        {%- endif -%}
+        {%- if blog.next_article -%}
+          <a href="{{ blog.next_article }}" class="article-nav__link article-nav__link--next">
+            {{ 'blog.next_article' | t | default: 'Next article' }}
+            {%- render 'icon', name: 'chevron-right', size: 16 -%}
+          </a>
+        {%- endif -%}
+      </nav>
+
+      <a href="{{ blog.url }}" class="btn btn--ghost">← {{ 'blog.back_to_blog' | t | default: 'Back to blog' }}</a>
+
+    </footer>
+
+  </div>
+
+</article>
+
+<style>
+  .article-page { padding-block: var(--space-8); }
+
+  .article-page__container { max-width: 780px; }
+
+  .article-header { margin-bottom: var(--space-8); }
+
+  .article-header__tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); }
+
+  .article-header__title {
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    line-height: 1.15;
+    margin-bottom: var(--space-4);
+  }
+
+  .article-header__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    flex-wrap: wrap;
+  }
+
+  .article-header__date,
+  .article-header__author,
+  .article-header__read-time {
+    display: flex; align-items: center; gap: var(--space-1);
+  }
+
+  .article-featured-image {
+    margin-bottom: var(--space-8);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .article-featured-image__img { width: 100%; height: auto; display: block; }
+
+  /* Article body */
+  .article-body {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text);
+  }
+  .article-body p { margin-bottom: var(--space-5); }
+  .article-body h2 { font-size: var(--font-size-2xl); margin: var(--space-10) 0 var(--space-4); }
+  .article-body h3 { font-size: var(--font-size-xl); margin: var(--space-8) 0 var(--space-3); }
+  .article-body ul, .article-body ol { padding-left: var(--space-7); margin-bottom: var(--space-5); }
+  .article-body li { margin-bottom: var(--space-2); }
+  .article-body img { max-width: 100%; border-radius: var(--radius-card); margin-block: var(--space-6); }
+  .article-body blockquote {
+    border-left: 4px solid var(--color-primary);
+    padding: var(--space-4) var(--space-6);
+    margin: var(--space-6) 0;
+    background: var(--color-surface);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: var(--font-size-xl);
+    font-style: italic;
+    color: var(--color-text-secondary);
+  }
+  .article-body pre {
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    padding: var(--space-5);
+    overflow-x: auto;
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-5);
+  }
+
+  /* Footer */
+  .article-footer {
+    margin-top: var(--space-10);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .article-footer__tags { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-size: var(--font-size-sm); }
+
+  .article-footer__share { display: flex; align-items: center; gap: var(--space-3); font-size: var(--font-size-sm); }
+
+  .share-link {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    border: 1px solid var(--color-border); border-radius: var(--radius-full);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+  }
+  .share-link:hover { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+
+  .article-nav { display: flex; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
+
+  .article-nav__link {
+    display: inline-flex; align-items: center; gap: var(--space-1);
+    font-size: var(--font-size-sm); font-weight: var(--font-weight-medium);
+    color: var(--color-primary); text-decoration: none;
+    transition: gap var(--transition-fast);
+  }
+  .article-nav__link:hover { gap: var(--space-2); }
+</style>
+
+{% schema %}
+{
+  "name": "Article",
+  "settings": [
+    { "type": "checkbox", "id": "show_featured_image", "label": "Show featured image", "default": true },
+    { "type": "checkbox", "id": "show_date", "label": "Show date", "default": true },
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true },
+    { "type": "checkbox", "id": "show_tags", "label": "Show tags", "default": true },
+    { "type": "checkbox", "id": "show_share", "label": "Show share buttons", "default": true }
+  ],
+  "presets": [{ "name": "Article" }]
+}
+{% endschema %}

@@ -1,0 +1,228 @@
+{% comment %}
+  ZELEXTO THEME — snippets/variant-picker.liquid
+  Color swatches + size buttons + select dropdowns for variant selection.
+  Accepts: product
+{% endcomment %}
+
+{%- unless product.has_only_default_variant -%}
+  <div class="variant-picker" id="variant-picker" data-variant-picker>
+
+    {%- for option in product.options_with_values -%}
+      {%- liquid
+        assign option_index = forloop.index0
+        assign option_name_lower = option.name | downcase
+
+        assign is_color = false
+        if option_name_lower == 'color' or option_name_lower == 'colour' or option_name_lower == 'color/colour'
+          assign is_color = true
+        endif
+
+        assign is_size = false
+        if option_name_lower == 'size' or option_name_lower == 'sizes'
+          assign is_size = true
+        endif
+      -%}
+
+      <fieldset class="variant-picker__field" data-option-index="{{ option_index }}">
+        <legend class="variant-picker__label">
+          {{ option.name }}
+          {%- if is_size -%}
+            {%- if product.metafields.custom.size_guide_url -%}
+              <a href="{{ product.metafields.custom.size_guide_url }}" class="variant-picker__size-guide" target="_blank" rel="noopener">
+                {{ 'product.size_guide' | t | default: 'Size guide' }}
+              </a>
+            {%- endif -%}
+          {%- endif -%}
+          {%- if option.selected_value -%}
+            <span class="variant-picker__selected-value">: {{ option.selected_value }}</span>
+          {%- endif -%}
+        </legend>
+
+        {%- if is_color -%}
+          <!-- Color swatches -->
+          <div class="variant-picker__swatches" role="group">
+            {%- for value in option.values -%}
+              {%- liquid
+                assign is_selected = false
+                if value == option.selected_value
+                  assign is_selected = true
+                endif
+                assign color_lower = value | downcase | replace: ' ', '-'
+              -%}
+              <label
+                class="swatch{% if is_selected %} is-selected{% endif %}"
+                title="{{ value }}"
+                for="opt-{{ option_index }}-{{ forloop.index0 }}">
+                <input
+                  type="radio"
+                  id="opt-{{ option_index }}-{{ forloop.index0 }}"
+                  name="option-{{ option_index }}"
+                  value="{{ value | escape }}"
+                  class="swatch__input visually-hidden"
+                  {% if is_selected %}checked{% endif %}
+                  data-option-index="{{ option_index }}"
+                  data-option-value="{{ value | escape }}">
+                <span
+                  class="swatch__color"
+                  style="background-color: {{ color_lower }};
+                         background-image: url({{ value | handle | append: '.png' | file_img_url: '50x' }});">
+                </span>
+              </label>
+            {%- endfor -%}
+          </div>
+
+        {%- elsif is_size -%}
+          <!-- Size buttons -->
+          <div class="variant-picker__sizes" role="group">
+            {%- for value in option.values -%}
+              {%- liquid
+                assign is_selected = false
+                if value == option.selected_value
+                  assign is_selected = true
+                endif
+              -%}
+              <label
+                class="size-btn{% if is_selected %} is-selected{% endif %}"
+                for="opt-{{ option_index }}-{{ forloop.index0 }}">
+                <input
+                  type="radio"
+                  id="opt-{{ option_index }}-{{ forloop.index0 }}"
+                  name="option-{{ option_index }}"
+                  value="{{ value | escape }}"
+                  class="size-btn__input visually-hidden"
+                  {% if is_selected %}checked{% endif %}
+                  data-option-index="{{ option_index }}"
+                  data-option-value="{{ value | escape }}">
+                {{ value }}
+              </label>
+            {%- endfor -%}
+          </div>
+
+        {%- else -%}
+          <!-- Generic dropdown -->
+          <select
+            class="form-select variant-picker__select"
+            name="option-{{ option_index }}"
+            data-option-index="{{ option_index }}"
+            aria-label="{{ option.name }}">
+            {%- for value in option.values -%}
+              <option
+                value="{{ value | escape }}"
+                {% if value == option.selected_value %}selected{% endif %}>
+                {{ value }}
+              </option>
+            {%- endfor -%}
+          </select>
+        {%- endif -%}
+
+      </fieldset>
+    {%- endfor -%}
+
+    <!-- Hidden variant ID field (synced by component-product.js) -->
+    <input type="hidden" name="id" id="product-variant-id" value="{{ product.selected_or_first_available_variant.id }}" data-variant-id>
+
+  </div>
+{%- else -%}
+  <!-- Single variant — just a hidden field -->
+  <input type="hidden" name="id" id="product-variant-id" value="{{ product.variants.first.id }}" data-variant-id>
+{%- endunless -%}
+
+<!-- Variant data for JS -->
+<script type="application/json" id="product-variants-json">
+  {{ product.variants | json }}
+</script>
+
+<style>
+  .variant-picker { display: flex; flex-direction: column; gap: var(--space-5); }
+
+  .variant-picker__field {
+    border: none; margin: 0; padding: 0;
+  }
+
+  .variant-picker__label {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-3);
+    color: var(--color-text);
+  }
+
+  .variant-picker__selected-value {
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text-secondary);
+  }
+
+  .variant-picker__size-guide {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    margin-left: auto;
+  }
+
+  /* Color swatches */
+  .variant-picker__swatches { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+  .swatch { cursor: pointer; }
+
+  .swatch__color {
+    display: block;
+    width: 36px; height: 36px;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-border);
+    background-size: cover;
+    background-position: center;
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+  }
+
+  .swatch:hover .swatch__color { transform: scale(1.12); }
+
+  .swatch.is-selected .swatch__color {
+    border-color: var(--color-primary);
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* Size buttons */
+  .variant-picker__sizes { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+  .size-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    height: 44px;
+    padding: 0 var(--space-3);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    background: var(--color-bg);
+    color: var(--color-text);
+    transition: border-color var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+    user-select: none;
+  }
+
+  .size-btn:hover { border-color: var(--color-primary); }
+
+  .size-btn.is-selected {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary);
+    color: #fff;
+  }
+
+  /* Unavailable sizes — crossed out */
+  .size-btn.is-unavailable {
+    opacity: 0.4;
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
+
+  /* Select dropdown */
+  .variant-picker__select { width: 100%; }
+</style>

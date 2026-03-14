@@ -1,0 +1,184 @@
+{% comment %}
+  ZELEXTO THEME — sections/featured-collections.liquid
+  Grid of collection tiles for homepage.
+{% endcomment %}
+
+{%- liquid
+  assign enable_anim = section.settings.enable_animation
+-%}
+
+<section class="featured-collections section" id="featured-collections-{{ section.id }}">
+  <div class="container">
+
+    {%- if section.settings.heading != blank -%}
+      <div class="section-header{% if enable_anim %} animate-fade-in{% endif %}" {% if enable_anim %}data-animate="animate-fade-in"{% endif %}>
+        {%- if section.settings.eyebrow != blank %}
+          <p class="section-header__eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif %}
+        <h2 class="section-header__title">{{ section.settings.heading }}</h2>
+      </div>
+    {%- endif -%}
+
+    <div class="fc-grid fc-grid--{{ section.settings.columns }}" data-stagger>
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign col = collections[block.settings.collection]
+        -%}
+        <a
+          class="fc-tile{% if enable_anim %} animate-scale-in{% endif %}"
+          href="{{ col.url | default: '#' }}"
+          {% if enable_anim %}data-animate="animate-scale-in"{% endif %}
+          {{ block.shopify_attributes }}>
+
+          {%- liquid
+            assign col_image = block.settings.override_image | default: col.image
+          -%}
+          {%- if col_image -%}
+            <img
+              src="{{ col_image | image_url: width: 600 }}"
+              srcset="{{ col_image | image_url: width: 400 }} 400w,
+                      {{ col_image | image_url: width: 600 }} 600w,
+                      {{ col_image | image_url: width: 900 }} 900w"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, {{ 100 | divided_by: section.settings.columns }}vw"
+              alt="{{ col_image.alt | escape | default: col.title }}"
+              width="600"
+              height="{{ 600 | divided_by: col_image.aspect_ratio | round }}"
+              loading="lazy"
+              decoding="async"
+              class="fc-tile__image">
+          {%- else -%}
+            {{ 'collection-1' | placeholder_svg_tag: 'fc-tile__image fc-tile__image--placeholder' }}
+          {%- endif -%}
+
+          <div class="fc-tile__overlay"></div>
+          <div class="fc-tile__text">
+            <h3 class="fc-tile__title">{{ block.settings.label | default: col.title }}</h3>
+            {%- if block.settings.subtitle != blank -%}
+              <p class="fc-tile__subtitle">{{ block.settings.subtitle }}</p>
+            {%- endif -%}
+            <span class="fc-tile__cta">{{ block.settings.cta_label | default: 'Shop now' }}</span>
+          </div>
+
+        </a>
+      {%- endfor -%}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .featured-collections { padding-block: var(--section-padding); }
+
+  .fc-grid {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .fc-grid--2 { grid-template-columns: repeat(2, 1fr); }
+  .fc-grid--3 { grid-template-columns: repeat(3, 1fr); }
+  .fc-grid--4 { grid-template-columns: repeat(4, 1fr); }
+  .fc-grid--2-asym { grid-template-columns: 2fr 1fr; }
+
+  @media (max-width: 768px) {
+    .fc-grid--3, .fc-grid--4 { grid-template-columns: repeat(2, 1fr); }
+    .fc-grid--2-asym { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .fc-grid--2 { grid-template-columns: 1fr; }
+  }
+
+  .fc-tile {
+    position: relative;
+    display: block;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    aspect-ratio: 4/5;
+    text-decoration: none;
+    background: var(--color-surface);
+  }
+
+  .fc-tile__image {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.5s ease;
+    will-change: transform;
+  }
+  .fc-tile:hover .fc-tile__image { transform: scale(1.06); }
+  .fc-tile__image--placeholder { width: 100%; height: 100%; }
+
+  .fc-tile__overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+    transition: opacity var(--transition-base);
+  }
+  .fc-tile:hover .fc-tile__overlay { opacity: 0.9; }
+
+  .fc-tile__text {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: var(--space-6);
+    color: #fff;
+    display: flex; flex-direction: column; gap: var(--space-2);
+  }
+
+  .fc-tile__title {
+    font-size: clamp(1.1rem, 2.5vw, 1.75rem);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.2;
+  }
+
+  .fc-tile__subtitle { font-size: var(--font-size-sm); opacity: 0.85; }
+
+  .fc-tile__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: var(--radius);
+    padding: var(--space-2) var(--space-4);
+    width: fit-content;
+    transform: translateY(8px);
+    opacity: 0;
+    transition: transform var(--transition-base), opacity var(--transition-base);
+  }
+  .fc-tile:hover .fc-tile__cta { transform: translateY(0); opacity: 1; }
+</style>
+
+{% schema %}
+{
+  "name": "Featured collections",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by category" },
+    { "type": "select", "id": "columns", "label": "Layout", "options": [{"value":"2","label":"2 equal"},{"value":"3","label":"3 equal"},{"value":"4","label":"4 equal"},{"value":"2-asym","label":"2 asymmetric"}], "default": "3" },
+    { "type": "header", "content": "Animation" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "blocks": [{
+    "type": "collection_tile",
+    "name": "Collection tile",
+    "limit": 6,
+    "settings": [
+      { "type": "collection", "id": "collection", "label": "Collection" },
+      { "type": "image_picker", "id": "override_image", "label": "Override image" },
+      { "type": "text", "id": "label", "label": "Custom title (optional)" },
+      { "type": "text", "id": "subtitle", "label": "Subtitle" },
+      { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Shop now" }
+    ]
+  }],
+  "max_blocks": 6,
+  "presets": [{
+    "name": "Featured collections",
+    "settings": { "heading": "Shop by category" },
+    "blocks": [
+      {"type":"collection_tile","settings":{"cta_label":"Shop now"}},
+      {"type":"collection_tile","settings":{"cta_label":"Shop now"}},
+      {"type":"collection_tile","settings":{"cta_label":"Shop now"}}
+    ]
+  }]
+}
+{% endschema %}
