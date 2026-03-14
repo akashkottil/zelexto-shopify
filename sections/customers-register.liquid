@@ -1,0 +1,69 @@
+{% comment %}
+  ZELEXTO THEME — sections/customers-register.liquid
+  Customer registration page.
+{% endcomment %}
+
+<div class="auth-page section">
+  <div class="auth-page__container">
+    <div class="auth-card">
+      <div class="auth-card__header">
+        {%- render 'icon', name: 'user', size: 32 -%}
+        <h1 class="auth-card__title">{{ 'customer.register.title' | t | default: 'Create account' }}</h1>
+        <p class="auth-card__sub">{{ 'customer.register.subtitle' | t | default: 'Join us for a better experience.' }}</p>
+      </div>
+
+      {%- form 'create_customer', class: 'auth-form' -%}
+
+        {%- if form.errors -%}
+          <div class="auth-form__errors" role="alert">{{ form.errors | default_errors }}</div>
+        {%- endif -%}
+
+        <div class="auth-form__row">
+          <div class="form-field">
+            <label class="form-label" for="FirstName">{{ 'customer.register.first_name' | t | default: 'First name' }}</label>
+            <input type="text" name="customer[first_name]" id="FirstName" class="form-input" autocomplete="given-name">
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="LastName">{{ 'customer.register.last_name' | t | default: 'Last name' }}</label>
+            <input type="text" name="customer[last_name]" id="LastName" class="form-input" autocomplete="family-name">
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="Email">{{ 'customer.register.email' | t | default: 'Email' }}</label>
+          <input type="email" name="customer[email]" id="Email" class="form-input" autocomplete="email" required>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="CreatePassword">{{ 'customer.register.password' | t | default: 'Password' }}</label>
+          <input type="password" name="customer[password]" id="CreatePassword" class="form-input" autocomplete="new-password" required>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full btn--lg">
+          {{ 'customer.register.submit' | t | default: 'Create account' }}
+        </button>
+
+        <p style="text-align:center; font-size:var(--font-size-sm); color:var(--color-text-secondary);">
+          {{ 'customer.register.have_account' | t | default: 'Already have an account?' }}
+          <a href="{{ routes.account_login_url }}" class="auth-link">{{ 'customer.login.title' | t | default: 'Sign in' }}</a>
+        </p>
+
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Auth pages shared */
+  .auth-page { padding-block: var(--space-12); }
+  .auth-page__container { max-width: 480px; margin-inline: auto; padding-inline: var(--space-4); }
+  .auth-card { background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-card); padding: var(--space-8); box-shadow: var(--shadow-lg); }
+  .auth-card__header { text-align: center; margin-bottom: var(--space-6); display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+  .auth-card__title { font-size: var(--font-size-2xl); }
+  .auth-card__sub { color: var(--color-text-secondary); font-size: var(--font-size-sm); }
+  .auth-form { display: flex; flex-direction: column; gap: var(--space-4); }
+  .auth-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  @media (max-width: 420px) { .auth-form__row { grid-template-columns: 1fr; } }
+  .auth-form__errors { background: #fef2f2; border: 1px solid #fca5a5; border-radius: var(--radius); padding: var(--space-4); font-size: var(--font-size-sm); color: #dc2626; }
+  .auth-link { color: var(--color-primary); font-weight: var(--font-weight-semibold); text-decoration: underline; }
+</style>

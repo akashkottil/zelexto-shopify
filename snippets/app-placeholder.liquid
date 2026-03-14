@@ -1,0 +1,16 @@
+{% comment %}
+  ZELEXTO THEME — snippets/app-placeholder.liquid
+  Provides standard app block integration zones for reviews, loyalty, bundles etc.
+  Usage: {% render 'app-placeholder', type: 'reviews' %}
+  type options: 'reviews' | 'loyalty' | 'bundles' | 'wishlist' | 'upsell' | 'size_chart'
+{% endcomment %}
+
+{%- liquid
+  assign placeholder_type = type | default: 'generic'
+-%}
+
+{%- if settings.enable_app_blocks -%}
+  <div class="app-placeholder app-placeholder--{{ placeholder_type }}" data-app-block="{{ placeholder_type }}">
+    {%- content_for 'app_block', type: placeholder_type -%}
+  </div>
+{%- endif -%}
