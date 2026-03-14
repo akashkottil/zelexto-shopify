@@ -39,7 +39,7 @@
     {%- else -%}
       <div class="account-page__empty">
         {%- render 'icon', name: 'cart', size: 48 -%}
-        <p>{{ 'customer.orders.none' | t | default: 'You haven\'t placed any orders yet.' }}</p>
+        <p>{{ 'customer.orders.none' | t | default: "You haven't placed any orders yet." }}</p>
         <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">{{ 'general.browse_all' | t | default: 'Start shopping' }}</a>
       </div>
     {%- endif -%}

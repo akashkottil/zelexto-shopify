@@ -18,12 +18,13 @@
     "@type": "SearchAction",
     "target": {
       "@type": "EntryPoint",
-      "urlTemplate": {{ shop.url | append: routes.search_url | append: "?q={search_term_string}" | json }}
+      "urlTemplate": "{{ shop.url }}{{ routes.search_url }}?q={search_term_string}"
     },
     "query-input": "required name=search_term_string"
   }
 }
 </script>
+
 
 {%- if template.name == 'product' -%}
 <!-- Product Schema -->
