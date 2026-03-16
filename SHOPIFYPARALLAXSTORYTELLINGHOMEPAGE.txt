@@ -1,0 +1,637 @@
+SHOPIFY PARALLAX STORYTELLING HOMEPAGE
+PRODUCT REQUIREMENTS DOCUMENT (PRD)
+PROJECT: ZELEXTO SHOPIFY THEME – STORY HOMEPAGE SYSTEM
+VERSION: 1.0
+FORMAT: PLAIN TXT
+INTENDED FOR: ANTIGRAVITY / AI CODING SYSTEM
+
+======================================================================
+PROJECT OVERVIEW
+================
+
+Objective
+
+Design and implement a high-performance Shopify homepage that uses
+parallax animations and scroll-driven storytelling to guide visitors
+through a cinematic brand experience while maintaining fast loading
+performance.
+
+The homepage must present the brand, highlight products, and encourage
+conversion through progressive storytelling.
+
+The design should be inspired by the interaction style of:
+
+https://more-nutrition.webflow.io/
+
+However, the implementation must be optimized for Shopify and maintain
+excellent performance.
+
+The homepage will be part of a reusable Shopify Online Store 2.0 theme
+that merchants across multiple industries can use.
+
+Supported industries include:
+
+• Fashion brands
+• Beauty brands
+• Electronics brands
+• Lifestyle brands
+• Direct-to-consumer ecommerce stores
+
+The homepage must be modular and customizable using Shopify Theme
+Editor so merchants can rearrange sections and adapt the storytelling
+structure.
+
+---
+
+## CORE EXPERIENCE GOAL
+
+Create a homepage that feels like a "scrolling brand story".
+
+As users scroll through the page:
+
+• Visual layers move at different speeds (parallax effect)
+• Products reveal themselves gradually
+• Images and sections animate smoothly
+• Each section introduces a new story chapter
+• The user is naturally guided toward product discovery and purchase
+
+The experience should feel cinematic but must remain fast and smooth.
+
+Key characteristics
+
+• Scroll-driven storytelling
+• Layered parallax backgrounds
+• Product reveal animations
+• Smooth transitions
+• Strong product focus
+• Fast loading performance
+• Fully responsive layout
+
+---
+
+## DESIGN PRINCIPLES
+
+1. Visual Storytelling
+
+Each section should represent a chapter in the brand story.
+
+The homepage should move users through a narrative rather than simply
+showing products.
+
+2. Motion With Purpose
+
+Animations must enhance the storytelling and product focus.
+
+Animations should never distract from the product or degrade usability.
+
+3. Performance First
+
+Animations must rely on GPU-accelerated transforms and lightweight
+JavaScript logic.
+
+4. Product Focus
+
+Products must remain the central visual element throughout the homepage.
+
+Product images should subtly move or animate during scroll to create
+depth.
+
+5. Responsive Experience
+
+Animations must degrade gracefully on tablets and mobile devices.
+
+Mobile experiences should prioritize readability and speed.
+
+---
+
+## TECHNICAL REQUIREMENTS
+
+Platform
+
+Shopify Theme – Online Store 2.0 architecture.
+
+Recommended technologies
+
+• CSS transform animations
+• IntersectionObserver API
+• Lightweight JavaScript
+• requestAnimationFrame
+• SVG graphics for icons
+• WebP images
+• Lazy loading images
+
+Optional
+
+• GSAP ScrollTrigger for advanced scroll animation (only if required
+and optimized)
+
+Avoid
+
+• Heavy animation libraries
+• Large video backgrounds unless compressed
+• Unnecessary DOM complexity
+• Excessive JavaScript bundles
+
+---
+
+## PERFORMANCE TARGETS
+
+Lighthouse Performance Score
+
+Target: 90+
+
+First Contentful Paint
+
+Target: less than 2 seconds
+
+Largest Contentful Paint
+
+Target: less than 2.5 seconds
+
+Animation Performance
+
+Smooth 60fps scrolling.
+
+Layout Stability
+
+Minimal layout shifts (CLS close to zero).
+
+---
+
+## GLOBAL PARALLAX SYSTEM
+
+Implement a reusable parallax system inside the theme.
+
+This system will allow different layers to move at different speeds
+during scroll.
+
+Parallax Layers
+
+Layer 1 — Background layer
+Slowest movement.
+
+Layer 2 — Decorative shapes and textures.
+
+Layer 3 — Lifestyle images or design elements.
+
+Layer 4 — Product images.
+
+Layer 5 — Text and UI elements (normal scroll speed).
+
+Scroll Movement Examples
+
+Background layer
+Scroll speed multiplier: 0.5x
+
+Decorative elements
+Scroll speed multiplier: 0.7x
+
+Images
+Scroll speed multiplier: 0.8x
+
+Products
+Scroll speed multiplier: 1.1x
+
+Text
+Scroll speed multiplier: 1.0x
+
+Motion should be subtle to avoid distracting users.
+
+---
+
+## COMMON ECOMMERCE HOMEPAGE STORY STRUCTURE
+
+SECTION 1 — HERO INTRO
+
+Goal
+
+Capture immediate attention.
+
+Content
+
+• Large hero product image
+• Brand tagline
+• Short description
+• Call-to-action button
+• Floating design elements
+
+Animations
+
+• Hero image parallax movement
+• Text fade-in
+• Gradient background shift
+
+Example headline
+
+Designed for everyday performance.
+
+CTA
+
+Shop Now
+
+---
+
+SECTION 2 — BRAND STORY
+
+Goal
+
+Introduce the brand philosophy.
+
+Content
+
+• Brand message
+• Lifestyle imagery
+• Key brand values
+
+Animations
+
+• Images slide into view
+• Text fades upward
+• Background shapes move slowly
+
+Example text
+
+Built for people who expect more from their products.
+
+---
+
+SECTION 3 — FEATURE HIGHLIGHTS
+
+Goal
+
+Explain product benefits.
+
+Layout
+
+Three or four feature blocks.
+
+Example features
+
+• Premium Materials
+• Long Lasting
+• Sustainable Design
+• Engineered Performance
+
+Animations
+
+• Icons scale into view
+• Feature cards float slightly during scroll
+
+---
+
+SECTION 4 — PRODUCT PARALLAX SHOWCASE
+
+Goal
+
+Highlight hero products.
+
+Layout
+
+Large central product with layered parallax visuals.
+
+Animations
+
+• Product rotates slightly during scroll
+• Background layers move slower
+• Decorative shapes drift slowly
+
+Content
+
+• Product name
+• Key benefits
+• Shop button
+
+---
+
+SECTION 5 — SOCIAL PROOF
+
+Goal
+
+Build trust and credibility.
+
+Content
+
+• Customer testimonials
+• Ratings and reviews
+• Influencer imagery
+
+Animations
+
+• Review cards slide horizontally
+• Star ratings animate in
+
+---
+
+SECTION 6 — COLLECTION DISCOVERY
+
+Goal
+
+Encourage product exploration.
+
+Layout
+
+Grid of collection cards.
+
+Example collections
+
+• Best Sellers
+• New Arrivals
+• Trending Products
+• Limited Editions
+
+Animations
+
+• Cards zoom slightly during scroll
+• Hover reveal interactions
+
+---
+
+SECTION 7 — LIFESTYLE STORY
+
+Goal
+
+Create emotional connection.
+
+Content
+
+• Full width lifestyle imagery
+• Narrative copy
+
+Animations
+
+• Background parallax
+• Text overlay fade in
+
+---
+
+SECTION 8 — FINAL PRODUCT PUSH
+
+Goal
+
+Encourage purchase.
+
+Content
+
+• Featured product
+• Key benefits
+• Call-to-action button
+
+Animations
+
+• Product scale animation
+• Button highlight animation
+
+---
+
+SECTION 9 — NEWSLETTER + FINAL CTA
+
+Goal
+
+Capture email leads.
+
+Content
+
+• Email signup form
+• Incentive message
+
+Example message
+
+Join 50,000+ customers.
+
+Animations
+
+• Subtle fade in
+
+---
+
+## MERCHANT HOMEPAGE STORY VARIANTS
+
+The theme should provide preset story structures for multiple
+industries.
+
+---
+
+## FASHION STORE STORYLINE
+
+Theme colors
+
+Black
+White
+Neutral beige
+
+Hero message
+
+Style that moves with you.
+
+Visuals
+
+Editorial fashion photography.
+
+Animation style
+
+Fabric-like slow parallax motion.
+
+Sections
+
+Hero
+Lookbook
+Featured Collection
+Product Highlights
+Lifestyle Story
+
+---
+
+## BEAUTY BRAND STORYLINE
+
+Theme colors
+
+Soft pink
+Cream
+Gold accents
+
+Hero message
+
+Glow starts with care.
+
+Visuals
+
+Clean skincare photography.
+
+Animations
+
+Floating bubbles and smooth fade transitions.
+
+Sections
+
+Hero
+Ingredient Highlights
+Before / After
+Customer Reviews
+Featured Products
+
+---
+
+## ELECTRONICS BRAND STORYLINE
+
+Theme colors
+
+Dark blue
+Electric purple
+Neon highlights
+
+Hero message
+
+Technology that powers your life.
+
+Visuals
+
+3D product renders.
+
+Animations
+
+Light pulses and circuit pattern movement.
+
+Sections
+
+Hero
+Tech Features
+Product Showcase
+Specification Highlights
+Reviews
+
+---
+
+## LIFESTYLE BRAND STORYLINE
+
+Theme colors
+
+Earth tones
+Sand
+Forest green
+
+Hero message
+
+Designed for everyday living.
+
+Visuals
+
+Outdoor lifestyle imagery.
+
+Animations
+
+Slow natural parallax motion.
+
+Sections
+
+Hero
+Brand Mission
+Product Story
+Customer Stories
+Collections
+
+---
+
+## COMMON ASSET REQUIREMENTS
+
+Images
+
+• WebP format preferred
+• Hero images around 2000px width
+• Optimized product photography
+
+Graphics
+
+• SVG icons
+• Abstract shapes
+• Texture overlays
+
+Optional visual elements
+
+• Subtle background particles
+• Soft gradient overlays
+
+---
+
+## RESPONSIVE DESIGN REQUIREMENTS
+
+Desktop
+
+Full parallax storytelling experience.
+
+Tablet
+
+Reduced parallax intensity.
+
+Mobile
+
+Simplified animations and stacked layout.
+
+Mobile rules
+
+• No heavy animations
+• Images stacked vertically
+• Maintain text readability
+• Optimize for touch interactions
+
+---
+
+## SHOPIFY CUSTOMIZATION OPTIONS
+
+Merchants must be able to customize the homepage via the theme editor.
+
+Editable settings
+
+• Brand colors
+• Section order
+• Product selections
+• Text content
+• Animation intensity
+• Background images
+
+All homepage sections must be modular and reorderable.
+
+---
+
+## SUCCESS METRICS
+
+Key success indicators
+
+• Increased conversion rate
+• Longer time on homepage
+• Higher scroll engagement
+• Smooth animation performance
+• Fast loading speeds
+
+---
+
+## INSPIRATION REFERENCE
+
+Interaction inspiration
+
+https://more-nutrition.webflow.io/
+
+Key ideas from this reference
+
+• Scroll-based storytelling
+• Product reveal animations
+• Layered parallax visuals
+• Strong product focus
+
+---
+
+## FINAL GOAL
+
+Develop a Shopify homepage system that combines:
+
+• cinematic storytelling
+• layered parallax motion
+• scroll-based interactions
+• animated product showcases
+• high performance
+• full customization for merchants
+
+The final experience should feel like a modern premium ecommerce
+landing page that improves engagement, strengthens brand perception,
+and increases product conversions.
+
+END OF DOCUMENT

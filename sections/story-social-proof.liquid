@@ -1,0 +1,108 @@
+{% comment %}
+  ZELEXTO THEME — sections/story-social-proof.liquid
+  Section 5: Testimonials — scroll carousel of review cards + star rating aggregate.
+{% endcomment %}
+
+{%- liquid
+  assign enable_anim = section.settings.enable_animation
+-%}
+
+<link rel="stylesheet" href="{{ 'story.css' | asset_url }}" media="all">
+
+<section class="story-section" id="story-social-proof-{{ section.id }}" style="background-color: {{ section.settings.bg_color }};">
+  <div class="story-container">
+
+    <!-- Header -->
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:24px; margin-bottom:clamp(40px,6vw,64px);">
+      <div>
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="story-eyebrow story-animate anim-fade-in" {% if enable_anim %}data-animate{% endif %} style="color: {{ section.settings.accent_color }};">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        <h2 class="story-heading-xl story-animate anim-slide-up delay-1" {% if enable_anim %}data-animate{% endif %} style="color: {{ section.settings.text_color }};">
+          {{ section.settings.heading | default: 'Loved by thousands.' }}
+        </h2>
+        {%- if section.settings.aggregate_rating > 0 -%}
+          <div class="story-animate anim-fade-in delay-2" {% if enable_anim %}data-animate{% endif %} style="display:flex; align-items:center; gap:12px; margin-top:12px;">
+            <span style="color:#f59e0b; font-size:1.3rem; letter-spacing:2px;">★★★★★</span>
+            <span style="font-size:0.9rem; font-weight:600; color: {{ section.settings.text_color }}; opacity:0.7;">
+              {{ section.settings.aggregate_rating }} / 5 · {{ section.settings.review_count }} reviews
+            </span>
+          </div>
+        {%- endif -%}
+      </div>
+      <!-- Scroll controls -->
+      <div class="story-social-proof__controls" role="group" aria-label="Scroll reviews">
+        <button type="button" class="story-social-proof__btn" id="sp-prev-{{ section.id }}" aria-label="Previous reviews" style="color: {{ section.settings.text_color }};">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="story-social-proof__btn" id="sp-next-{{ section.id }}" aria-label="Next reviews" style="color: {{ section.settings.text_color }};">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Review cards scrollable track -->
+    <div class="story-social-proof__track" id="sp-track-{{ section.id }}" aria-label="Customer reviews">
+      {%- for block in section.blocks -%}
+        {%- render 'story-review-card', block: block, index: forloop.index0 -%}
+      {%- endfor -%}
+    </div>
+
+  </div>
+</section>
+
+<script>
+  (function () {
+    'use strict';
+    const track = document.getElementById('sp-track-{{ section.id }}');
+    const prev  = document.getElementById('sp-prev-{{ section.id }}');
+    const next  = document.getElementById('sp-next-{{ section.id }}');
+    if (!track) return;
+
+    const SCROLL_AMOUNT = 344; // card width + gap
+
+    prev?.addEventListener('click', () => { track.scrollBy({ left: -SCROLL_AMOUNT, behavior: 'smooth' }); });
+    next?.addEventListener('click', () => { track.scrollBy({ left:  SCROLL_AMOUNT, behavior: 'smooth' }); });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Story — Social Proof",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Testimonials" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Loved by thousands." },
+    { "type": "range", "id": "aggregate_rating", "label": "Aggregate rating display", "min": 0, "max": 5, "step": 1, "default": 5 },
+    { "type": "number", "id": "review_count", "label": "Review count display", "default": 2847 },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#0a0a0a" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#6366f1" },
+    { "type": "header", "content": "Animation" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "blocks": [{
+    "type": "review",
+    "name": "Review",
+    "settings": [
+      { "type": "textarea", "id": "quote", "label": "Review quote", "default": "This product completely transformed my daily routine. Incredible quality." },
+      { "type": "text", "id": "author", "label": "Author name", "default": "Sarah K." },
+      { "type": "text", "id": "location", "label": "Location", "default": "New York, USA" },
+      { "type": "range", "id": "rating", "label": "Rating", "min": 1, "max": 5, "step": 1, "default": 5 },
+      { "type": "image_picker", "id": "avatar", "label": "Author avatar" }
+    ]
+  }],
+  "max_blocks": 12,
+  "presets": [{
+    "name": "Story — Social Proof",
+    "blocks": [
+      {"type":"review","settings":{"quote":"Life-changing quality. I've recommended it to everyone I know.","author":"James L.","location":"London","rating":5}},
+      {"type":"review","settings":{"quote":"Fast shipping, beautiful packaging, and the product exceeded all expectations.","author":"Mia T.","location":"Sydney","rating":5}},
+      {"type":"review","settings":{"quote":"Best purchase I've made this year. Worth every penny.","author":"Carlos R.","location":"Madrid","rating":5}},
+      {"type":"review","settings":{"quote":"Absolutely stunning design and exceptional functionality.","author":"Emma W.","location":"Vancouver","rating":5}}
+    ]
+  }]
+}
+{% endschema %}

@@ -1,0 +1,83 @@
+{% comment %}
+  ZELEXTO THEME — sections/story-features.liquid
+  Section 3: Feature highlights grid — icons + titles + descriptions.
+{% endcomment %}
+
+{%- liquid
+  assign enable_anim = section.settings.enable_animation
+  assign cols        = section.settings.columns | default: '3'
+-%}
+
+<link rel="stylesheet" href="{{ 'story.css' | asset_url }}" media="all">
+
+<section class="story-section" id="story-features-{{ section.id }}" style="background-color: {{ section.settings.bg_color }};">
+  <div class="story-container">
+
+    <!-- Section header -->
+    {%- if section.settings.heading != blank -%}
+      <div style="text-align: {{ section.settings.text_align }}; margin-bottom: clamp(48px,6vw,80px);">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="story-eyebrow story-animate anim-fade-in" {% if enable_anim %}data-animate{% endif %} style="color: {{ section.settings.accent_color }};">
+            {{ section.settings.eyebrow }}
+          </p>
+        {%- endif -%}
+        <h2 class="story-heading-xl story-animate anim-slide-up delay-1" {% if enable_anim %}data-animate{% endif %} style="color: {{ section.settings.text_color }};">
+          {{ section.settings.heading }}
+        </h2>
+        {%- if section.settings.subheading != blank -%}
+          <p class="story-body-lg story-animate anim-slide-up delay-2" {% if enable_anim %}data-animate{% endif %} style="color: {{ section.settings.text_color }}; max-width:580px; margin-inline:auto;">
+            {{ section.settings.subheading }}
+          </p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <!-- Feature cards -->
+    <div class="story-grid-{{ cols }}">
+      {%- for block in section.blocks -%}
+        {%- render 'story-feature-card', block: block, index: forloop.index0 -%}
+      {%- endfor -%}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Story — Features",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Why choose us" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Built different, by design." },
+    { "type": "textarea", "id": "subheading", "label": "Subheading" },
+    { "type": "select", "id": "text_align", "label": "Header alignment", "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"}], "default": "center" },
+    { "type": "select", "id": "columns", "label": "Columns", "options": [{"value":"3","label":"3"},{"value":"4","label":"4"}], "default": "3" },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#f8f8f8" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#0a0a0a" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#6366f1" },
+    { "type": "header", "content": "Animation" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "blocks": [{
+    "type": "feature",
+    "name": "Feature",
+    "settings": [
+      { "type": "text", "id": "icon", "label": "Icon name", "default": "star" },
+      { "type": "text", "id": "title", "label": "Feature title", "default": "Premium Materials" },
+      { "type": "textarea", "id": "text", "label": "Feature description", "default": "Crafted from the finest materials for lasting quality and performance." }
+    ]
+  }],
+  "max_blocks": 8,
+  "presets": [{
+    "name": "Story — Features",
+    "blocks": [
+      {"type":"feature","settings":{"icon":"star","title":"Premium Materials","text":"Crafted from the finest materials for lasting quality."}},
+      {"type":"feature","settings":{"icon":"shield","title":"Long Lasting","text":"Built to withstand the test of time and daily use."}},
+      {"type":"feature","settings":{"icon":"leaf","title":"Sustainable Design","text":"Eco-conscious materials and manufacturing processes."}},
+      {"type":"feature","settings":{"icon":"zap","title":"Engineered Performance","text":"Precision engineering that delivers results every time."}}
+    ]
+  }]
+}
+{% endschema %}

@@ -1,0 +1,108 @@
+{% comment %}
+  ZELEXTO THEME — sections/story-lifestyle.liquid
+  Section 7: Full-width lifestyle image with parallax background and
+  narrative text overlay that fades in on scroll.
+{% endcomment %}
+
+{%- liquid
+  assign enable_anim  = section.settings.enable_animation
+  assign overlay_opac = section.settings.overlay_opacity | times: 0.01
+  assign text_pos     = section.settings.text_position | default: 'left'
+-%}
+
+<link rel="stylesheet" href="{{ 'story.css' | asset_url }}" media="all">
+
+<section
+  class="story-lifestyle story-section"
+  id="story-lifestyle-{{ section.id }}"
+  style="min-height: {{ section.settings.min_height }}vh;">
+
+  <!-- Parallax background image (0.5×) -->
+  <div class="story-lifestyle__bg" aria-hidden="true">
+    {%- if section.settings.image != blank -%}
+      <img
+        src="{{ section.settings.image | image_url: width: 2000 }}"
+        srcset="{{ section.settings.image | image_url: width: 1200 }} 1200w,
+                {{ section.settings.image | image_url: width: 2000 }} 2000w"
+        sizes="100vw"
+        alt="{{ section.settings.image.alt | escape | default: section.settings.heading }}"
+        width="2000"
+        height="1125"
+        loading="lazy"
+        decoding="async"
+        class="story-lifestyle__bg-img parallax-layer"
+        data-parallax-speed="{{ section.settings.parallax_speed }}"
+        data-parallax-max="80">
+    {%- else -%}
+      {{ 'lifestyle-2' | placeholder_svg_tag: 'story-lifestyle__bg-img' }}
+    {%- endif -%}
+    <div class="story-lifestyle__overlay" style="background: rgba(0,0,0,{{ overlay_opac }});"></div>
+  </div>
+
+  <!-- Content overlay -->
+  <div class="story-container" style="position:relative; z-index:1; min-height: inherit; display:flex; align-items:center;
+    justify-content: {% if text_pos == 'center' %}center{% elsif text_pos == 'right' %}flex-end{% else %}flex-start{% endif %};">
+
+    <div class="story-lifestyle__content story-animate anim-fade-in" {% if enable_anim %}data-animate{% endif %}
+      style="max-width: 560px; {% if text_pos == 'center' %}text-align:center;{% endif %} color: {{ section.settings.text_color }};">
+
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="story-eyebrow story-animate anim-slide-up delay-1" {% if enable_anim %}data-animate{% endif %}
+          style="color: {{ section.settings.accent_color }};">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+
+      <h2 class="story-heading-xl story-animate anim-slide-up delay-2" {% if enable_anim %}data-animate{% endif %}>
+        {{ section.settings.heading | default: 'Life is better with quality.' }}
+      </h2>
+
+      {%- if section.settings.body_text != blank -%}
+        <p class="story-body-lg story-animate anim-slide-up delay-3" {% if enable_anim %}data-animate{% endif %}
+          style="margin-top:1.25rem;">{{ section.settings.body_text }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.btn_label != blank -%}
+        <div class="story-animate anim-slide-up delay-4" {% if enable_anim %}data-animate{% endif %}
+          style="margin-top:2rem;">
+          <a href="{{ section.settings.btn_url | default: '#' }}"
+            class="story-btn"
+            style="background: {{ section.settings.btn_bg_color }}; color: {{ section.settings.btn_text_color }};">
+            {{ section.settings.btn_label }}
+            <span class="story-btn__arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      {%- endif -%}
+
+    </div>
+  </div>
+
+</section>
+
+{% schema %}
+{
+  "name": "Story — Lifestyle",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Our world" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Life is better with quality." },
+    { "type": "textarea", "id": "body_text", "label": "Body text", "default": "Designed for the moments that matter. Experience life elevated." },
+    { "type": "text", "id": "btn_label", "label": "Button label", "default": "Explore the story" },
+    { "type": "url", "id": "btn_url", "label": "Button URL" },
+    { "type": "header", "content": "Image" },
+    { "type": "image_picker", "id": "image", "label": "Lifestyle image" },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay opacity", "min": 10, "max": 80, "step": 5, "default": 50 },
+    { "type": "range", "id": "min_height", "label": "Section height (vh)", "min": 50, "max": 100, "step": 5, "default": 80 },
+    { "type": "range", "id": "parallax_speed", "label": "Parallax speed", "min": 3, "max": 9, "step": 1, "default": 5,
+      "info": "Low = slower background movement. 5 = 0.5x speed." },
+    { "type": "select", "id": "text_position", "label": "Text position", "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}], "default": "left" },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
+    { "type": "color", "id": "accent_color", "label": "Eyebrow color", "default": "#a5b4fc" },
+    { "type": "color", "id": "btn_bg_color", "label": "Button background", "default": "#ffffff" },
+    { "type": "color", "id": "btn_text_color", "label": "Button text", "default": "#0a0a0a" },
+    { "type": "header", "content": "Animation" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "presets": [{ "name": "Story — Lifestyle", "settings": { "heading": "Life is better with quality." } }]
+}
+{% endschema %}

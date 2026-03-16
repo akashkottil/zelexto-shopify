@@ -9,144 +9,357 @@
                 "text_color": "#ffffff"
             }
         },
-        "hero-banner": {
-            "type": "hero-banner",
+        "story-hero": {
+            "type": "story-hero",
             "settings": {
-                "heading": "Welcome to Zelexto",
-                "subheading": "Premium products, exceptional experience.",
-                "button_label": "Shop Now",
-                "full_height": true,
+                "eyebrow": "Welcome to Zelexto",
+                "heading": "Designed for everyday performance.",
+                "subheading": "Premium quality meets modern design. Experience the difference.",
+                "btn_primary_label": "Shop Now",
+                "btn_secondary_label": "Our Story",
+                "overlay_opacity": 45,
+                "min_height": 100,
+                "text_color": "#ffffff",
+                "accent_color": "#6366f1",
                 "enable_animation": true
             }
         },
-        "story-intro": {
-            "type": "story-intro",
+        "story-brand": {
+            "type": "story-brand",
             "settings": {
-                "heading": "Our Story",
-                "enable_animation": true
-            }
-        },
-        "story-product-showcase": {
-            "type": "story-product-showcase",
-            "settings": {
-                "heading": "Featured Products",
-                "products_to_show": 4,
-                "show_view_all": true,
-                "enable_animation": true
-            }
-        },
-        "story-statistics": {
-            "type": "story-statistics",
-            "settings": {
-                "heading": "By the Numbers",
+                "eyebrow": "Our story",
+                "heading": "Built for people who expect more.",
+                "body_text": "We believe great products change daily routines. Every detail is carefully crafted to deliver a premium experience.",
+                "btn_label": "Learn our story",
+                "image_side": "left",
+                "bg_color": "#ffffff",
+                "text_color": "#0a0a0a",
+                "accent_color": "#6366f1",
                 "enable_animation": true
             },
             "blocks": {
-                "stat-1": {
-                    "type": "stat",
+                "val-1": {
+                    "type": "value",
                     "settings": {
-                        "number": 50000,
-                        "suffix": "+",
-                        "label": "Happy customers"
+                        "value": "Premium quality materials"
                     }
                 },
-                "stat-2": {
-                    "type": "stat",
+                "val-2": {
+                    "type": "value",
                     "settings": {
-                        "number": 4.9,
-                        "suffix": "★",
-                        "label": "Average rating"
+                        "value": "Sustainably designed"
                     }
                 },
-                "stat-3": {
-                    "type": "stat",
+                "val-3": {
+                    "type": "value",
                     "settings": {
-                        "number": 120,
-                        "suffix": "+",
-                        "label": "Countries"
-                    }
-                },
-                "stat-4": {
-                    "type": "stat",
-                    "settings": {
-                        "number": 99,
-                        "suffix": "%",
-                        "label": "Satisfaction"
+                        "value": "Engineered for performance"
                     }
                 }
             },
             "blocks_order": [
-                "stat-1",
-                "stat-2",
-                "stat-3",
-                "stat-4"
+                "val-1",
+                "val-2",
+                "val-3"
             ]
         },
-        "story-feature": {
-            "type": "story-feature",
+        "story-features": {
+            "type": "story-features",
             "settings": {
-                "heading": "Why Zelexto?",
-                "image_side": "left",
+                "eyebrow": "Why choose us",
+                "heading": "Built different, by design.",
+                "text_align": "center",
+                "columns": "4",
+                "bg_color": "#f8f8f8",
+                "text_color": "#0a0a0a",
+                "accent_color": "#6366f1",
                 "enable_animation": true
             },
             "blocks": {
-                "f1": {
-                    "type": "feature_item",
+                "feat-1": {
+                    "type": "feature",
                     "settings": {
-                        "icon": "truck",
-                        "label": "Fast Shipping",
-                        "text": "Orders ship within 24 hours."
+                        "icon": "star",
+                        "title": "Premium Materials",
+                        "text": "Crafted from the finest materials for lasting quality."
                     }
                 },
-                "f2": {
-                    "type": "feature_item",
+                "feat-2": {
+                    "type": "feature",
                     "settings": {
                         "icon": "shield",
-                        "label": "Secure Payments",
-                        "text": "256-bit SSL encryption."
+                        "title": "Long Lasting",
+                        "text": "Built to withstand the test of time and daily use."
                     }
                 },
-                "f3": {
-                    "type": "feature_item",
+                "feat-3": {
+                    "type": "feature",
                     "settings": {
-                        "icon": "refresh",
-                        "label": "Easy Returns",
-                        "text": "30-day hassle-free returns."
+                        "icon": "leaf",
+                        "title": "Sustainable Design",
+                        "text": "Eco-conscious materials and responsible manufacturing."
+                    }
+                },
+                "feat-4": {
+                    "type": "feature",
+                    "settings": {
+                        "icon": "zap",
+                        "title": "Engineered Performance",
+                        "text": "Precision engineering that delivers results every time."
                     }
                 }
             },
             "blocks_order": [
-                "f1",
-                "f2",
-                "f3"
+                "feat-1",
+                "feat-2",
+                "feat-3",
+                "feat-4"
             ]
         },
-        "story-cta": {
-            "type": "story-cta",
+        "story-product-parallax": {
+            "type": "story-product-parallax",
             "settings": {
-                "heading": "Ready to Start?",
-                "subheading": "Join thousands of happy customers.",
-                "button_label": "Shop Now",
-                "show_trust_badges": true,
+                "eyebrow": "Bestseller",
+                "heading": "Our flagship product",
+                "body_text": "Precision-engineered for those who demand the best. Discover the difference quality makes.",
+                "btn_label": "Shop now",
+                "bg_color": "#080808",
+                "text_color": "#ffffff",
+                "accent_color": "#6366f1",
+                "glow_color": "#6366f1",
+                "enable_animation": true
+            },
+            "blocks": {
+                "ben-1": {
+                    "type": "benefit",
+                    "settings": {
+                        "benefit": "Premium materials sourced globally"
+                    }
+                },
+                "ben-2": {
+                    "type": "benefit",
+                    "settings": {
+                        "benefit": "Engineered for maximum durability"
+                    }
+                },
+                "ben-3": {
+                    "type": "benefit",
+                    "settings": {
+                        "benefit": "30-day satisfaction guarantee"
+                    }
+                }
+            },
+            "blocks_order": [
+                "ben-1",
+                "ben-2",
+                "ben-3"
+            ]
+        },
+        "story-social-proof": {
+            "type": "story-social-proof",
+            "settings": {
+                "eyebrow": "Testimonials",
+                "heading": "Loved by thousands.",
+                "aggregate_rating": 5,
+                "review_count": 2847,
+                "bg_color": "#ffffff",
+                "text_color": "#0a0a0a",
+                "accent_color": "#6366f1",
+                "enable_animation": true
+            },
+            "blocks": {
+                "rev-1": {
+                    "type": "review",
+                    "settings": {
+                        "quote": "Life-changing quality. Recommended it to everyone I know.",
+                        "author": "James L.",
+                        "location": "London",
+                        "rating": 5
+                    }
+                },
+                "rev-2": {
+                    "type": "review",
+                    "settings": {
+                        "quote": "Fast shipping, beautiful packaging, exceeded all expectations.",
+                        "author": "Mia T.",
+                        "location": "Sydney",
+                        "rating": 5
+                    }
+                },
+                "rev-3": {
+                    "type": "review",
+                    "settings": {
+                        "quote": "Best purchase of the year. Worth every penny.",
+                        "author": "Carlos R.",
+                        "location": "Madrid",
+                        "rating": 5
+                    }
+                },
+                "rev-4": {
+                    "type": "review",
+                    "settings": {
+                        "quote": "Stunning design and exceptional functionality.",
+                        "author": "Emma W.",
+                        "location": "Vancouver",
+                        "rating": 5
+                    }
+                }
+            },
+            "blocks_order": [
+                "rev-1",
+                "rev-2",
+                "rev-3",
+                "rev-4"
+            ]
+        },
+        "story-collections": {
+            "type": "story-collections",
+            "settings": {
+                "eyebrow": "Explore",
+                "heading": "Shop by collection.",
+                "view_all_label": "View all collections",
+                "columns": "4",
+                "bg_color": "#ffffff",
+                "text_color": "#0a0a0a",
+                "accent_color": "#6366f1",
+                "enable_animation": true
+            },
+            "blocks": {
+                "col-1": {
+                    "type": "collection_tile",
+                    "settings": {
+                        "label": "Best Sellers",
+                        "cta_label": "Shop now"
+                    }
+                },
+                "col-2": {
+                    "type": "collection_tile",
+                    "settings": {
+                        "label": "New Arrivals",
+                        "cta_label": "Shop now"
+                    }
+                },
+                "col-3": {
+                    "type": "collection_tile",
+                    "settings": {
+                        "label": "Trending Now",
+                        "cta_label": "Shop now"
+                    }
+                },
+                "col-4": {
+                    "type": "collection_tile",
+                    "settings": {
+                        "label": "Limited Edition",
+                        "cta_label": "Shop now"
+                    }
+                }
+            },
+            "blocks_order": [
+                "col-1",
+                "col-2",
+                "col-3",
+                "col-4"
+            ]
+        },
+        "story-lifestyle": {
+            "type": "story-lifestyle",
+            "settings": {
+                "eyebrow": "Our world",
+                "heading": "Life is better with quality.",
+                "body_text": "Designed for the moments that matter. Experience life elevated.",
+                "btn_label": "Explore the story",
+                "overlay_opacity": 50,
+                "min_height": 80,
+                "parallax_speed": 5,
+                "text_position": "left",
+                "text_color": "#ffffff",
+                "accent_color": "#a5b4fc",
+                "btn_bg_color": "#ffffff",
+                "btn_text_color": "#0a0a0a",
+                "enable_animation": true
+            }
+        },
+        "story-final-product": {
+            "type": "story-final-product",
+            "settings": {
+                "eyebrow": "Bestseller",
+                "heading": "Your next favourite product.",
+                "body_text": "Join thousands of customers who've made this their go-to. Order today and feel the difference.",
+                "btn_label": "Get yours today",
+                "trust_text": "Free shipping · 30-day returns · Secure checkout",
+                "image_side": "right",
+                "bg_color": "#0a0a0a",
+                "text_color": "#ffffff",
+                "accent_color": "#6366f1",
+                "glow_color": "#6366f1",
+                "enable_animation": true
+            },
+            "blocks": {
+                "blt-1": {
+                    "type": "bullet",
+                    "settings": {
+                        "bullet": "Free worldwide shipping included"
+                    }
+                },
+                "blt-2": {
+                    "type": "bullet",
+                    "settings": {
+                        "bullet": "30-day satisfaction guarantee"
+                    }
+                },
+                "blt-3": {
+                    "type": "bullet",
+                    "settings": {
+                        "bullet": "24/7 dedicated customer support"
+                    }
+                }
+            },
+            "blocks_order": [
+                "blt-1",
+                "blt-2",
+                "blt-3"
+            ]
+        },
+        "story-newsletter": {
+            "type": "story-newsletter",
+            "settings": {
+                "badge": "Exclusive offer",
+                "heading": "Join 50,000+ customers.",
+                "subheading": "Subscribe for exclusive deals, new arrivals, and a welcome discount on your first order.",
+                "input_placeholder": "Enter your email address",
+                "btn_label": "Subscribe",
+                "show_badges": true,
+                "badge_1": "No spam, ever",
+                "badge_2": "Unsubscribe anytime",
+                "badge_3": "Exclusive members-only offers",
+                "overlay_opacity": 0,
+                "bg_color": "#0a0a0a",
+                "text_color": "#ffffff",
+                "accent_color": "#6366f1",
+                "btn_color": "#6366f1",
+                "btn_text_color": "#ffffff",
                 "enable_animation": true
             }
         },
         "footer": {
             "type": "footer",
             "settings": {
-                "show_newsletter": true,
+                "show_newsletter": false,
                 "show_payment_icons": true
             }
         }
     },
     "order": [
         "announcement-bar",
-        "hero-banner",
-        "story-intro",
-        "story-product-showcase",
-        "story-statistics",
-        "story-feature",
-        "story-cta",
+        "story-hero",
+        "story-brand",
+        "story-features",
+        "story-product-parallax",
+        "story-social-proof",
+        "story-collections",
+        "story-lifestyle",
+        "story-final-product",
+        "story-newsletter",
         "footer"
     ]
 }

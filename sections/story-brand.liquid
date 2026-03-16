@@ -1,0 +1,124 @@
+{% comment %}
+  ZELEXTO THEME — sections/story-brand.liquid
+  Section 2: Brand story — lifestyle image + narrative copy + values list.
+{% endcomment %}
+
+{%- liquid
+  assign enable_anim  = section.settings.enable_animation
+  assign img_side     = section.settings.image_side | default: 'left'
+-%}
+
+<link rel="stylesheet" href="{{ 'story.css' | asset_url }}" media="all">
+
+<section class="story-section" id="story-brand-{{ section.id }}" style="background-color: {{ section.settings.bg_color }};">
+  <div class="story-container">
+
+    <div class="story-grid-2{% if img_side == 'right' %} story-grid-2--reverse{% endif %}">
+
+      <!-- Image column (parallax 0.8×) -->
+      <div
+        class="story-brand__image-wrap story-animate anim-slide-left"
+        {% if enable_anim %}data-animate{% endif %}
+        style="border-radius: 20px; overflow:hidden; aspect-ratio: 4/5; position:relative;">
+        {%- if section.settings.image != blank -%}
+          <img
+            src="{{ section.settings.image | image_url: width: 900 }}"
+            srcset="{{ section.settings.image | image_url: width: 600 }} 600w,
+                    {{ section.settings.image | image_url: width: 900 }} 900w"
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            alt="{{ section.settings.image.alt | escape | default: section.settings.heading }}"
+            width="900"
+            height="{{ 900 | divided_by: section.settings.image.aspect_ratio | round }}"
+            loading="lazy"
+            decoding="async"
+            class="story-brand__image parallax-layer"
+            data-parallax-speed="0.8"
+            data-parallax-max="40">
+        {%- else -%}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'story-brand__image' }}
+        {%- endif -%}
+        {%- if enable_anim -%}
+          <div style="position:absolute; bottom:-40px; right:-40px; width:200px; height:200px; background: {{ section.settings.accent_color }}; border-radius:50%; opacity:0.1; pointer-events:none;" class="parallax-layer" data-parallax-speed="0.6" aria-hidden="true"></div>
+        {%- endif -%}
+      </div>
+
+      <!-- Text column -->
+      <div style="display:flex; flex-direction:column; justify-content:center; gap: 2rem;">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="story-eyebrow story-animate anim-fade-in" {% if enable_anim %}data-animate{% endif %} style="color:{{ section.settings.accent_color }};">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+
+        <h2 class="story-heading-xl story-animate anim-slide-up delay-1" {% if enable_anim %}data-animate{% endif %} style="color: {{ section.settings.text_color }};">
+          {{ section.settings.heading | default: 'Built for people who expect more.' }}
+        </h2>
+
+        {%- if section.settings.body_text != blank -%}
+          <p class="story-body-lg story-animate anim-slide-up delay-2" {% if enable_anim %}data-animate{% endif %} style="color: {{ section.settings.text_color }};">{{ section.settings.body_text }}</p>
+        {%- endif -%}
+
+        {%- if section.blocks.size > 0 -%}
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:14px; margin:0; padding:0;">
+            {%- for block in section.blocks -%}
+              <li class="story-animate anim-slide-up delay-{{ forloop.index | plus: 2 }}" {% if enable_anim %}data-animate{% endif %}
+                style="display:flex; align-items:center; gap:12px; font-size:0.95rem; font-weight:600; color:{{ section.settings.text_color }};"
+                {{ block.shopify_attributes }}>
+                <span style="color:{{ section.settings.accent_color }}; font-size:1.2rem;" aria-hidden="true">✓</span>
+                {{ block.settings.value }}
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- if section.settings.btn_label != blank -%}
+          <div class="story-animate anim-slide-up delay-5" {% if enable_anim %}data-animate{% endif %}>
+            <a href="{{ section.settings.btn_url | default: '#' }}" class="story-btn story-btn--primary" style="background:{{ section.settings.accent_color }}; width:fit-content;">
+              {{ section.settings.btn_label }}
+              <span class="story-btn__arrow" aria-hidden="true">→</span>
+            </a>
+          </div>
+        {%- endif -%}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .story-grid-2--reverse { direction: rtl; }
+  .story-grid-2--reverse > * { direction: ltr; }
+  @media (max-width: 1024px) { .story-grid-2--reverse { direction: ltr; } }
+</style>
+
+{% schema %}
+{
+  "name": "Story — Brand",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Our story" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Built for people who expect more from their products." },
+    { "type": "textarea", "id": "body_text", "label": "Body text", "default": "We believe great products change daily routines. Every detail is carefully crafted to deliver a premium experience." },
+    { "type": "text", "id": "btn_label", "label": "Button label", "default": "Learn our story" },
+    { "type": "url", "id": "btn_url", "label": "Button URL" },
+    { "type": "header", "content": "Image" },
+    { "type": "image_picker", "id": "image", "label": "Lifestyle image" },
+    { "type": "select", "id": "image_side", "label": "Image position", "options": [{"value":"left","label":"Left"},{"value":"right","label":"Right"}], "default": "left" },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#0a0a0a" },
+    { "type": "color", "id": "accent_color", "label": "Accent color", "default": "#6366f1" },
+    { "type": "header", "content": "Animation" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "blocks": [{ "type": "value", "name": "Brand value", "settings": [{ "type": "text", "id": "value", "label": "Value", "default": "Premium quality materials" }] }],
+  "max_blocks": 6,
+  "presets": [{
+    "name": "Story — Brand",
+    "blocks": [
+      {"type":"value","settings":{"value":"Premium quality materials"}},
+      {"type":"value","settings":{"value":"Sustainably designed"}},
+      {"type":"value","settings":{"value":"Engineered for performance"}}
+    ]
+  }]
+}
+{% endschema %}

@@ -1,0 +1,864 @@
+/**
+ * ZELEXTO THEME — assets/story.css
+ * ===================================
+ * Cinematic storytelling design system.
+ * Used by all story-*.liquid sections.
+ *
+ * Tokens, layout utilities, animation classes,
+ * responsive rules, and component styles.
+ */
+
+/* ================================================================
+   STORY DESIGN TOKENS
+   ================================================================ */
+:root {
+    /* Section spacing */
+    --story-section-py: clamp(80px, 10vw, 160px);
+    --story-section-px: clamp(20px, 5vw, 80px);
+    --story-container-max: 1280px;
+
+    /* Cinematic type scale */
+    --story-heading-hero: clamp(2.75rem, 7vw, 6rem);
+    --story-heading-xl: clamp(2rem, 5vw, 3.75rem);
+    --story-heading-lg: clamp(1.5rem, 3vw, 2.5rem);
+    --story-body-lg: clamp(1rem, 1.5vw, 1.25rem);
+    --story-eyebrow: 0.75rem;
+
+    /* Motion */
+    --story-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --story-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --story-duration-fast: 0.35s;
+    --story-duration-base: 0.6s;
+    --story-duration-slow: 0.9s;
+
+    /* Overlay */
+    --story-overlay-dark: rgba(0, 0, 0, 0.45);
+    --story-overlay-light: rgba(255, 255, 255, 0.08);
+
+    /* Card */
+    --story-card-radius: 16px;
+    --story-card-shadow: 0 24px 64px rgba(0, 0, 0, 0.12);
+}
+
+/* ================================================================
+   LAYOUT HELPERS
+   ================================================================ */
+.story-section {
+    padding-block: var(--story-section-py);
+    position: relative;
+    overflow: hidden;
+}
+
+.story-container {
+    max-width: var(--story-container-max);
+    margin-inline: auto;
+    padding-inline: var(--story-section-px);
+}
+
+.story-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(32px, 5vw, 80px);
+    align-items: center;
+}
+
+.story-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(20px, 3vw, 40px);
+}
+
+.story-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(16px, 2vw, 32px);
+}
+
+@media (max-width: 1024px) {
+    .story-grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .story-grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .story-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+
+    .story-grid-3,
+    .story-grid-4 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ================================================================
+   TYPOGRAPHY
+   ================================================================ */
+.story-eyebrow {
+    display: inline-block;
+    font-size: var(--story-eyebrow);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 1rem;
+}
+
+.story-heading-hero {
+    font-size: var(--story-heading-hero);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+}
+
+.story-heading-xl {
+    font-size: var(--story-heading-xl);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+}
+
+.story-heading-lg {
+    font-size: var(--story-heading-lg);
+    line-height: 1.2;
+}
+
+.story-body-lg {
+    font-size: var(--story-body-lg);
+    line-height: 1.7;
+    opacity: 0.8;
+}
+
+/* ================================================================
+   SCROLL ANIMATION CLASSES
+   — elements start hidden, animate-visible triggers CSS keyframe
+   ================================================================ */
+.story-animate {
+    opacity: 0;
+    will-change: transform, opacity;
+    transition-property: transform, opacity;
+    transition-timing-function: var(--story-ease-out);
+    transition-duration: var(--story-duration-base);
+}
+
+.story-animate.delay-1 {
+    transition-delay: 0.1s;
+}
+
+.story-animate.delay-2 {
+    transition-delay: 0.2s;
+}
+
+.story-animate.delay-3 {
+    transition-delay: 0.3s;
+}
+
+.story-animate.delay-4 {
+    transition-delay: 0.4s;
+}
+
+.story-animate.delay-5 {
+    transition-delay: 0.5s;
+}
+
+.story-animate.delay-6 {
+    transition-delay: 0.6s;
+}
+
+/* fade-in */
+.anim-fade-in {
+    transform: none;
+}
+
+/* slide-up */
+.anim-slide-up {
+    transform: translateY(48px);
+}
+
+/* slide-left */
+.anim-slide-left {
+    transform: translateX(-48px);
+}
+
+/* slide-right */
+.anim-slide-right {
+    transform: translateX(48px);
+}
+
+/* scale-in */
+.anim-scale-in {
+    transform: scale(0.88);
+}
+
+/* When visible — all types resolve to natural state */
+.story-animate.animate-visible {
+    opacity: 1;
+    transform: none !important;
+}
+
+/* ================================================================
+   PARALLAX ELEMENTS
+   ================================================================ */
+.parallax-layer {
+    will-change: transform;
+    transform: translateY(0);
+}
+
+/* Decorative floating shapes */
+.story-shape {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    will-change: transform;
+    opacity: 0.06;
+    background: currentColor;
+}
+
+/* ================================================================
+   STORY BUTTONS
+   ================================================================ */
+.story-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 36px;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition: transform var(--story-duration-fast) var(--story-ease-spring),
+        box-shadow var(--story-duration-fast) var(--story-ease-out);
+    cursor: pointer;
+    border: none;
+}
+
+.story-btn--primary {
+    background: var(--color-text, #111);
+    color: var(--color-bg, #fff);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.story-btn--primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+}
+
+.story-btn--outline {
+    background: transparent;
+    border: 2px solid currentColor;
+    color: inherit;
+}
+
+.story-btn--outline:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Arrow icon in button */
+.story-btn__arrow {
+    display: inline-block;
+    transition: transform var(--story-duration-fast) var(--story-ease-out);
+}
+
+.story-btn:hover .story-btn__arrow {
+    transform: translateX(4px);
+}
+
+/* ================================================================
+   HERO SECTION
+   ================================================================ */
+.story-hero {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    background: #0a0a0a;
+    color: #fff;
+}
+
+.story-hero__bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.story-hero__bg-img {
+    width: 100%;
+    height: 110%;
+    object-fit: cover;
+    will-change: transform;
+}
+
+.story-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.2) 0%,
+            rgba(0, 0, 0, 0.5) 60%,
+            rgba(0, 0, 0, 0.75) 100%);
+}
+
+.story-hero__content {
+    position: relative;
+    z-index: 2;
+    max-width: 780px;
+    padding: var(--story-section-py) var(--story-section-px);
+}
+
+.story-hero__scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.5;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #fff;
+    animation: scroll-bounce 2s ease-in-out infinite;
+}
+
+@keyframes scroll-bounce {
+
+    0%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    50% {
+        transform: translateX(-50%) translateY(8px);
+    }
+}
+
+/* ================================================================
+   BRAND SECTION
+   ================================================================ */
+.story-brand__image-wrap {
+    position: relative;
+    border-radius: var(--story-card-radius);
+    overflow: hidden;
+}
+
+.story-brand__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--story-ease-out);
+}
+
+.story-brand__image-wrap:hover .story-brand__image {
+    transform: scale(1.04);
+}
+
+/* ================================================================
+   FEATURE CARDS
+   ================================================================ */
+.story-feature-card {
+    background: var(--color-surface, #f9f9f9);
+    border-radius: var(--story-card-radius);
+    padding: clamp(24px, 3vw, 48px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: box-shadow var(--story-duration-fast) var(--story-ease-out),
+        transform var(--story-duration-fast) var(--story-ease-out);
+}
+
+.story-feature-card:hover {
+    box-shadow: var(--story-card-shadow);
+    transform: translateY(-4px);
+}
+
+.story-feature-card__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary, #111);
+    color: #fff;
+    flex-shrink: 0;
+}
+
+/* ================================================================
+   PRODUCT PARALLAX SHOWCASE
+   ================================================================ */
+.story-product-parallax {
+    background: #080808;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.story-product-parallax__scene {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.story-product-parallax__product {
+    position: relative;
+    z-index: 3;
+    border-radius: var(--story-card-radius);
+    overflow: hidden;
+}
+
+.story-product-parallax__glow {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--color-primary, #6366f1) 0%, transparent 70%);
+    opacity: 0.15;
+    filter: blur(60px);
+    pointer-events: none;
+    will-change: transform;
+}
+
+/* ================================================================
+   SOCIAL PROOF — REVIEW CARDS
+   ================================================================ */
+.story-social-proof__track {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+}
+
+.story-social-proof__track::-webkit-scrollbar {
+    display: none;
+}
+
+.story-review-card {
+    flex: 0 0 320px;
+    scroll-snap-align: start;
+    background: var(--color-bg, #fff);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: var(--story-card-radius);
+    padding: 32px;
+    box-shadow: var(--story-card-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.story-review-card__stars {
+    color: #f59e0b;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+}
+
+.story-review-card__quote {
+    font-size: 1rem;
+    line-height: 1.7;
+    flex: 1;
+}
+
+.story-review-card__quote::before {
+    content: '"';
+}
+
+.story-review-card__quote::after {
+    content: '"';
+}
+
+.story-review-card__author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.85rem;
+}
+
+.story-review-card__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--color-surface, #f0f0f0);
+}
+
+/* Scroll controls */
+.story-social-proof__controls {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.story-social-proof__btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-border, #e5e5e5);
+    background: var(--color-bg, #fff);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--story-duration-fast), border-color var(--story-duration-fast);
+}
+
+.story-social-proof__btn:hover {
+    background: var(--color-primary, #111);
+    border-color: var(--color-primary, #111);
+    color: #fff;
+}
+
+/* ================================================================
+   COLLECTION CARDS
+   ================================================================ */
+.story-collection-card {
+    position: relative;
+    border-radius: var(--story-card-radius);
+    overflow: hidden;
+    aspect-ratio: 3/4;
+    display: block;
+    text-decoration: none;
+    color: #fff;
+}
+
+.story-collection-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s var(--story-ease-out);
+    will-change: transform;
+}
+
+.story-collection-card:hover .story-collection-card__img {
+    transform: scale(1.06);
+}
+
+.story-collection-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.1) 55%, transparent 100%);
+    transition: opacity var(--story-duration-base);
+}
+
+.story-collection-card__body {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 28px;
+}
+
+.story-collection-card__title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.story-collection-card__count {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    letter-spacing: 0.06em;
+}
+
+.story-collection-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 12px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity var(--story-duration-fast), transform var(--story-duration-fast);
+}
+
+.story-collection-card:hover .story-collection-card__cta {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ================================================================
+   LIFESTYLE SECTION
+   ================================================================ */
+.story-lifestyle {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.story-lifestyle__bg {
+    position: absolute;
+    inset: 0;
+}
+
+.story-lifestyle__bg-img {
+    width: 100%;
+    height: 110%;
+    object-fit: cover;
+}
+
+.story-lifestyle__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.story-lifestyle__content {
+    position: relative;
+    z-index: 1;
+    color: #fff;
+    max-width: 600px;
+}
+
+/* ================================================================
+   FINAL PRODUCT SECTION
+   ================================================================ */
+.story-final-product {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%);
+    color: #fff;
+}
+
+.story-final-product__img-wrap {
+    position: relative;
+    border-radius: var(--story-card-radius);
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.story-final-product__img {
+    width: 100%;
+    transition: transform 0.8s var(--story-ease-out);
+}
+
+.story-final-product__img-wrap:hover .story-final-product__img {
+    transform: scale(1.03);
+}
+
+/* Glowing price badge */
+.story-final-product__price-badge {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 12px 20px;
+    text-align: center;
+    color: #fff;
+}
+
+/* Button pulsing highlight */
+.story-btn--highlight {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+    animation: btn-pulse 2s ease-out infinite;
+}
+
+@keyframes btn-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 16px rgba(99, 102, 241, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+    }
+}
+
+/* ================================================================
+   NEWSLETTER SECTION
+   ================================================================ */
+.story-newsletter {
+    padding-block: var(--story-section-py);
+    text-align: center;
+    position: relative;
+}
+
+.story-newsletter__form {
+    display: flex;
+    gap: 0;
+    max-width: 520px;
+    margin-inline: auto;
+    border-radius: 100px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.story-newsletter__input {
+    flex: 1;
+    border: none;
+    padding: 18px 28px;
+    font-size: 0.95rem;
+    outline: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: #111;
+}
+
+.story-newsletter__submit {
+    padding: 18px 32px;
+    background: var(--color-primary, #111);
+    color: #fff;
+    border: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background var(--story-duration-fast);
+}
+
+.story-newsletter__submit:hover {
+    background: #333;
+}
+
+.story-newsletter__badges {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 20px;
+    font-size: 0.8rem;
+    opacity: 0.5;
+}
+
+/* ================================================================
+   STORY PRODUCT CARD
+   ================================================================ */
+.story-product-card {
+    position: relative;
+    border-radius: var(--story-card-radius);
+    overflow: hidden;
+    background: var(--color-surface, #f5f5f5);
+    transition: transform var(--story-duration-fast) var(--story-ease-out),
+        box-shadow var(--story-duration-fast) var(--story-ease-out);
+}
+
+.story-product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--story-card-shadow);
+}
+
+.story-product-card__img-wrap {
+    aspect-ratio: 1;
+    overflow: hidden;
+}
+
+.story-product-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--story-ease-out);
+}
+
+.story-product-card:hover .story-product-card__img {
+    transform: scale(1.06);
+}
+
+.story-product-card__body {
+    padding: 20px;
+}
+
+.story-product-card__title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.story-product-card__price {
+    font-size: 0.9rem;
+    opacity: 0.6;
+}
+
+.story-product-card__atc {
+    position: absolute;
+    bottom: -48px;
+    left: 0;
+    right: 0;
+    background: var(--color-primary, #111);
+    color: #fff;
+    border: none;
+    padding: 14px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: bottom var(--story-duration-fast) var(--story-ease-out);
+    letter-spacing: 0.04em;
+}
+
+.story-product-card:hover .story-product-card__atc {
+    bottom: 0;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 768px) {
+
+    /* Hero */
+    .story-hero__content {
+        max-width: 100%;
+    }
+
+    .story-heading-hero {
+        font-size: clamp(2.25rem, 10vw, 3rem);
+    }
+
+    /* Disable parallax on mobile via class override */
+    .story-animate {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    /* Newsletter form */
+    .story-newsletter__form {
+        flex-direction: column;
+        border-radius: var(--story-card-radius);
+    }
+
+    .story-newsletter__input {
+        border-radius: var(--story-card-radius) var(--story-card-radius) 0 0;
+    }
+
+    .story-newsletter__submit {
+        border-radius: 0 0 var(--story-card-radius) var(--story-card-radius);
+    }
+}
+
+/* ================================================================
+   REDUCED MOTION
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+    .story-animate {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    .parallax-layer {
+        transform: none !important;
+    }
+
+    .story-btn--highlight {
+        animation: none !important;
+    }
+
+    .story-hero__scroll-hint {
+        animation: none !important;
+    }
+}

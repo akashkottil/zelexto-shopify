@@ -1,0 +1,161 @@
+{% comment %}
+  ZELEXTO THEME — sections/story-product-parallax.liquid
+  Section 4: Hero product showcase with deep layered parallax.
+  Background 0.5× · Glow shape 0.7× · Product image 1.1× · Text 1.0×
+{% endcomment %}
+
+{%- liquid
+  assign enable_anim = section.settings.enable_animation
+  assign the_product = all_products[section.settings.product]
+-%}
+
+<link rel="stylesheet" href="{{ 'story.css' | asset_url }}" media="all">
+
+<section
+  class="story-product-parallax story-section"
+  id="story-product-parallax-{{ section.id }}"
+  style="background-color: {{ section.settings.bg_color }}; color: {{ section.settings.text_color }};">
+
+  <!-- Background gradient layer (0.5×) -->
+  <div aria-hidden="true"
+    class="parallax-layer"
+    data-parallax-speed="0.5"
+    style="position:absolute; inset:0; background: radial-gradient(ellipse at 30% 50%, {{ section.settings.glow_color }} 0%, transparent 65%); opacity: 0.25; pointer-events:none;">
+  </div>
+
+  <!-- Decorative floating shape (0.7×) -->
+  {%- if enable_anim -%}
+    <div aria-hidden="true"
+      class="parallax-layer"
+      data-parallax-speed="0.7"
+      style="position:absolute; top:10%; right:5%; width:300px; height:300px; border-radius:50%; background: {{ section.settings.glow_color }}; opacity:0.07; filter:blur(40px); pointer-events:none;">
+    </div>
+  {%- endif -%}
+
+  <div class="story-container" style="position:relative; z-index:1;">
+    <div class="story-grid-2">
+
+      <!-- Product image (1.1×) — moves faster for depth -->
+      <div class="story-animate anim-scale-in" {% if enable_anim %}data-animate{% endif %}>
+        <div class="story-product-parallax__product" style="border-radius:20px; overflow:hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.5);">
+          {%- if the_product != nil and the_product.featured_image -%}
+            <img
+              src="{{ the_product.featured_image | image_url: width: 900 }}"
+              srcset="{{ the_product.featured_image | image_url: width: 600 }} 600w,
+                      {{ the_product.featured_image | image_url: width: 900 }} 900w"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              alt="{{ the_product.featured_image.alt | escape | default: the_product.title }}"
+              width="900"
+              height="{{ 900 | divided_by: the_product.featured_image.aspect_ratio | round }}"
+              loading="lazy"
+              decoding="async"
+              class="parallax-layer"
+              data-parallax-speed="1.1"
+              data-parallax-max="30"
+              style="width:100%; display:block;">
+          {%- elsif section.settings.product_image != blank -%}
+            <img
+              src="{{ section.settings.product_image | image_url: width: 900 }}"
+              alt="{{ section.settings.heading }}"
+              width="900"
+              height="{{ 900 | divided_by: section.settings.product_image.aspect_ratio | round }}"
+              loading="lazy"
+              decoding="async"
+              class="parallax-layer"
+              data-parallax-speed="1.1"
+              data-parallax-max="30"
+              style="width:100%; display:block;">
+          {%- else -%}
+            {{ 'product-1' | placeholder_svg_tag: '' }}
+          {%- endif -%}
+        </div>
+      </div>
+
+      <!-- Text content (1.0×) -->
+      <div style="display:flex; flex-direction:column; justify-content:center; gap:1.75rem;">
+
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="story-eyebrow story-animate anim-fade-in" {% if enable_anim %}data-animate{% endif %} style="color: {{ section.settings.accent_color }};">
+            {{ section.settings.eyebrow }}
+          </p>
+        {%- endif -%}
+
+        <h2 class="story-heading-xl story-animate anim-slide-up delay-1" {% if enable_anim %}data-animate{% endif %}>
+          {%- if the_product != nil -%}{{ the_product.title }}{%- else -%}{{ section.settings.heading | default: 'Hero Product' }}{%- endif -%}
+        </h2>
+
+        {%- if section.settings.body_text != blank -%}
+          <p class="story-body-lg story-animate anim-slide-up delay-2" {% if enable_anim %}data-animate{% endif %}>
+            {{ section.settings.body_text }}
+          </p>
+        {%- endif -%}
+
+        <!-- Key benefits -->
+        {%- if section.blocks.size > 0 -%}
+          <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:12px;">
+            {%- for block in section.blocks -%}
+              <li class="story-animate anim-slide-up delay-{{ forloop.index | plus: 2 }}" {% if enable_anim %}data-animate{% endif %}
+                style="display:flex; align-items:center; gap:12px; font-size:0.95rem; opacity:0.85;"
+                {{ block.shopify_attributes }}>
+                <span style="width:8px; height:8px; border-radius:50%; background: {{ section.settings.accent_color }}; flex-shrink:0;" aria-hidden="true"></span>
+                {{ block.settings.benefit }}
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        <!-- Price + CTA -->
+        <div class="story-animate anim-slide-up delay-5" {% if enable_anim %}data-animate{% endif %} style="display:flex; align-items:center; gap:20px; flex-wrap:wrap; margin-top:0.5rem;">
+          {%- if the_product != nil -%}
+            <span style="font-size:2rem; font-weight:800;">{{ the_product.price | money }}</span>
+            <a href="{{ the_product.url }}" class="story-btn story-btn--primary" style="background:{{ section.settings.accent_color }};">
+              {{ section.settings.btn_label | default: 'Shop now' }}
+              <span class="story-btn__arrow" aria-hidden="true">→</span>
+            </a>
+          {%- elsif section.settings.btn_label != blank -%}
+            <a href="{{ section.settings.btn_url | default: '#' }}" class="story-btn story-btn--primary" style="background:{{ section.settings.accent_color }};">
+              {{ section.settings.btn_label }}
+              <span class="story-btn__arrow" aria-hidden="true">→</span>
+            </a>
+          {%- endif -%}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Story — Product Parallax",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Product" },
+    { "type": "product", "id": "product", "label": "Hero product" },
+    { "type": "image_picker", "id": "product_image", "label": "Fallback image" },
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Bestseller" },
+    { "type": "text", "id": "heading", "label": "Heading (if no product)", "default": "Our flagship product" },
+    { "type": "textarea", "id": "body_text", "label": "Description", "default": "Precision-engineered for those who demand the best. Discover the difference quality makes." },
+    { "type": "text", "id": "btn_label", "label": "Button label", "default": "Shop now" },
+    { "type": "url", "id": "btn_url", "label": "Button URL (if no product)" },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#080808" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
+    { "type": "color", "id": "accent_color", "label": "Accent color", "default": "#6366f1" },
+    { "type": "color", "id": "glow_color", "label": "Glow color", "default": "#6366f1" },
+    { "type": "header", "content": "Animation" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "blocks": [{ "type": "benefit", "name": "Benefit", "settings": [{ "type": "text", "id": "benefit", "label": "Benefit", "default": "Premium materials" }] }],
+  "max_blocks": 5,
+  "presets": [{
+    "name": "Story — Product Parallax",
+    "blocks": [
+      {"type":"benefit","settings":{"benefit":"Premium materials sourced globally"}},
+      {"type":"benefit","settings":{"benefit":"Engineered for maximum durability"}},
+      {"type":"benefit","settings":{"benefit":"30-day satisfaction guarantee"}}
+    ]
+  }]
+}
+{% endschema %}

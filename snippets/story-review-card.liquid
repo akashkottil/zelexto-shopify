@@ -1,0 +1,40 @@
+{% comment %}
+  ZELEXTO THEME — snippets/story-review-card.liquid
+  Usage: {% render 'story-review-card', block: block, index: forloop.index0 %}
+{% endcomment %}
+
+{%- liquid
+  assign delay_class = 'delay-' | append: index | modulo: 6 | plus: 1
+-%}
+
+<blockquote class="story-review-card story-animate anim-slide-up {{ delay_class }}" data-animate {{ block.shopify_attributes }}>
+  <div class="story-review-card__stars" aria-label="{{ block.settings.rating }} out of 5 stars">
+    {%- for i in (1..5) -%}
+      {%- if i <= block.settings.rating -%}★{%- else -%}☆{%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  <p class="story-review-card__quote">{{ block.settings.quote | default: 'Amazing product. Changed my life.' }}</p>
+
+  <footer class="story-review-card__author">
+    {%- if block.settings.avatar != blank -%}
+      <img
+        src="{{ block.settings.avatar | image_url: width: 80 }}"
+        alt="{{ block.settings.author }}"
+        width="40" height="40"
+        loading="lazy"
+        decoding="async"
+        class="story-review-card__avatar">
+    {%- else -%}
+      <div class="story-review-card__avatar" style="background: var(--color-primary, #111); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700;">
+        {{ block.settings.author | slice: 0, 1 | upcase }}
+      </div>
+    {%- endif -%}
+    <div>
+      <strong style="display:block; font-size:0.9rem;">{{ block.settings.author | default: 'Verified customer' }}</strong>
+      {%- if block.settings.location != blank -%}
+        <span style="font-size:0.75rem; opacity:0.5;">{{ block.settings.location }}</span>
+      {%- endif -%}
+    </div>
+  </footer>
+</blockquote>

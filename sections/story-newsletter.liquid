@@ -1,0 +1,135 @@
+{% comment %}
+  ZELEXTO THEME — sections/story-newsletter.liquid
+  Section 9: Email capture with incentive message and subtle fade-in animation.
+{% endcomment %}
+
+{%- liquid
+  assign enable_anim = section.settings.enable_animation
+-%}
+
+<link rel="stylesheet" href="{{ 'story.css' | asset_url }}" media="all">
+
+<section
+  class="story-newsletter story-section"
+  id="story-newsletter-{{ section.id }}"
+  style="background: {{ section.settings.bg_color }}; color: {{ section.settings.text_color }};
+  {% if section.settings.bg_image != blank %}
+    background-image: url('{{ section.settings.bg_image | image_url: width: 1600 }}');
+    background-size: cover; background-position: center;
+  {% endif %}">
+
+  {%- if section.settings.bg_image != blank -%}
+    <div style="position:absolute; inset:0; background: rgba(0,0,0,{{ section.settings.overlay_opacity | times: 0.01 }});"></div>
+  {%- endif -%}
+
+  <div class="story-container" style="position:relative; z-index:1; max-width: 760px;">
+
+    <!-- Decorative shapes -->
+    {%- if enable_anim -%}
+      <div aria-hidden="true" class="parallax-layer" data-parallax-speed="0.7"
+        style="position:absolute; top:-60px; right:-80px; width:300px; height:300px; border-radius:50%; background: {{ section.settings.accent_color }}; opacity:0.07; pointer-events:none; filter:blur(30px);">
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.badge != blank -%}
+      <div style="text-align:center; margin-bottom:1.5rem;">
+        <span style="display:inline-block; background: {{ section.settings.accent_color }}; color:#fff; font-size:0.75rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:6px 18px; border-radius:100px;"
+          class="story-animate anim-scale-in" {% if enable_anim %}data-animate{% endif %}>
+          {{ section.settings.badge }}
+        </span>
+      </div>
+    {%- endif -%}
+
+    <h2 class="story-heading-xl story-animate anim-slide-up delay-1" {% if enable_anim %}data-animate{% endif %}
+      style="text-align:center;">
+      {{ section.settings.heading | default: 'Join 50,000+ customers.' }}
+    </h2>
+
+    {%- if section.settings.subheading != blank -%}
+      <p class="story-body-lg story-animate anim-slide-up delay-2" {% if enable_anim %}data-animate{% endif %}
+        style="text-align:center; margin-top:1rem; margin-bottom:2.5rem; opacity:0.75;">
+        {{ section.settings.subheading }}
+      </p>
+    {%- endif -%}
+
+    {%- form 'customer', class: 'story-animate anim-slide-up delay-3', id: 'story-newsletter-form-{{ section.id }}' -%}
+      {%- if enable_anim -%}data-animate{%- endif -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+
+      {%- if form.posted_successfully? -%}
+        <div style="text-align:center; padding:24px; background:rgba(255,255,255,0.1); border-radius:16px; border:1px solid rgba(255,255,255,0.2);">
+          <p style="font-size:1.1rem; font-weight:600;">🎉 {{ section.settings.success_text | default: "You're in! Check your email for a welcome gift." }}</p>
+        </div>
+      {%- else -%}
+        <div class="story-newsletter__form">
+          <label for="newsletter-email-{{ section.id }}" class="visually-hidden">
+            {{ 'newsletter.email' | t | default: 'Email address' }}
+          </label>
+          <input
+            type="email"
+            name="contact[email]"
+            id="newsletter-email-{{ section.id }}"
+            class="story-newsletter__input"
+            placeholder="{{ section.settings.input_placeholder | default: 'Enter your email address' }}"
+            autocomplete="email"
+            required>
+          <button type="submit" class="story-newsletter__submit"
+            style="background: {{ section.settings.btn_color }}; color: {{ section.settings.btn_text_color }};">
+            {{ section.settings.btn_label | default: 'Subscribe' }}
+          </button>
+        </div>
+      {%- endif -%}
+
+    {%- endform -%}
+
+    <!-- Trust badges row -->
+    {%- if section.settings.show_badges -%}
+      <div class="story-newsletter__badges story-animate anim-fade-in delay-4" {% if enable_anim %}data-animate{% endif %}>
+        {%- if section.settings.badge_1 != blank -%}
+          <span>{{ section.settings.badge_1 }}</span>
+        {%- endif -%}
+        {%- if section.settings.badge_2 != blank -%}
+          <span>{{ section.settings.badge_2 }}</span>
+        {%- endif -%}
+        {%- if section.settings.badge_3 != blank -%}
+          <span>{{ section.settings.badge_3 }}</span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Story — Newsletter",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "badge", "label": "Top badge label", "default": "Exclusive offer" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Join 50,000+ customers." },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Subscribe for exclusive deals, new arrivals, and a welcome discount on your first order." },
+    { "type": "header", "content": "Form" },
+    { "type": "text", "id": "input_placeholder", "label": "Input placeholder", "default": "Enter your email address" },
+    { "type": "text", "id": "btn_label", "label": "Button label", "default": "Subscribe" },
+    { "type": "text", "id": "success_text", "label": "Success message", "default": "You're in! Check your email for a welcome gift." },
+    { "type": "header", "content": "Trust badges" },
+    { "type": "checkbox", "id": "show_badges", "label": "Show trust badges", "default": true },
+    { "type": "text", "id": "badge_1", "label": "Badge 1", "default": "No spam, ever" },
+    { "type": "text", "id": "badge_2", "label": "Badge 2", "default": "Unsubscribe anytime" },
+    { "type": "text", "id": "badge_3", "label": "Badge 3", "default": "Exclusive members-only offers" },
+    { "type": "header", "content": "Background" },
+    { "type": "image_picker", "id": "bg_image", "label": "Background image (optional)" },
+    { "type": "range", "id": "overlay_opacity", "label": "Image overlay opacity", "min": 0, "max": 80, "step": 5, "default": 40 },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#0a0a0a" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
+    { "type": "color", "id": "accent_color", "label": "Accent / badge color", "default": "#6366f1" },
+    { "type": "color", "id": "btn_color", "label": "Button color", "default": "#6366f1" },
+    { "type": "color", "id": "btn_text_color", "label": "Button text color", "default": "#ffffff" },
+    { "type": "header", "content": "Animation" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "presets": [{ "name": "Story — Newsletter", "settings": { "heading": "Join 50,000+ customers." } }]
+}
+{% endschema %}

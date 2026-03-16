@@ -1,0 +1,132 @@
+{% comment %}
+  ZELEXTO THEME — sections/story-collections.liquid
+  Section 6: Collection discovery grid — tiles with hover reveal CTA and zoom.
+{% endcomment %}
+
+{%- liquid
+  assign enable_anim = section.settings.enable_animation
+  assign cols        = section.settings.columns | default: '4'
+-%}
+
+<link rel="stylesheet" href="{{ 'story.css' | asset_url }}" media="all">
+
+<section class="story-section" id="story-collections-{{ section.id }}" style="background-color: {{ section.settings.bg_color }};">
+  <div class="story-container">
+
+    <!-- Header -->
+    {%- if section.settings.heading != blank -%}
+      <div style="text-align: center; margin-bottom: clamp(48px, 6vw, 80px);">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="story-eyebrow story-animate anim-fade-in" {% if enable_anim %}data-animate{% endif %}
+            style="color: {{ section.settings.accent_color }};">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        <h2 class="story-heading-xl story-animate anim-slide-up delay-1" {% if enable_anim %}data-animate{% endif %}
+          style="color: {{ section.settings.text_color }};">{{ section.settings.heading }}</h2>
+      </div>
+    {%- endif -%}
+
+    <!-- Collection grid -->
+    <div class="story-grid-{{ cols }}" data-stagger>
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign col = collections[block.settings.collection]
+          assign col_img = block.settings.image | default: col.image
+          assign delay_num = forloop.index0 | modulo: 6 | plus: 1
+        -%}
+        <a
+          href="{{ col.url | default: '#' }}"
+          class="story-collection-card story-animate anim-scale-in delay-{{ delay_num }}"
+          {% if enable_anim %}data-animate{% endif %}
+          {{ block.shopify_attributes }}
+          aria-label="{{ block.settings.label | default: col.title }}">
+
+          <!-- Image (parallax 0.85×) -->
+          {%- if col_img != blank -%}
+            <img
+              src="{{ col_img | image_url: width: 700 }}"
+              srcset="{{ col_img | image_url: width: 400 }} 400w,
+                      {{ col_img | image_url: width: 700 }} 700w"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              alt="{{ col_img.alt | escape | default: block.settings.label | default: col.title }}"
+              width="700"
+              height="{{ 700 | divided_by: col_img.aspect_ratio | round | default: 875 }}"
+              loading="lazy"
+              decoding="async"
+              class="story-collection-card__img">
+          {%- else -%}
+            {{ 'collection-1' | placeholder_svg_tag: 'story-collection-card__img' }}
+          {%- endif -%}
+
+          <div class="story-collection-card__overlay"></div>
+
+          <div class="story-collection-card__body">
+            <h3 class="story-collection-card__title">{{ block.settings.label | default: col.title }}</h3>
+            {%- if col.products_count > 0 -%}
+              <p class="story-collection-card__count">{{ col.products_count }} products</p>
+            {%- endif -%}
+            <span class="story-collection-card__cta">
+              {{ block.settings.cta_label | default: 'Shop now' }}
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </span>
+          </div>
+
+        </a>
+      {%- endfor -%}
+    </div>
+
+    <!-- View all link -->
+    {%- if section.settings.view_all_label != blank -%}
+      <div style="text-align:center; margin-top: clamp(40px, 6vw, 64px);">
+        <a href="{{ section.settings.view_all_url | default: routes.collections_url }}"
+          class="story-btn story-btn--outline story-animate anim-fade-in"
+          {% if enable_anim %}data-animate{% endif %}
+          style="color: {{ section.settings.text_color }}; border-color: {{ section.settings.text_color }};">
+          {{ section.settings.view_all_label }}
+          <span class="story-btn__arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Story — Collections",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Explore" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Shop by collection." },
+    { "type": "text", "id": "view_all_label", "label": "View all button label", "default": "View all collections" },
+    { "type": "url", "id": "view_all_url", "label": "View all URL" },
+    { "type": "select", "id": "columns", "label": "Columns", "options": [{"value":"2","label":"2"},{"value":"3","label":"3"},{"value":"4","label":"4"}], "default": "4" },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#0a0a0a" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#6366f1" },
+    { "type": "header", "content": "Animation" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Enable animation", "default": true }
+  ],
+  "blocks": [{
+    "type": "collection_tile",
+    "name": "Collection tile",
+    "settings": [
+      { "type": "collection", "id": "collection", "label": "Collection" },
+      { "type": "image_picker", "id": "image", "label": "Override image" },
+      { "type": "text", "id": "label", "label": "Override title" },
+      { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Shop now" }
+    ]
+  }],
+  "max_blocks": 8,
+  "presets": [{
+    "name": "Story — Collections",
+    "blocks": [
+      {"type":"collection_tile","settings":{"label":"Best Sellers","cta_label":"Shop now"}},
+      {"type":"collection_tile","settings":{"label":"New Arrivals","cta_label":"Shop now"}},
+      {"type":"collection_tile","settings":{"label":"Trending Now","cta_label":"Shop now"}},
+      {"type":"collection_tile","settings":{"label":"Limited Edition","cta_label":"Shop now"}}
+    ]
+  }]
+}
+{% endschema %}

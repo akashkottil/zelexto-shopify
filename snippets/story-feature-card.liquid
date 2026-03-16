@@ -1,0 +1,40 @@
+{% comment %}
+  ZELEXTO THEME — snippets/story-feature-card.liquid
+  Usage: {% render 'story-feature-card', block: block, index: forloop.index0 %}
+{% endcomment %}
+
+{%- liquid
+  assign delay_class = 'delay-' | append: index | modulo: 6 | plus: 1
+-%}
+
+<div class="story-feature-card story-animate anim-scale-in {{ delay_class }}" data-animate {{ block.shopify_attributes }}>
+  <div class="story-feature-card__icon">
+    {%- if block.settings.icon != blank -%}
+      {%- render 'icon', name: block.settings.icon, size: 28 -%}
+    {%- else -%}
+      <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/>
+      </svg>
+    {%- endif -%}
+  </div>
+
+  <div>
+    <h3 class="story-feature-card__title">{{ block.settings.title | default: 'Feature title' }}</h3>
+    {%- if block.settings.text != blank -%}
+      <p class="story-feature-card__text">{{ block.settings.text }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  .story-feature-card__icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: var(--color-primary, #111);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .story-feature-card__title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+  .story-feature-card__text  { font-size: 0.9rem; opacity: 0.65; line-height: 1.65; }
+</style>

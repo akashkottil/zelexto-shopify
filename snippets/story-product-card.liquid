@@ -1,0 +1,49 @@
+{% comment %}
+  ZELEXTO THEME — snippets/story-product-card.liquid
+  Usage: {% render 'story-product-card', product: product, index: forloop.index0 %}
+{% endcomment %}
+
+{%- liquid
+  assign delay_class = 'delay-' | append: index | modulo: 6 | plus: 1
+  assign card_product = product
+-%}
+
+<div class="story-product-card story-animate anim-slide-up {{ delay_class }}" data-animate>
+  <div class="story-product-card__img-wrap">
+    <a href="{{ card_product.url }}" tabindex="-1">
+      {%- if card_product.featured_image -%}
+        <img
+          src="{{ card_product.featured_image | image_url: width: 600 }}"
+          srcset="{{ card_product.featured_image | image_url: width: 400 }} 400w,
+                  {{ card_product.featured_image | image_url: width: 600 }} 600w,
+                  {{ card_product.featured_image | image_url: width: 800 }} 800w"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          alt="{{ card_product.featured_image.alt | escape | default: card_product.title }}"
+          width="600"
+          height="{{ 600 | divided_by: card_product.featured_image.aspect_ratio | round }}"
+          loading="lazy"
+          decoding="async"
+          class="story-product-card__img">
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'story-product-card__img' }}
+      {%- endif -%}
+    </a>
+    <button
+      type="button"
+      class="story-product-card__atc"
+      data-product-id="{{ card_product.id }}"
+      data-variant-id="{{ card_product.selected_or_first_available_variant.id }}"
+      aria-label="{{ 'products.product.add_to_cart' | t | default: 'Add to cart' }}: {{ card_product.title }}">
+      {{- 'products.product.add_to_cart' | t | default: 'Add to cart' -}}
+    </button>
+  </div>
+  <div class="story-product-card__body">
+    <a href="{{ card_product.url }}" class="story-product-card__title">{{ card_product.title }}</a>
+    <p class="story-product-card__price">
+      {%- if card_product.compare_at_price > card_product.price -%}
+        <s style="opacity:0.4; margin-right:6px;">{{ card_product.compare_at_price | money }}</s>
+      {%- endif -%}
+      <span>{{ card_product.price | money }}</span>
+    </p>
+  </div>
+</div>
