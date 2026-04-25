@@ -3,153 +3,177 @@
     "hero": {
       "type": "hero",
       "settings": {
-        "eyebrow": "New season",
-        "heading": "Designed for everyday.",
-        "subheading": "Considered products. Honest pricing. Delivered across India in 3–7 days.",
+        "theme": "dark",
+        "height": "large",
+        "content_align": "center",
+        "overlay_opacity": 30,
+        "eyebrow": "New collection",
+        "heading": "Designed for everyday performance.",
+        "body": "<p>Crafted from premium materials. Engineered for the way you actually live.</p>",
         "cta_primary_label": "Shop the collection",
         "cta_primary_url": "shopify://collections/all",
-        "cta_secondary_label": "Our story",
-        "cta_secondary_url": "/pages/about",
-        "height": "large",
-        "text_align": "left",
-        "overlay_opacity": 25,
-        "text_color": "#ffffff"
+        "cta_secondary_label": "Watch the film",
+        "cta_secondary_url": "/pages/about"
       }
     },
-    "feature-row-1": {
+    "marquee": {
+      "type": "marquee",
+      "settings": {
+        "theme": "light",
+        "label": "As featured in",
+        "speed": 50
+      },
+      "blocks": {
+        "m1": { "type": "logo", "settings": { "label": "VOGUE"      } },
+        "m2": { "type": "logo", "settings": { "label": "WIRED"      } },
+        "m3": { "type": "logo", "settings": { "label": "Forbes"     } },
+        "m4": { "type": "logo", "settings": { "label": "Bloomberg"  } },
+        "m5": { "type": "logo", "settings": { "label": "TechCrunch" } },
+        "m6": { "type": "logo", "settings": { "label": "GQ"         } }
+      },
+      "block_order": ["m1", "m2", "m3", "m4", "m5", "m6"]
+    },
+    "feature-rows": {
       "type": "feature-row",
       "settings": {
-        "eyebrow": "Why Zelexto",
-        "heading": "Built better, on purpose.",
-        "subheading": "Materials chosen with care. Details considered, never assumed.",
-        "bg": "bg"
+        "theme": "light",
+        "section_eyebrow": "Built different",
+        "section_heading": "Premium materials. Made for everyday."
       },
       "blocks": {
         "row-1": {
           "type": "row",
           "settings": {
-            "eyebrow": "Materials",
-            "heading": "Sourced with intent.",
-            "body": "<p>We pick materials for how they age, not how they photograph. The result: products that feel right on day one, and on day one thousand.</p>",
-            "cta_label": "Learn more",
-            "cta_url": "/pages/materials",
-            "image_side": "auto"
+            "image_side": "left",
+            "eyebrow": "Material",
+            "heading": "Aluminum unibody.",
+            "body": "<p>Precision-machined from a single block. Light, strong, and built to last a decade.</p>",
+            "cta_label": "Explore the material",
+            "cta_url": "/pages/about"
           }
         },
         "row-2": {
           "type": "row",
           "settings": {
-            "eyebrow": "Craft",
-            "heading": "Made with hands you can name.",
-            "body": "<p>Manufactured in small runs across India. We meet our partners. We pay them fairly. We sign the work.</p>",
-            "cta_label": "Inside the workshop",
-            "cta_url": "/pages/craft",
-            "image_side": "auto"
+            "image_side": "right",
+            "eyebrow": "Engineered",
+            "heading": "Built to perform.",
+            "body": "<p>Tested in the conditions you actually live in. From your morning run to weekend escapes.</p>",
+            "cta_label": "See how it's made",
+            "cta_url": "/pages/about"
+          }
+        },
+        "row-3": {
+          "type": "row",
+          "settings": {
+            "image_side": "left",
+            "eyebrow": "Considered",
+            "heading": "Designed in detail.",
+            "body": "<p>Every edge, every curve, every weight balance — purposeful. Nothing accidental.</p>",
+            "cta_label": "Inside the studio",
+            "cta_url": "/pages/about"
           }
         }
       },
-      "block_order": ["row-1", "row-2"]
+      "block_order": ["row-1", "row-2", "row-3"]
     },
     "spotlight": {
       "type": "product-spotlight",
       "settings": {
-        "eyebrow": "Bestseller",
-        "heading": "Our most-loved piece.",
-        "body": "<p>Engineered for everyday wear, designed to feel like a staple. Free shipping above ₹999, GST invoice on request.</p>",
-        "cta_label": "Shop the product",
-        "show_features": true,
-        "bg": "surface"
-      },
-      "blocks": {
-        "f1": { "type": "feature", "settings": { "text": "Free shipping above ₹999" } },
-        "f2": { "type": "feature", "settings": { "text": "30-day returns, no questions" } },
-        "f3": { "type": "feature", "settings": { "text": "GST invoice on request" } }
-      },
-      "block_order": ["f1", "f2", "f3"]
+        "theme": "dark",
+        "eyebrow": "Now available",
+        "heading": "The flagship.",
+        "body": "<p>Refined. Considered. Ready.</p>",
+        "cta_label": "Shop now",
+        "cta_url": "shopify://collections/all"
+      }
     },
-    "bestsellers": {
+    "categories": {
       "type": "grid-collection",
       "settings": {
-        "eyebrow": "Shop",
-        "heading": "Bestsellers",
-        "product_limit": 8,
+        "theme": "light",
+        "render_type": "collection",
         "columns": "4",
-        "show_view_all": true,
-        "view_all_label": "View all",
-        "bg": "bg"
+        "eyebrow": "Shop by",
+        "heading": "Find your fit.",
+        "cta_label": "View all",
+        "cta_url": "shopify://collections/all"
+      },
+      "blocks": {
+        "c1": { "type": "collection_tile", "settings": { "label": "Best sellers"     } },
+        "c2": { "type": "collection_tile", "settings": { "label": "New arrivals"     } },
+        "c3": { "type": "collection_tile", "settings": { "label": "Trending now"     } },
+        "c4": { "type": "collection_tile", "settings": { "label": "Limited edition"  } }
+      },
+      "block_order": ["c1", "c2", "c3", "c4"]
+    },
+    "image-with-text": {
+      "type": "image-with-text",
+      "settings": {
+        "theme": "soft",
+        "image_side": "left",
+        "eyebrow": "Our story",
+        "heading": "Designed in India. Built for the world.",
+        "body": "<p>We started with a simple idea — world-class products don't need to come from elsewhere. We build here, with people we know, in materials we trust.</p>",
+        "cta_label": "Read the story",
+        "cta_url": "/pages/about"
       }
     },
     "testimonials": {
       "type": "testimonials",
       "settings": {
-        "eyebrow": "What customers say",
-        "heading": "Loved across India.",
-        "aggregate_rating": 5,
-        "review_count": 2847,
+        "theme": "light",
         "columns": "3",
-        "bg": "surface"
+        "eyebrow": "What people say",
+        "heading": "Loved by 50,000+ customers.",
+        "show_summary": true,
+        "rating": 4.9,
+        "count": "2,847 reviews"
       },
       "blocks": {
-        "t1": { "type": "testimonial", "settings": { "quote": "Outstanding quality. Worth every rupee.", "author": "Aanya R.", "location": "Mumbai", "rating": 5 } },
-        "t2": { "type": "testimonial", "settings": { "quote": "Quick delivery, beautifully packaged.", "author": "Vikram S.", "location": "Bengaluru", "rating": 5 } },
-        "t3": { "type": "testimonial", "settings": { "quote": "Lives up to the hype, and then some.", "author": "Priya M.", "location": "Delhi", "rating": 5 } }
+        "t1": { "type": "review", "settings": { "rating": 5, "quote": "<p>Best purchase I've made all year. Quality is unreal.</p>",         "author": "Anika R.", "location": "Mumbai"     } },
+        "t2": { "type": "review", "settings": { "rating": 5, "quote": "<p>Looks even better in person. Daily-driver material.</p>",        "author": "Rohan M.", "location": "Bengaluru"  } },
+        "t3": { "type": "review", "settings": { "rating": 5, "quote": "<p>Genuinely excited every time I use it. Worth every rupee.</p>",  "author": "Priya S.", "location": "Delhi"      } }
       },
       "block_order": ["t1", "t2", "t3"]
-    },
-    "marquee": {
-      "type": "marquee",
-      "settings": {
-        "heading": "As featured in",
-        "speed": 40,
-        "bg": "bg"
-      },
-      "blocks": {
-        "m1": { "type": "logo", "settings": { "text": "Vogue India" } },
-        "m2": { "type": "logo", "settings": { "text": "Forbes" } },
-        "m3": { "type": "logo", "settings": { "text": "GQ" } },
-        "m4": { "type": "logo", "settings": { "text": "Mint" } },
-        "m5": { "type": "logo", "settings": { "text": "Wired" } },
-        "m6": { "type": "logo", "settings": { "text": "Fast Company" } }
-      },
-      "block_order": ["m1", "m2", "m3", "m4", "m5", "m6"]
-    },
-    "image-with-text": {
-      "type": "image-with-text",
-      "settings": {
-        "eyebrow": "Our story",
-        "heading": "Designed in India. Built for the world.",
-        "body": "<p>We started Zelexto with a simple idea: world-class products don't need to come from elsewhere. We build here, with people we know, in materials we trust.</p>",
-        "cta_label": "Read the story",
-        "cta_url": "/pages/about",
-        "cta_style": "ghost",
-        "image_side": "right",
-        "bg": "bg"
-      }
     },
     "faq": {
       "type": "faq",
       "settings": {
-        "eyebrow": "Help",
-        "heading": "Frequently asked",
-        "bg": "surface"
+        "theme": "light",
+        "eyebrow": "Help center",
+        "heading": "Questions, answered."
       },
       "blocks": {
-        "q1": { "type": "qa", "settings": { "question": "When will my order arrive?",     "answer": "<p>Most orders ship within 24 hours and arrive in 3–7 business days.</p>" } },
-        "q2": { "type": "qa", "settings": { "question": "Do you accept Cash on Delivery?", "answer": "<p>Yes — COD is available across most pincodes in India. A small fee may apply.</p>" } },
-        "q3": { "type": "qa", "settings": { "question": "Can I get a GST invoice?",        "answer": "<p>Add your GSTIN at checkout and we’ll email a tax invoice.</p>" } },
-        "q4": { "type": "qa", "settings": { "question": "What is your return policy?",     "answer": "<p>30-day returns on unused items in original packaging.</p>" } }
+        "q1": { "type": "qa", "settings": { "question": "How long does shipping take?",     "answer": "<p>Standard delivery in 2–4 business days within India. Free over ₹999.</p>" } },
+        "q2": { "type": "qa", "settings": { "question": "What's your return policy?",       "answer": "<p>30-day returns on unused items. We'll arrange the pickup at no charge.</p>" } },
+        "q3": { "type": "qa", "settings": { "question": "Do you offer Cash on Delivery?",   "answer": "<p>Yes — COD is available on most pincodes in India. Enter your pincode on the product page to check.</p>" } },
+        "q4": { "type": "qa", "settings": { "question": "Can I pay via UPI / Razorpay?",   "answer": "<p>Absolutely. UPI, all major cards, RuPay, netbanking, and EMI are supported via Razorpay.</p>" } },
+        "q5": { "type": "qa", "settings": { "question": "Is partial payment available?",   "answer": "<p>Yes. Pay 20% now, the rest on delivery — available on orders above ₹999.</p>" } }
       },
-      "block_order": ["q1", "q2", "q3", "q4"]
+      "block_order": ["q1", "q2", "q3", "q4", "q5"]
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "theme": "dark",
+        "eyebrow": "Stay close",
+        "heading": "Be the first to know.",
+        "body": "<p>Drops, restocks, and stories — straight to your inbox.</p>",
+        "button_label": "Subscribe",
+        "fineprint": "<p>By subscribing you agree to our privacy policy. Unsubscribe anytime.</p>"
+      }
     }
   },
   "order": [
     "hero",
-    "feature-row-1",
-    "spotlight",
-    "bestsellers",
-    "testimonials",
     "marquee",
+    "feature-rows",
+    "spotlight",
+    "categories",
     "image-with-text",
-    "faq"
+    "testimonials",
+    "faq",
+    "newsletter"
   ]
 }

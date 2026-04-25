@@ -1,143 +1,159 @@
+{%- comment -%}
+  FAQ — accordion built with native <details>.
+{%- endcomment -%}
+
 {%- liquid
-  assign bg = section.settings.bg | default: 'bg'
+  assign theme = section.settings.theme | default: 'light'
 -%}
 
-<section class="faq faq--{{ bg }} section" data-section-id="{{ section.id }}">
-  <div class="container faq__container">
-    <header class="faq__header">
+<section class="faq faq--{{ theme }}" data-section-id="{{ section.id }}" itemscope itemtype="https://schema.org/FAQPage">
+  <div class="container faq__inner">
+    <header class="faq__header" data-reveal="up">
       {%- if section.settings.eyebrow != blank -%}
         <p class="faq__eyebrow">{{ section.settings.eyebrow }}</p>
       {%- endif -%}
       {%- if section.settings.heading != blank -%}
         <h2 class="faq__heading">{{ section.settings.heading }}</h2>
       {%- endif -%}
-      {%- if section.settings.subheading != blank -%}
-        <p class="faq__sub">{{ section.settings.subheading }}</p>
-      {%- endif -%}
     </header>
 
-    <div class="faq__list" itemscope itemtype="https://schema.org/FAQPage">
+    <div class="faq__list" data-stagger>
       {%- for block in section.blocks -%}
-        {%- if block.type == 'qa' -%}
-          <details
-            class="faq__item"
-            itemscope
-            itemprop="mainEntity"
-            itemtype="https://schema.org/Question"
-            {{ block.shopify_attributes }}
-            {% if block.settings.open_by_default %}open{% endif %}>
-            <summary class="faq__question" itemprop="name">
-              <span>{{ block.settings.question }}</span>
-              <span class="faq__icon" aria-hidden="true">
-                <span class="faq__icon-bar"></span>
-                <span class="faq__icon-bar"></span>
-              </span>
-            </summary>
-            <div
-              class="faq__answer"
-              itemscope
-              itemprop="acceptedAnswer"
-              itemtype="https://schema.org/Answer">
-              <div itemprop="text">{{ block.settings.answer }}</div>
-            </div>
-          </details>
-        {%- endif -%}
+        <details class="faq__item" data-reveal="up" {{ block.shopify_attributes }} itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <summary class="faq__summary">
+            <span itemprop="name">{{ block.settings.question }}</span>
+            <span class="faq__icon" aria-hidden="true">
+              {%- render 'icon', name: 'plus', class: 'icon faq__icon-plus' -%}
+              {%- render 'icon', name: 'minus', class: 'icon faq__icon-minus' -%}
+            </span>
+          </summary>
+          <div class="faq__answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <div itemprop="text">{{ block.settings.answer }}</div>
+          </div>
+        </details>
       {%- endfor -%}
     </div>
   </div>
 </section>
 
 <style>
-  #shopify-section-{{ section.id }} .faq--bg{background:var(--c-bg)}
-  #shopify-section-{{ section.id }} .faq--surface{background:var(--c-surface)}
-  #shopify-section-{{ section.id }} .faq--elev{background:var(--c-elev)}
+  #shopify-section-{{ section.id }} { display: block; }
 
-  #shopify-section-{{ section.id }} .faq__container{max-width:880px}
-  #shopify-section-{{ section.id }} .faq__header{margin-bottom:var(--s-7);text-align:center}
-  #shopify-section-{{ section.id }} .faq__eyebrow{
-    font-size:var(--fs-14);font-weight:var(--weight-medium);
-    letter-spacing:.04em;text-transform:uppercase;
-    color:var(--c-ink-muted);margin-bottom:var(--s-2);
+  .faq {
+    padding-block: clamp(var(--s-9), 12vh, var(--s-10));
+    background: var(--c-bg);
+    color: var(--c-ink);
   }
-  #shopify-section-{{ section.id }} .faq__heading{
-    font-size:clamp(var(--fs-28), 4vw, var(--fs-56));
-    line-height:var(--lh-snug);
+  .faq--soft { background: var(--c-surface); }
+  .faq--dark { background: var(--c-bg-inv); color: var(--c-ink-inv); }
+
+  .faq__inner { max-width: 880px; margin-inline: auto; }
+
+  .faq__header { text-align: center; margin-bottom: var(--s-9); }
+  .faq__eyebrow {
+    margin: 0 0 var(--s-3);
+    font-size: var(--fs-14);
+    font-weight: var(--weight-medium);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
   }
-  #shopify-section-{{ section.id }} .faq__sub{
-    margin-top:var(--s-3);color:var(--c-ink-muted);font-size:var(--fs-19);
+  .faq--dark .faq__eyebrow { color: var(--c-ink-muted-inv); }
+  .faq__heading {
+    margin: 0;
+    font-size: clamp(var(--fs-28), 4vw, var(--fs-56));
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.022em;
+    line-height: 1.06;
   }
 
-  #shopify-section-{{ section.id }} .faq__list{display:flex;flex-direction:column;gap:0}
-  #shopify-section-{{ section.id }} .faq__item{
-    border-top:1px solid var(--c-line);padding:var(--s-5) 0;
+  .faq__list { display: flex; flex-direction: column; }
+
+  .faq__item {
+    border-bottom: 1px solid var(--c-line);
   }
-  #shopify-section-{{ section.id }} .faq__item:last-child{border-bottom:1px solid var(--c-line)}
-  #shopify-section-{{ section.id }} .faq__question{
-    display:flex;align-items:center;justify-content:space-between;
-    gap:var(--s-4);
-    font-size:var(--fs-19);font-weight:var(--weight-medium);
-    cursor:pointer;list-style:none;
-    color:var(--c-ink);min-height:48px;
+  .faq--dark .faq__item { border-color: var(--c-line-inv); }
+
+  .faq__summary {
+    list-style: none;
+    cursor: pointer;
+    padding-block: var(--s-5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--s-4);
+    font-size: var(--fs-19);
+    font-weight: var(--weight-medium);
+    line-height: 1.4;
+    transition: color var(--dur-fast) var(--ease-soft);
   }
-  #shopify-section-{{ section.id }} .faq__question::-webkit-details-marker{display:none}
-  #shopify-section-{{ section.id }} .faq__icon{
-    position:relative;width:18px;height:18px;flex-shrink:0;
+  .faq__summary::-webkit-details-marker { display: none; }
+  .faq__summary:hover { color: var(--c-ink-muted); }
+  .faq--dark .faq__summary:hover { color: var(--c-ink-muted-inv); }
+
+  .faq__icon {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
   }
-  #shopify-section-{{ section.id }} .faq__icon-bar{
-    position:absolute;left:50%;top:50%;width:18px;height:2px;
-    background:var(--c-ink);border-radius:1px;
-    transition:transform var(--dur-fast) var(--ease-standard);
+  .faq__icon .icon { position: absolute; inset: 0; transition: opacity var(--dur-fast) var(--ease-soft), transform var(--dur-base) var(--ease-apple); }
+  .faq__icon-minus { opacity: 0; transform: scale(0.6); }
+  .faq__item[open] .faq__icon-plus  { opacity: 0; transform: scale(0.6); }
+  .faq__item[open] .faq__icon-minus { opacity: 1; transform: scale(1); }
+
+  .faq__answer {
+    padding-bottom: var(--s-5);
+    color: var(--c-ink-muted);
+    font-size: var(--fs-16);
+    line-height: 1.6;
+    max-width: 70ch;
   }
-  #shopify-section-{{ section.id }} .faq__icon-bar:nth-child(1){transform:translate(-50%,-50%)}
-  #shopify-section-{{ section.id }} .faq__icon-bar:nth-child(2){transform:translate(-50%,-50%) rotate(90deg)}
-  #shopify-section-{{ section.id }} details[open] .faq__icon-bar:nth-child(2){transform:translate(-50%,-50%) rotate(0deg)}
-  #shopify-section-{{ section.id }} .faq__answer{
-    margin-top:var(--s-3);font-size:var(--fs-16);
-    color:var(--c-ink-muted);line-height:var(--lh-body);
-    max-width:72ch;
+  .faq--dark .faq__answer { color: var(--c-ink-muted-inv); }
+
+  /* Smooth reveal of answer */
+  .faq__item[open] .faq__answer { animation: faq-open var(--dur-base) var(--ease-apple); }
+  @keyframes faq-open {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
-  #shopify-section-{{ section.id }} .faq__answer p{margin:0 0 var(--s-3)}
-  #shopify-section-{{ section.id }} .faq__answer p:last-child{margin:0}
+  @media (prefers-reduced-motion: reduce) {
+    .faq__item[open] .faq__answer { animation: none; }
+  }
 </style>
 
 {% schema %}
 {
   "name": "FAQ",
-  "tag": "section",
   "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Help" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Frequently asked questions" },
-    { "type": "textarea", "id": "subheading", "label": "Subheading" },
-    {
-      "type": "select", "id": "bg", "label": "Background",
+    { "type": "select", "id": "theme", "label": "Theme",
       "options": [
-        { "value": "bg",      "label": "White" },
-        { "value": "surface", "label": "Surface" },
-        { "value": "elev",    "label": "Elevated" }
-      ],
-      "default": "bg"
-    }
+        { "value": "light", "label": "Light" },
+        { "value": "soft",  "label": "Soft" },
+        { "value": "dark",  "label": "Dark" }
+      ], "default": "light" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Frequently asked" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Questions, answered." }
   ],
   "blocks": [
     {
       "type": "qa",
       "name": "Question",
       "settings": [
-        { "type": "text", "id": "question", "label": "Question", "default": "What is your shipping policy?" },
-        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>We deliver across India in 3–7 business days. Free shipping on orders over ₹999.</p>" },
-        { "type": "checkbox", "id": "open_by_default", "label": "Open by default", "default": false }
+        { "type": "text",     "id": "question", "label": "Question", "default": "How long does shipping take?" },
+        { "type": "richtext", "id": "answer",   "label": "Answer",   "default": "<p>Standard delivery in 2–4 business days within India. Free over ₹999.</p>" }
       ]
     }
   ],
-  "max_blocks": 24,
   "presets": [
     {
       "name": "FAQ",
       "blocks": [
-        { "type": "qa", "settings": { "question": "When will my order arrive?",          "answer": "<p>Most orders ship within 24 hours and arrive in 3–7 business days.</p>" } },
-        { "type": "qa", "settings": { "question": "Do you accept Cash on Delivery?",      "answer": "<p>Yes — COD is available across most pincodes in India. A small fee may apply.</p>" } },
-        { "type": "qa", "settings": { "question": "Can I get a GST invoice?",             "answer": "<p>Absolutely. Add your GSTIN at checkout and we’ll email a tax invoice.</p>" } },
-        { "type": "qa", "settings": { "question": "What is your return policy?",          "answer": "<p>30-day returns on unused items in original packaging. Refunds in 5–7 business days.</p>" } }
+        { "type": "qa", "settings": { "question": "How long does shipping take?",         "answer": "<p>Standard delivery in 2–4 business days within India. Free over ₹999.</p>" } },
+        { "type": "qa", "settings": { "question": "What's your return policy?",           "answer": "<p>30-day returns on unused items. We'll arrange the pickup at no charge.</p>" } },
+        { "type": "qa", "settings": { "question": "Do you offer Cash on Delivery?",      "answer": "<p>Yes — COD is available on most pincodes in India. Enter your pincode on the product page to check.</p>" } },
+        { "type": "qa", "settings": { "question": "Can I pay via UPI / Razorpay?",       "answer": "<p>Absolutely. UPI, all major cards, RuPay, netbanking, and EMI are supported via Razorpay.</p>" } },
+        { "type": "qa", "settings": { "question": "Is partial payment available?",      "answer": "<p>Yes. Pay 20% now, the rest on delivery — available on orders above ₹999.</p>" } }
       ]
     }
   ]

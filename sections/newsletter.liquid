@@ -1,130 +1,177 @@
+{%- comment -%}
+  Newsletter — large, centred email-capture block.
+{%- endcomment -%}
+
 {%- liquid
-  assign bg = section.settings.background | default: 'elev'
+  assign theme = section.settings.theme | default: 'dark'
 -%}
 
-<section class="newsletter newsletter--{{ bg }} section" data-section-id="{{ section.id }}">
-  <div class="container newsletter__container">
+<section class="newsletter newsletter--{{ theme }}" data-section-id="{{ section.id }}">
+  <div class="container newsletter__inner" data-stagger>
     {%- if section.settings.eyebrow != blank -%}
-      <p class="newsletter__eyebrow">{{ section.settings.eyebrow }}</p>
+      <p class="newsletter__eyebrow" data-reveal="up">{{ section.settings.eyebrow }}</p>
     {%- endif -%}
     {%- if section.settings.heading != blank -%}
-      <h2 class="newsletter__heading">{{ section.settings.heading }}</h2>
+      <h2 class="newsletter__heading" data-reveal="up">{{ section.settings.heading }}</h2>
     {%- endif -%}
     {%- if section.settings.body != blank -%}
-      <p class="newsletter__body">{{ section.settings.body }}</p>
+      <div class="newsletter__body" data-reveal="up">{{ section.settings.body }}</div>
     {%- endif -%}
 
+    <div data-reveal="up" class="newsletter__form-wrap">
     {%- form 'customer', class: 'newsletter__form' -%}
       <input type="hidden" name="contact[tags]" value="newsletter">
-      <input type="hidden" name="contact[accepts_marketing]" value="true">
-
+      <label class="sr-only" for="newsletter-email-{{ section.id }}">{{ 'newsletter.placeholder' | t }}</label>
       <div class="newsletter__field">
-        <label class="sr-only" for="newsletter-{{ section.id }}-email">{{ section.settings.placeholder | default: 'Email address' }}</label>
         <input
           type="email"
-          id="newsletter-{{ section.id }}-email"
           name="contact[email]"
+          id="newsletter-email-{{ section.id }}"
           class="newsletter__input"
-          placeholder="{{ section.settings.placeholder | default: 'Email address' }}"
-          autocomplete="email"
+          placeholder="{{ 'newsletter.placeholder' | t }}"
           required
-          aria-required="true">
-        <button type="submit" class="btn btn--primary newsletter__submit">
-          {{ section.settings.submit_label | default: 'Subscribe' }}
+          autocomplete="email"
+        >
+        <button type="submit" class="newsletter__submit btn btn--primary">
+          <span>{{ section.settings.button_label | default: 'newsletter.submit' | t }}</span>
+          {%- render 'icon', name: 'arrow-right', class: 'icon icon--sm' -%}
         </button>
       </div>
 
-      {%- if form.errors -%}
-        <p class="newsletter__error" role="alert">{{ form.errors | default_errors }}</p>
-      {%- endif -%}
       {%- if form.posted_successfully? -%}
-        <p class="newsletter__success" role="status">{{ section.settings.success_message | default: 'Thanks for subscribing.' }}</p>
-      {%- endif -%}
-
-      {%- if section.settings.disclaimer != blank -%}
-        <p class="newsletter__disclaimer">{{ section.settings.disclaimer }}</p>
+        <p class="newsletter__success" role="status">{{ 'newsletter.success' | t }}</p>
+      {%- elsif form.errors -%}
+        <p class="newsletter__error" role="alert">{{ 'newsletter.error' | t }}</p>
       {%- endif -%}
     {%- endform -%}
+    </div>
+
+    {%- if section.settings.fineprint != blank -%}
+      <p class="newsletter__fineprint" data-reveal="up">{{ section.settings.fineprint }}</p>
+    {%- endif -%}
   </div>
 </section>
 
 <style>
-  #shopify-section-{{ section.id }} .newsletter--bg{background:var(--c-bg)}
-  #shopify-section-{{ section.id }} .newsletter--surface{background:var(--c-surface)}
-  #shopify-section-{{ section.id }} .newsletter--elev{background:var(--c-elev)}
-  #shopify-section-{{ section.id }} .newsletter--ink{background:var(--c-ink);color:var(--c-bg)}
+  #shopify-section-{{ section.id }} { display: block; }
 
-  #shopify-section-{{ section.id }} .newsletter__container{
-    max-width:680px;text-align:center;
+  .newsletter {
+    padding-block: clamp(var(--s-9), 14vh, var(--s-10));
+    background: var(--c-bg);
+    color: var(--c-ink);
   }
-  #shopify-section-{{ section.id }} .newsletter__eyebrow{
-    font-size:var(--fs-14);font-weight:var(--weight-medium);
-    letter-spacing:.04em;text-transform:uppercase;
-    color:var(--c-ink-muted);margin-bottom:var(--s-2);
-  }
-  #shopify-section-{{ section.id }} .newsletter--ink .newsletter__eyebrow{color:rgba(255,255,255,.7)}
-  #shopify-section-{{ section.id }} .newsletter__heading{
-    font-size:clamp(var(--fs-28), 4vw, var(--fs-56));
-    line-height:var(--lh-snug);
-  }
-  #shopify-section-{{ section.id }} .newsletter__body{
-    margin-top:var(--s-3);font-size:var(--fs-19);
-    color:var(--c-ink-muted);max-width:60ch;margin-inline:auto;
-  }
-  #shopify-section-{{ section.id }} .newsletter--ink .newsletter__body{color:rgba(255,255,255,.78)}
+  .newsletter--soft { background: var(--c-surface); }
+  .newsletter--dark { background: var(--c-bg-inv); color: var(--c-ink-inv); }
 
-  #shopify-section-{{ section.id }} .newsletter__form{margin-top:var(--s-5)}
-  #shopify-section-{{ section.id }} .newsletter__field{
-    display:flex;gap:var(--s-2);
-    background:var(--c-bg);border:1px solid var(--c-line);
-    border-radius:var(--radius-pill);padding:var(--s-1);
-    max-width:480px;margin-inline:auto;
+  .newsletter__inner {
+    max-width: 720px;
+    margin-inline: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+    align-items: center;
   }
-  #shopify-section-{{ section.id }} .newsletter--ink .newsletter__field{
-    background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);
+  .newsletter__eyebrow {
+    margin: 0;
+    font-size: var(--fs-14);
+    font-weight: var(--weight-medium);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
   }
-  #shopify-section-{{ section.id }} .newsletter__input{
-    flex:1;background:transparent;border:0;outline:none;
-    padding:var(--s-2) var(--s-4);min-height:44px;
-    font-size:var(--fs-16);color:inherit;
+  .newsletter--dark .newsletter__eyebrow { color: var(--c-ink-muted-inv); }
+  .newsletter__heading {
+    margin: 0;
+    font-size: clamp(var(--fs-28), 4vw, var(--fs-56));
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.022em;
+    line-height: 1.06;
+    max-width: 22ch;
   }
-  #shopify-section-{{ section.id }} .newsletter__submit{flex-shrink:0}
-  #shopify-section-{{ section.id }} .newsletter__error{
-    color:var(--c-danger);font-size:var(--fs-14);margin-top:var(--s-3);
+  .newsletter__body {
+    margin: 0;
+    color: var(--c-ink-muted);
+    font-size: var(--fs-19);
+    line-height: 1.5;
+    max-width: 56ch;
   }
-  #shopify-section-{{ section.id }} .newsletter__success{
-    color:var(--c-success);font-size:var(--fs-14);margin-top:var(--s-3);
+  .newsletter--dark .newsletter__body { color: var(--c-ink-muted-inv); }
+
+  .newsletter__form {
+    width: 100%;
+    max-width: 520px;
+    margin-top: var(--s-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
   }
-  #shopify-section-{{ section.id }} .newsletter__disclaimer{
-    margin-top:var(--s-3);font-size:var(--fs-12);
-    color:var(--c-ink-muted);
+  .newsletter__field {
+    display: flex;
+    background: var(--c-bg);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+    transition: border-color var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
   }
-  #shopify-section-{{ section.id }} .newsletter--ink .newsletter__disclaimer{color:rgba(255,255,255,.6)}
+  .newsletter--dark .newsletter__field { background: var(--c-elev-inv); border-color: var(--c-line-inv); }
+  .newsletter__field:focus-within {
+    border-color: var(--c-ink);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--c-ink) 10%, transparent);
+  }
+  .newsletter--dark .newsletter__field:focus-within {
+    border-color: var(--c-ink-inv);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--c-ink-inv) 18%, transparent);
+  }
+  .newsletter__input {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    padding: 0 var(--s-5);
+    height: 56px;
+    font-size: var(--fs-16);
+    color: inherit;
+  }
+  .newsletter__input::placeholder { color: var(--c-ink-muted); }
+  .newsletter__input:focus { outline: none; }
+  .newsletter__submit {
+    border-radius: 0;
+    padding-inline: var(--s-5);
+    margin: 4px;
+    border-radius: var(--radius-pill);
+  }
+  .newsletter--dark .btn--primary { background: #fff; color: #000; }
+  .newsletter--dark .btn--primary:hover { background: #e8e8ed; }
+
+  .newsletter__success { color: var(--c-success); font-weight: var(--weight-medium); }
+  .newsletter__error   { color: var(--c-danger);  font-weight: var(--weight-medium); }
+  .newsletter__fineprint {
+    margin: var(--s-2) 0 0;
+    font-size: var(--fs-14);
+    color: var(--c-ink-muted);
+  }
+  .newsletter--dark .newsletter__fineprint { color: var(--c-ink-muted-inv); }
 </style>
 
 {% schema %}
 {
   "name": "Newsletter",
-  "tag": "section",
   "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Stay in touch" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Be first to know." },
-    { "type": "textarea", "id": "body", "label": "Body", "default": "Subscribe for early access to new launches, members-only offers and the occasional well-written email." },
-    { "type": "text", "id": "placeholder", "label": "Input placeholder", "default": "Email address" },
-    { "type": "text", "id": "submit_label", "label": "Submit label", "default": "Subscribe" },
-    { "type": "text", "id": "success_message", "label": "Success message", "default": "Thanks — check your inbox." },
-    { "type": "richtext", "id": "disclaimer", "label": "Disclaimer", "default": "<p>By subscribing you agree to receive marketing emails. Unsubscribe anytime.</p>" },
-    {
-      "type": "select", "id": "background", "label": "Background",
+    { "type": "select", "id": "theme", "label": "Theme",
       "options": [
-        { "value": "bg",      "label": "White" },
-        { "value": "surface", "label": "Surface" },
-        { "value": "elev",    "label": "Elevated" },
-        { "value": "ink",     "label": "Dark" }
-      ],
-      "default": "elev"
-    }
+        { "value": "light", "label": "Light" },
+        { "value": "soft",  "label": "Soft" },
+        { "value": "dark",  "label": "Dark" }
+      ], "default": "dark" },
+    { "type": "text",     "id": "eyebrow", "label": "Eyebrow", "default": "Stay close" },
+    { "type": "text",     "id": "heading", "label": "Heading", "default": "Be the first to know." },
+    { "type": "richtext", "id": "body",    "label": "Body",    "default": "<p>Drops, restocks, and stories — straight to your inbox.</p>" },
+    { "type": "text",     "id": "button_label", "label": "Button label", "default": "Subscribe" },
+    { "type": "richtext", "id": "fineprint", "label": "Fine print",
+      "default": "<p>By subscribing you agree to our privacy policy. Unsubscribe anytime.</p>" }
   ],
-  "presets": [{ "name": "Newsletter" }]
+  "presets": [
+    { "name": "Newsletter" }
+  ]
 }
 {% endschema %}

@@ -1,72 +1,83 @@
+{%- comment -%}
+  Feature row — alternating image/text rows.
+
+  - Each block: optional eyebrow, heading, body, CTA, image
+  - Auto-alternates image side per row (override per block)
+  - Light or dark theme per section
+  - Smooth scroll reveals on copy + image
+{%- endcomment -%}
+
 {%- liquid
-  assign bg = section.settings.bg | default: 'bg'
+  assign theme = section.settings.theme | default: 'light'
 -%}
 
-<section class="feature-row feature-row--{{ bg }} section" data-section-id="{{ section.id }}">
+<section class="feature-rows feature-rows--{{ theme }}" data-section-id="{{ section.id }}">
   <div class="container">
-    {%- if section.settings.heading != blank or section.settings.eyebrow != blank -%}
-      <header class="feature-row__header">
-        {%- if section.settings.eyebrow != blank -%}
-          <p class="feature-row__eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- if section.settings.section_heading != blank -%}
+      <header class="feature-rows__header" data-reveal="up">
+        {%- if section.settings.section_eyebrow != blank -%}
+          <p class="feature-rows__eyebrow">{{ section.settings.section_eyebrow }}</p>
         {%- endif -%}
-        {%- if section.settings.heading != blank -%}
-          <h2 class="feature-row__heading">{{ section.settings.heading }}</h2>
-        {%- endif -%}
-        {%- if section.settings.subheading != blank -%}
-          <p class="feature-row__subheading">{{ section.settings.subheading }}</p>
-        {%- endif -%}
+        <h2 class="feature-rows__heading">{{ section.settings.section_heading }}</h2>
       </header>
     {%- endif -%}
 
-    <div class="feature-row__list">
+    <div class="feature-rows__list">
       {%- for block in section.blocks -%}
         {%- liquid
-          assign reverse = forloop.index | modulo: 2 | minus: 1 | abs
-          assign image_side = block.settings.image_side
-          if image_side == 'auto'
-            if reverse == 0
-              assign image_side = 'left'
+          assign side_setting = block.settings.image_side | default: 'auto'
+          assign side = side_setting
+          if side_setting == 'auto'
+            assign mod = forloop.index | modulo: 2
+            if mod == 0
+              assign side = 'right'
             else
-              assign image_side = 'right'
+              assign side = 'left'
             endif
           endif
         -%}
         <article
-          class="feature-row__item feature-row__item--image-{{ image_side }}"
-          {{ block.shopify_attributes }}>
-
-          <div class="feature-row__media">
+          class="feature-row feature-row--image-{{ side }}"
+          data-block-id="{{ block.id }}"
+          {{ block.shopify_attributes }}
+        >
+          <div class="feature-row__media zoomable" data-reveal="{% if side == 'left' %}left{% else %}right{% endif %}">
             {%- if block.settings.image != blank -%}
-              <div class="aspect aspect--4/3">
-                {%- render 'responsive-image',
+              {%- render 'responsive-image',
                   image: block.settings.image,
-                  alt: block.settings.image.alt | default: block.settings.heading,
-                  sizes: '(min-width: 769px) 50vw, 100vw',
-                  loading: 'lazy'
-                -%}
-              </div>
+                  alt: block.settings.heading,
+                  sizes: '(min-width: 990px) 50vw, 100vw',
+                  widths: '480,750,900,1100,1400,1800',
+                  loading: 'lazy',
+                  aspect_ratio: '4/5',
+                  class: 'feature-row__image' -%}
             {%- else -%}
-              <div class="aspect aspect--4/3 feature-row__placeholder" aria-hidden="true">
-                {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              <div class="feature-row__image-wrap">
+                {%- render 'demo-image', kind: 'lifestyle', class: 'feature-row__image' -%}
               </div>
             {%- endif -%}
           </div>
 
-          <div class="feature-row__body">
-            {%- if block.settings.eyebrow != blank -%}
-              <p class="feature-row__item-eyebrow">{{ block.settings.eyebrow }}</p>
-            {%- endif -%}
-            {%- if block.settings.heading != blank -%}
-              <h3 class="feature-row__item-heading">{{ block.settings.heading }}</h3>
-            {%- endif -%}
-            {%- if block.settings.body != blank -%}
-              <div class="feature-row__item-body">{{ block.settings.body }}</div>
-            {%- endif -%}
-            {%- if block.settings.cta_label != blank -%}
-              <a href="{{ block.settings.cta_url | default: '#' }}" class="feature-row__cta">
-                {{ block.settings.cta_label }} {%- render 'icon', name: 'arrow-right', class: 'icon icon--xs' -%}
-              </a>
-            {%- endif -%}
+          <div class="feature-row__content">
+            <div class="feature-row__copy" data-stagger>
+              {%- if block.settings.eyebrow != blank -%}
+                <p class="feature-row__eyebrow" data-reveal="up">{{ block.settings.eyebrow }}</p>
+              {%- endif -%}
+              {%- if block.settings.heading != blank -%}
+                <h3 class="feature-row__heading" data-reveal="up">{{ block.settings.heading }}</h3>
+              {%- endif -%}
+              {%- if block.settings.body != blank -%}
+                <div class="feature-row__body" data-reveal="up">{{ block.settings.body }}</div>
+              {%- endif -%}
+              {%- if block.settings.cta_label != blank -%}
+                <div class="feature-row__cta-wrap" data-reveal="up">
+                  <a href="{{ block.settings.cta_url | default: '#' }}" class="feature-row__cta">
+                    {{ block.settings.cta_label }}
+                    {%- render 'icon', name: 'arrow-right', class: 'icon icon--sm' -%}
+                  </a>
+                </div>
+              {%- endif -%}
+            </div>
           </div>
         </article>
       {%- endfor -%}
@@ -75,97 +86,130 @@
 </section>
 
 <style>
-  #shopify-section-{{ section.id }} .feature-row--bg{background:var(--c-bg);color:var(--c-ink)}
-  #shopify-section-{{ section.id }} .feature-row--surface{background:var(--c-surface);color:var(--c-ink)}
-  #shopify-section-{{ section.id }} .feature-row--elev{background:var(--c-elev);color:var(--c-ink)}
-  #shopify-section-{{ section.id }} .feature-row--ink{background:var(--c-ink);color:var(--c-bg)}
+  #shopify-section-{{ section.id }} { display: block; }
 
-  #shopify-section-{{ section.id }} .feature-row__header{
-    max-width:760px;margin:0 auto var(--s-7);text-align:center;
+  .feature-rows {
+    padding-block: clamp(var(--s-9), 12vh, var(--s-10));
+    color: var(--c-ink);
+    background: var(--c-bg);
   }
-  #shopify-section-{{ section.id }} .feature-row__eyebrow{
-    font-size:var(--fs-14);font-weight:var(--weight-medium);
-    letter-spacing:.04em;text-transform:uppercase;
-    color:var(--c-ink-muted);margin-bottom:var(--s-2);
-  }
-  #shopify-section-{{ section.id }} .feature-row--ink .feature-row__eyebrow{color:rgba(255,255,255,.7)}
-  #shopify-section-{{ section.id }} .feature-row__heading{
-    font-size:clamp(var(--fs-28), 4vw, var(--fs-56));
-    line-height:var(--lh-snug);
-  }
-  #shopify-section-{{ section.id }} .feature-row__subheading{
-    margin-top:var(--s-3);font-size:var(--fs-19);color:var(--c-ink-muted);
-  }
-  #shopify-section-{{ section.id }} .feature-row--ink .feature-row__subheading{color:rgba(255,255,255,.7)}
+  .feature-rows--soft { background: var(--c-surface); }
+  .feature-rows--dark { color: var(--c-ink-inv); background: var(--c-bg-inv); }
 
-  #shopify-section-{{ section.id }} .feature-row__list{display:grid;gap:var(--s-8)}
-
-  #shopify-section-{{ section.id }} .feature-row__item{
-    display:grid;grid-template-columns:1fr 1fr;
-    gap:clamp(var(--s-5), 6vw, var(--s-8));
-    align-items:center;
+  .feature-rows__header {
+    max-width: 760px;
+    margin: 0 auto var(--s-9);
+    text-align: center;
   }
-  #shopify-section-{{ section.id }} .feature-row__item--image-right .feature-row__media{order:2}
-  #shopify-section-{{ section.id }} .feature-row__item--image-right .feature-row__body{order:1}
+  .feature-rows__eyebrow {
+    margin: 0 0 var(--s-3);
+    font-size: var(--fs-14);
+    font-weight: var(--weight-medium);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+  .feature-rows--dark .feature-rows__eyebrow { color: var(--c-ink-muted-inv); }
+  .feature-rows__heading {
+    margin: 0;
+    font-size: clamp(var(--fs-28), 4vw, var(--fs-56));
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.022em;
+    line-height: 1.08;
+  }
 
-  @media (max-width: 768px){
-    #shopify-section-{{ section.id }} .feature-row__item,
-    #shopify-section-{{ section.id }} .feature-row__item--image-right{
-      grid-template-columns:1fr;
+  .feature-rows__list {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(var(--s-9), 12vh, var(--s-10));
+  }
+  .feature-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--s-7);
+    align-items: center;
+  }
+  @media (min-width: 990px) {
+    .feature-row {
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(var(--s-7), 6vw, var(--s-9));
     }
-    #shopify-section-{{ section.id }} .feature-row__item--image-right .feature-row__media{order:0}
-    #shopify-section-{{ section.id }} .feature-row__item--image-right .feature-row__body{order:0}
+    .feature-row--image-right .feature-row__media   { order: 2; }
+    .feature-row--image-right .feature-row__content { order: 1; }
   }
 
-  #shopify-section-{{ section.id }} .feature-row__media{border-radius:var(--radius-lg);overflow:hidden}
-  #shopify-section-{{ section.id }} .feature-row__placeholder{background:var(--c-elev);color:var(--c-ink-muted)}
-  #shopify-section-{{ section.id }} .feature-row__placeholder svg{width:100%;height:100%}
+  .feature-row__media {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--c-elev);
+  }
+  .feature-row__image-wrap { aspect-ratio: 4 / 5; }
+  .feature-row__media svg,
+  .feature-row__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  #shopify-section-{{ section.id }} .feature-row__item-eyebrow{
-    font-size:var(--fs-12);font-weight:var(--weight-medium);
-    letter-spacing:.06em;text-transform:uppercase;
-    color:var(--c-ink-muted);margin-bottom:var(--s-2);
+  .feature-row__copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+    max-width: 52ch;
   }
-  #shopify-section-{{ section.id }} .feature-row__item-heading{
-    font-size:clamp(var(--fs-21), 3vw, var(--fs-40));
-    line-height:var(--lh-snug);margin-bottom:var(--s-3);
+  .feature-row__eyebrow {
+    margin: 0;
+    font-size: var(--fs-14);
+    font-weight: var(--weight-medium);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
   }
-  #shopify-section-{{ section.id }} .feature-row__item-body{
-    font-size:var(--fs-16);line-height:var(--lh-body);
-    color:var(--c-ink-muted);max-width:60ch;
+  .feature-rows--dark .feature-row__eyebrow { color: var(--c-ink-muted-inv); }
+  .feature-row__heading {
+    margin: 0;
+    font-size: clamp(var(--fs-28), 3vw, var(--fs-40));
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.018em;
+    line-height: 1.1;
   }
-  #shopify-section-{{ section.id }} .feature-row--ink .feature-row__item-body,
-  #shopify-section-{{ section.id }} .feature-row--ink .feature-row__item-eyebrow{color:rgba(255,255,255,.78)}
-  #shopify-section-{{ section.id }} .feature-row__item-body p{margin:0 0 var(--s-3)}
-  #shopify-section-{{ section.id }} .feature-row__item-body p:last-child{margin:0}
-
-  #shopify-section-{{ section.id }} .feature-row__cta{
-    display:inline-flex;align-items:center;gap:var(--s-1);
-    margin-top:var(--s-4);
-    color:var(--c-accent);font-weight:var(--weight-medium);
+  .feature-row__body {
+    font-size: var(--fs-19);
+    line-height: 1.5;
+    color: var(--c-ink-muted);
   }
-  #shopify-section-{{ section.id }} .feature-row__cta:hover{text-decoration:underline}
-  #shopify-section-{{ section.id }} .feature-row--ink .feature-row__cta{color:#fff}
+  .feature-rows--dark .feature-row__body { color: var(--c-ink-muted-inv); }
+  .feature-row__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    font-size: var(--fs-16);
+    font-weight: var(--weight-medium);
+    color: inherit;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 2px;
+    align-self: flex-start;
+    transition: opacity var(--dur-fast) var(--ease-soft);
+  }
+  .feature-row__cta:hover { opacity: 0.7; }
+  .feature-row__cta .icon { transition: transform var(--dur-base) var(--ease-apple); }
+  .feature-row__cta:hover .icon { transform: translateX(4px); }
 </style>
 
 {% schema %}
 {
   "name": "Feature row",
-  "tag": "section",
   "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Built better, on purpose." },
-    { "type": "textarea", "id": "subheading", "label": "Subheading" },
     {
-      "type": "select", "id": "bg", "label": "Background",
+      "type": "select",
+      "id": "theme",
+      "label": "Theme",
       "options": [
-        { "value": "bg",      "label": "White" },
-        { "value": "surface", "label": "Surface" },
-        { "value": "elev",    "label": "Elevated" },
-        { "value": "ink",     "label": "Dark" }
+        { "value": "light", "label": "Light" },
+        { "value": "soft",  "label": "Soft (off-white)" },
+        { "value": "dark",  "label": "Dark" }
       ],
-      "default": "bg"
-    }
+      "default": "light"
+    },
+    { "type": "header", "content": "Section header (optional)" },
+    { "type": "text", "id": "section_eyebrow", "label": "Eyebrow", "default": "Built different" },
+    { "type": "text", "id": "section_heading", "label": "Heading", "default": "Premium materials. Made for everyday." }
   ],
   "blocks": [
     {
@@ -173,30 +217,32 @@
       "name": "Row",
       "settings": [
         { "type": "image_picker", "id": "image", "label": "Image" },
-        { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
-        { "type": "text", "id": "heading", "label": "Heading", "default": "Made with care." },
-        { "type": "richtext", "id": "body", "label": "Body", "default": "<p>Tell the story behind this section. Use simple, generous copy.</p>" },
-        { "type": "text", "id": "cta_label", "label": "CTA label" },
-        { "type": "url",  "id": "cta_url",   "label": "CTA link" },
         {
-          "type": "select", "id": "image_side", "label": "Image position",
+          "type": "select",
+          "id": "image_side",
+          "label": "Image side",
           "options": [
             { "value": "auto",  "label": "Auto-alternate" },
             { "value": "left",  "label": "Left" },
             { "value": "right", "label": "Right" }
           ],
           "default": "auto"
-        }
+        },
+        { "type": "text",     "id": "eyebrow", "label": "Eyebrow", "default": "Material" },
+        { "type": "text",     "id": "heading", "label": "Heading", "default": "Aluminum unibody" },
+        { "type": "richtext", "id": "body",    "label": "Body",    "default": "<p>Precision-machined from a single block. Light, strong, and built to last.</p>" },
+        { "type": "text",     "id": "cta_label", "label": "CTA label", "default": "Learn more" },
+        { "type": "url",      "id": "cta_url",   "label": "CTA URL" }
       ]
     }
   ],
-  "max_blocks": 6,
   "presets": [
     {
       "name": "Feature row",
       "blocks": [
-        { "type": "row" },
-        { "type": "row" }
+        { "type": "row", "settings": { "eyebrow": "Material",   "heading": "Aluminum unibody",    "body": "<p>Precision-machined from a single block. Light, strong, and built to last.</p>", "image_side": "left"  } },
+        { "type": "row", "settings": { "eyebrow": "Engineered", "heading": "Built to perform.",   "body": "<p>Tested in the conditions you actually live in. From your morning run to weekend escapes.</p>", "image_side": "right" } },
+        { "type": "row", "settings": { "eyebrow": "Considered", "heading": "Designed in detail.", "body": "<p>Every edge, every curve, every weight balance — purposeful.</p>", "image_side": "left"  } }
       ]
     }
   ]
