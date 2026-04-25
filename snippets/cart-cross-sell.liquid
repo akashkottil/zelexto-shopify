@@ -13,7 +13,8 @@
     assign skip = true
   endif
   assign limit = max | default: 4
-  assign heading_text = heading | default: 'cart.upsell_title' | t
+  assign upsell_default = 'cart.upsell_title' | t
+  assign heading_text = heading | default: upsell_default
 -%}
 
 {%- unless skip -%}

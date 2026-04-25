@@ -32,8 +32,9 @@
           required
           autocomplete="email"
         >
+        {%- assign submit_label = 'newsletter.submit' | t -%}
         <button type="submit" class="newsletter__submit btn btn--primary">
-          <span>{{ section.settings.button_label | default: 'newsletter.submit' | t }}</span>
+          <span>{{ section.settings.button_label | default: submit_label }}</span>
           {%- render 'icon', name: 'arrow-right', class: 'icon icon--sm' -%}
         </button>
       </div>

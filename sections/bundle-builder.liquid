@@ -27,8 +27,9 @@
   {%- if current_product != blank -%}
     <section class="section bundle-section">
       <div class="container">
+        {%- assign bundle_default_title = 'bundle.title' | t -%}
         <header class="bundle-section__head stack">
-          <h2 class="bundle-section__title">{{ section.settings.heading | default: 'bundle.title' | t }}</h2>
+          <h2 class="bundle-section__title">{{ section.settings.heading | default: bundle_default_title }}</h2>
           {%- if section.settings.subheading != blank -%}
             <p class="bundle-section__sub">{{ section.settings.subheading }}</p>
           {%- endif -%}

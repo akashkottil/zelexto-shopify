@@ -46,12 +46,14 @@
         </div>
       {%- endif -%}
 
+      {%- assign exit_default_title = 'exit_intent.title' | t: offer: offer -%}
+      {%- assign exit_default_sub = 'exit_intent.subtitle' | t -%}
       <div class="exit-modal__body">
         <h2 id="exit-modal-title" class="exit-modal__title">
-          {{ section.settings.heading | default: 'exit_intent.title' | t: offer: offer }}
+          {{ section.settings.heading | default: exit_default_title }}
         </h2>
         <p class="exit-modal__sub">
-          {{ section.settings.subheading | default: 'exit_intent.subtitle' | t }}
+          {{ section.settings.subheading | default: exit_default_sub }}
         </p>
 
         <form class="exit-modal__form" data-form novalidate>

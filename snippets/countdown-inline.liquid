@@ -11,7 +11,8 @@
 
 {%- liquid
   assign end_value = end_iso | default: end
-  assign label_text = label | default: 'urgency.ends_in' | t
+  assign urgency_default = 'urgency.ends_in' | t
+  assign label_text = label | default: urgency_default
 -%}
 
 {%- if end_value != blank -%}
