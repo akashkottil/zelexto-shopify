@@ -118,8 +118,9 @@
                 </div>
               </dl>
 
+              {% render 'payment-method-selector', context: 'cart', id: 'cart' %}
+
               {% render 'gst-invoice-field' %}
-              {% render 'partial-pay-summary' %}
 
               {%- if section.settings.show_cart_note | default: settings.cart_notes -%}
                 <details class="cart-summary__note">
@@ -128,7 +129,7 @@
                 </details>
               {%- endif -%}
 
-              <button type="submit" name="checkout" class="btn btn--primary btn--full cart-summary__checkout">
+              <button type="submit" name="checkout" class="btn btn--primary btn--full cart-summary__checkout" data-cart-checkout>
                 {{ 'cart.checkout' | t | default: 'Checkout' }} · <span data-money-cents="{{ cart.total_price }}">{{ cart.total_price | money }}</span>
               </button>
 
@@ -148,7 +149,7 @@
 
 {% schema %}
 {
-  "name": "t:sections.cart.name",
+  "name": "Cart",
   "tag": "section",
   "class": "section section--cart",
   "settings": [

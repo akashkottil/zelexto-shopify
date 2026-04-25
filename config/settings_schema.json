@@ -152,13 +152,14 @@
         "type": "select",
         "id": "partial_pay_provider",
         "label": "Partial payment app",
+        "info": "Set to 'Disabled' if no partial-payment app is installed. The selector card hides automatically.",
         "options": [
           { "value": "off", "label": "Disabled" },
           { "value": "gokwik", "label": "GoKwik Advance COD" },
           { "value": "razorpay_magic", "label": "Razorpay Magic Checkout" },
           { "value": "simpl", "label": "Simpl" }
         ],
-        "default": "off"
+        "default": "gokwik"
       },
       { "type": "range", "id": "partial_advance_percent", "label": "Advance %", "min": 10, "max": 90, "step": 5, "unit": "%", "default": 20 },
       { "type": "number", "id": "partial_pay_min_order", "label": "Partial pay minimum order (INR)", "default": 999 }

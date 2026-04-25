@@ -17,7 +17,7 @@
 {%- liquid
   assign ctx = context | default: 'cart'
   assign instance_id = id | default: ctx
-  assign show_only_eligible = show_when_eligible_only | default: true
+  assign show_only_eligible = show_when_eligible_only
 
   assign partial_provider = settings.partial_pay_provider | default: 'off'
   assign cod_provider = settings.cod_provider | default: 'off'
@@ -30,8 +30,9 @@
 
   assign show_partial = false
   if partial_provider != 'off'
-    if show_only_eligible == false or cart_total >= min_partial_cents
-      assign show_partial = true
+    assign show_partial = true
+    if show_only_eligible and cart_total > 0 and cart_total < min_partial_cents
+      assign show_partial = false
     endif
   endif
 

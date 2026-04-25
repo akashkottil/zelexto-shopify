@@ -122,9 +122,6 @@
                       {%- endif -%}
                     </span>
                   </button>
-                  {%- if block.settings.show_dynamic_checkout -%}
-                    {{ form | payment_button }}
-                  {%- endif -%}
                 {%- endform -%}
               </div>
 
@@ -186,7 +183,7 @@
 
 {% schema %}
 {
-  "name": "t:sections.product.name",
+  "name": "Product",
   "tag": "section",
   "class": "section section--product",
   "settings": [
@@ -233,7 +230,6 @@
       "name": "Buy buttons",
       "limit": 1,
       "settings": [
-        { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Show dynamic checkout button", "default": true },
         { "type": "checkbox", "id": "hide_quantity", "label": "Hide quantity input", "default": false }
       ]
     },
