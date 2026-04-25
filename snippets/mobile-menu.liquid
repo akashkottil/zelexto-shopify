@@ -1,115 +1,84 @@
-{% comment %}
-  ZELEXTO THEME — snippets/mobile-menu.liquid
-  Slide-in mobile navigation panel.
-  Triggered by hamburger button in header.
-  Accordion navigation via <details>/<summary> — CSS-only, zero JS fallback.
-{% endcomment %}
+{%- comment -%}
+  snippets/mobile-menu.liquid
+  Slide-in mobile navigation. Uses <details>/<summary> accordions (no JS for nesting).
+  Accepts: menu (linklist; defaults to main-menu)
+{%- endcomment -%}
 
 {%- liquid
-  assign nav_menu = linklists['main-menu']
+  assign nav_menu = menu | default: linklists['main-menu']
 -%}
 
-<!-- Mobile menu overlay backdrop -->
 <div class="mobile-menu-overlay" id="mobile-menu-overlay" aria-hidden="true" data-mobile-menu-overlay></div>
 
-<!-- Mobile menu panel -->
-<div
+<aside
   class="mobile-menu"
   id="mobile-menu"
   role="dialog"
   aria-label="{{ 'navigation.open_menu' | t }}"
   aria-modal="true"
-  aria-hidden="true">
+  aria-hidden="true"
+  tabindex="-1">
 
-  <!-- Header bar inside panel -->
   <div class="mobile-menu__header">
-    {%- if shop.brand.logo -%}
-      <img
-        src="{{ shop.brand.logo | image_url: width: 120 }}"
-        alt="{{ shop.name }}"
-        width="120"
-        height="40"
-        loading="eager"
-        decoding="sync"
-        class="mobile-menu__logo">
-    {%- else -%}
-      <span class="mobile-menu__brand">{{ shop.name }}</span>
-    {%- endif -%}
-
+    <span class="mobile-menu__brand">{{ shop.name }}</span>
     <button
-      class="mobile-menu__close header-icon-btn"
       type="button"
+      class="header-icon-btn"
       aria-label="{{ 'navigation.close_menu' | t }}"
       data-mobile-menu-close>
-      {%- render 'icon', name: 'close', size: 22 -%}
+      {%- render 'icon', name: 'close', class: 'icon' -%}
     </button>
   </div>
 
-  <!-- Search field at top of mobile menu -->
-  <div class="mobile-menu__search">
-    <form action="{{ routes.search_url }}" method="get" role="search">
-      <div class="mobile-menu__search-field">
-        {%- render 'icon', name: 'search', size: 18 -%}
-        <input
-          type="search"
-          name="q"
-          value="{{ search.terms | escape }}"
-          placeholder="{{ 'header.search_placeholder' | t }}"
-          class="mobile-menu__search-input"
-          aria-label="{{ 'header.search_placeholder' | t }}"
-          autocomplete="off"
-          autocorrect="off"
-          autocapitalize="off">
-      </div>
-    </form>
-  </div>
+  <form class="mobile-menu__search" action="{{ routes.search_url }}" method="get" role="search">
+    <label class="sr-only" for="mobile-search">{{ 'header.search_placeholder' | t }}</label>
+    <span class="mobile-menu__search-icon">{%- render 'icon', name: 'search', class: 'icon' -%}</span>
+    <input
+      type="search"
+      id="mobile-search"
+      name="q"
+      class="mobile-menu__search-input"
+      placeholder="{{ 'header.search_placeholder' | t }}"
+      autocomplete="off">
+  </form>
 
-  <!-- Navigation links -->
   <nav class="mobile-menu__nav" aria-label="{{ 'navigation.open_menu' | t }}">
     <ul class="mobile-menu__list" role="list">
       {%- for link in nav_menu.links -%}
         <li class="mobile-menu__item">
           {%- if link.links.size > 0 -%}
-            <!-- Accordion using <details>/<summary> — CSS-only, no JS required -->
             <details class="mobile-menu__accordion">
-              <summary class="mobile-menu__accordion-trigger">
+              <summary class="mobile-menu__trigger">
                 <span>{{ link.title }}</span>
-                <span class="mobile-menu__accordion-icon" aria-hidden="true">
-                  {%- render 'icon', name: 'chevron-down', size: 16 -%}
+                <span class="mobile-menu__chevron" aria-hidden="true">
+                  {%- render 'icon', name: 'chevron-down', class: 'icon icon--xs' -%}
                 </span>
               </summary>
-              <div class="mobile-menu__sub-panel">
-                <a href="{{ link.url }}" class="mobile-menu__sub-view-all">
+              <div class="mobile-menu__panel">
+                <a href="{{ link.url }}" class="mobile-menu__view-all">
                   {{ 'general.view_all' | t }} {{ link.title }}
                 </a>
                 <ul class="mobile-menu__sub-list" role="list">
-                  {%- for sub_link in link.links -%}
+                  {%- for sub in link.links -%}
                     <li>
-                      {%- if sub_link.links.size > 0 -%}
-                        <details class="mobile-menu__accordion mobile-menu__accordion--level-2">
-                          <summary class="mobile-menu__sub-link mobile-menu__accordion-trigger">
-                            {{ sub_link.title }}
-                            <span class="mobile-menu__accordion-icon" aria-hidden="true">
-                              {%- render 'icon', name: 'chevron-down', size: 14 -%}
+                      {%- if sub.links.size > 0 -%}
+                        <details class="mobile-menu__accordion mobile-menu__accordion--lvl2">
+                          <summary class="mobile-menu__trigger mobile-menu__trigger--lvl2">
+                            <span>{{ sub.title }}</span>
+                            <span class="mobile-menu__chevron" aria-hidden="true">
+                              {%- render 'icon', name: 'chevron-down', class: 'icon icon--xs' -%}
                             </span>
                           </summary>
-                          <ul class="mobile-menu__sub-list mobile-menu__sub-list--level-2" role="list">
-                            {%- for deep_link in sub_link.links -%}
+                          <ul class="mobile-menu__sub-list mobile-menu__sub-list--lvl2" role="list">
+                            {%- for deep in sub.links -%}
                               <li>
-                                <a href="{{ deep_link.url }}" class="mobile-menu__sub-link mobile-menu__sub-link--deep">
-                                  {{ deep_link.title }}
-                                </a>
+                                <a href="{{ deep.url }}" class="mobile-menu__sub-link mobile-menu__sub-link--deep">{{ deep.title }}</a>
                               </li>
                             {%- endfor -%}
                           </ul>
                         </details>
                       {%- else -%}
-                        <a
-                          href="{{ sub_link.url }}"
-                          class="mobile-menu__sub-link"
-                          {% if sub_link.current %}aria-current="page"{% endif %}>
-                          {{ sub_link.title }}
-                        </a>
+                        <a href="{{ sub.url }}" class="mobile-menu__sub-link"{% if sub.current %} aria-current="page"{% endif %}>{{ sub.title }}</a>
                       {%- endif -%}
                     </li>
                   {%- endfor -%}
@@ -117,297 +86,153 @@
               </div>
             </details>
           {%- else -%}
-            <a
-              href="{{ link.url }}"
-              class="mobile-menu__link"
-              {% if link.current %}aria-current="page"{% endif %}>
-              {{ link.title }}
-            </a>
+            <a href="{{ link.url }}" class="mobile-menu__link"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
           {%- endif -%}
         </li>
       {%- endfor -%}
     </ul>
   </nav>
 
-  <!-- Footer: account + locale -->
   <div class="mobile-menu__footer">
     <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="mobile-menu__footer-link">
-      {%- render 'icon', name: 'account', size: 18 -%}
-      {%- if customer -%}
-        {{ customer.first_name }}
-      {%- else -%}
-        {{ 'account.login' | t }}
-      {%- endif -%}
+      {%- render 'icon', name: 'account', class: 'icon icon--sm' -%}
+      <span>{%- if customer -%}{{ customer.first_name | default: 'Account' }}{%- else -%}{{ 'account.login' | t }}{%- endif -%}</span>
     </a>
-
-    {%- if settings.show_language_selector and localization.available_languages.size > 1 -%}
-      {%- form 'localization', id: 'lang-form-mobile' -%}
-        <select name="locale_code" class="form-select" onchange="this.form.submit()" aria-label="{{ 'header.language_selector' | t }}">
-          {%- for language in localization.available_languages -%}
-            <option value="{{ language.iso_code }}" {%- if language.iso_code == request.locale.iso_code %} selected{% endif %}>
-              {{ language.endonym_name | capitalize }}
-            </option>
-          {%- endfor -%}
-        </select>
-      {%- endform -%}
+    {%- if localization.available_languages.size > 1 -%}
+      <div class="mobile-menu__footer-locale">
+        {%- render 'locale-selector' -%}
+      </div>
+    {%- endif -%}
+    {%- if localization.available_countries.size > 1 -%}
+      <div class="mobile-menu__footer-locale">
+        {%- render 'currency-selector' -%}
+      </div>
     {%- endif -%}
   </div>
-
-</div>
+</aside>
 
 <style>
-  /* Overlay backdrop */
-  .mobile-menu-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: calc(var(--z-drawer) - 1);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--transition-base);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+  .mobile-menu-overlay{
+    position:fixed;inset:0;z-index:calc(var(--z-drawer) - 1);
+    background:rgba(0,0,0,.4);opacity:0;pointer-events:none;
+    -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);
+    transition:opacity var(--dur-base) var(--ease-standard);
   }
-  .mobile-menu-overlay.is-open {
-    opacity: 1;
-    pointer-events: auto;
+  .mobile-menu-overlay.is-open{opacity:1;pointer-events:auto}
+  .mobile-menu{
+    position:fixed;top:0;left:0;height:100vh;height:100dvh;
+    width:min(380px, 86vw);background:var(--c-bg);
+    z-index:var(--z-drawer);transform:translateX(-100%);
+    transition:transform var(--dur-slow) var(--ease-emphasized);
+    display:flex;flex-direction:column;overflow:hidden;
+    box-shadow:var(--shadow-2);
   }
-
-  /* Mobile menu panel */
-  .mobile-menu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    height: 100dvh; /* dynamic viewport height for mobile browsers */
-    width: min(360px, 85vw);
-    background: var(--color-bg);
-    z-index: var(--z-drawer);
-    transform: translateX(-100%);
-    transition: transform var(--transition-slow);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    box-shadow: var(--shadow-xl);
+  [dir="rtl"] .mobile-menu{left:auto;right:0;transform:translateX(100%)}
+  .mobile-menu.is-open{transform:translateX(0)}
+  @media (min-width:769px){
+    .mobile-menu,.mobile-menu-overlay{display:none!important}
   }
-
-  [dir="rtl"] .mobile-menu {
-    left: auto;
-    right: 0;
-    transform: translateX(100%);
+  .mobile-menu__header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--c-line);
   }
-
-  .mobile-menu.is-open {
-    transform: translateX(0);
+  .mobile-menu__brand{
+    font-family:var(--font-display);font-weight:var(--weight-semibold);
+    font-size:var(--fs-19);
   }
-
-  @media (min-width: 769px) {
-    .mobile-menu,
-    .mobile-menu-overlay { display: none !important; }
+  .mobile-menu__search{
+    display:flex;align-items:center;gap:var(--s-2);
+    padding:var(--s-3) var(--s-4);
+    border-bottom:1px solid var(--c-line);
   }
-
-  .mobile-menu__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-4);
-    border-bottom: 1px solid var(--color-border);
-    flex-shrink: 0;
+  .mobile-menu__search-icon{display:inline-flex;color:var(--c-ink-muted)}
+  .mobile-menu__search-input{
+    flex:1;background:var(--c-elev);
+    border:1px solid var(--c-line);border-radius:var(--radius-pill);
+    padding:var(--s-2) var(--s-3);
+    font-size:var(--fs-14);color:var(--c-ink);min-height:40px;
   }
-
-  .mobile-menu__brand {
-    font-family: var(--font-heading);
-    font-weight: var(--font-weight-bold);
-    font-size: var(--font-size-lg);
+  .mobile-menu__nav{flex:1;overflow-y:auto;padding-block:var(--s-2)}
+  .mobile-menu__list,.mobile-menu__sub-list{list-style:none;padding:0;margin:0}
+  .mobile-menu__item{border-bottom:1px solid var(--c-line)}
+  .mobile-menu__link,.mobile-menu__trigger{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:var(--s-4);
+    font-size:var(--fs-16);font-weight:var(--weight-medium);
+    color:var(--c-ink);min-height:48px;
+    cursor:pointer;list-style:none;
+    transition:background-color var(--dur-fast) var(--ease-standard);
   }
-
-  .mobile-menu__logo { height: 32px; width: auto; }
-
-  /* Search */
-  .mobile-menu__search { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--color-border); flex-shrink: 0; }
-  .mobile-menu__search-field {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: var(--space-2) var(--space-3);
-    color: var(--color-text-secondary);
+  .mobile-menu__trigger::-webkit-details-marker{display:none}
+  .mobile-menu__link:hover,.mobile-menu__trigger:hover{background:var(--c-elev)}
+  .mobile-menu__chevron{transition:transform var(--dur-fast) var(--ease-standard)}
+  details[open] > .mobile-menu__trigger .mobile-menu__chevron{transform:rotate(180deg)}
+  .mobile-menu__panel{background:var(--c-elev);padding-block:var(--s-2)}
+  .mobile-menu__view-all{
+    display:block;padding:var(--s-2) var(--s-6);
+    font-size:var(--fs-12);font-weight:var(--weight-semibold);
+    color:var(--c-accent);text-transform:uppercase;letter-spacing:.06em;
   }
-  .mobile-menu__search-input {
-    flex: 1;
-    background: none;
-    border: none;
-    outline: none;
-    font-size: var(--font-size-sm);
-    font-family: var(--font-body);
-    color: var(--color-text);
+  .mobile-menu__sub-link{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:var(--s-3) var(--s-6);
+    font-size:var(--fs-14);min-height:44px;
   }
-  .mobile-menu__search-input::placeholder { color: var(--color-text-secondary); }
-
-  /* Navigation */
-  .mobile-menu__nav { flex: 1; overflow-y: auto; padding: var(--space-2) 0; }
-  .mobile-menu__list { list-style: none; }
-  .mobile-menu__item { border-bottom: 1px solid var(--color-border); }
-
-  .mobile-menu__link {
-    display: block;
-    padding: var(--space-4);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text);
-    text-decoration: none;
-    transition: color var(--transition-fast), background-color var(--transition-fast);
+  .mobile-menu__sub-link:hover{color:var(--c-accent)}
+  .mobile-menu__sub-link--deep{padding-left:var(--s-7);font-size:var(--fs-12);color:var(--c-ink-muted)}
+  .mobile-menu__sub-list--lvl2{background:var(--c-bg)}
+  .mobile-menu__trigger--lvl2{padding-inline:var(--s-6);font-size:var(--fs-14);font-weight:var(--weight-regular)}
+  .mobile-menu__footer{
+    flex-shrink:0;padding:var(--s-4);border-top:1px solid var(--c-line);
+    display:flex;align-items:center;flex-wrap:wrap;gap:var(--s-3);
   }
-  .mobile-menu__link:hover { color: var(--color-primary); background-color: var(--color-surface); }
-
-  /* Accordion */
-  .mobile-menu__accordion { }
-  .mobile-menu__accordion-trigger {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-4);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text);
-    cursor: pointer;
-    list-style: none;
-    user-select: none;
-    transition: color var(--transition-fast), background-color var(--transition-fast);
+  .mobile-menu__footer-link{
+    display:inline-flex;align-items:center;gap:var(--s-2);
+    font-size:var(--fs-14);font-weight:var(--weight-medium);
   }
-  .mobile-menu__accordion-trigger::-webkit-details-marker { display: none; }
-  .mobile-menu__accordion-trigger:hover { color: var(--color-primary); background-color: var(--color-surface); }
-
-  details[open] .mobile-menu__accordion-icon svg { transform: rotate(180deg); }
-  .mobile-menu__accordion-icon svg { transition: transform var(--transition-fast); }
-
-  .mobile-menu__sub-panel { background: var(--color-surface); }
-  .mobile-menu__sub-view-all {
-    display: block;
-    padding: var(--space-3) var(--space-6);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-primary);
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-  .mobile-menu__sub-list { list-style: none; }
-  .mobile-menu__sub-link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-3) var(--space-6);
-    font-size: var(--font-size-sm);
-    color: var(--color-text);
-    text-decoration: none;
-    transition: color var(--transition-fast);
-  }
-  .mobile-menu__sub-link:hover { color: var(--color-primary); }
-  .mobile-menu__sub-link--deep {
-    padding-left: var(--space-8);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-  .mobile-menu__sub-list--level-2 { background: var(--color-bg); }
-
-  /* Footer */
-  .mobile-menu__footer {
-    flex-shrink: 0;
-    padding: var(--space-4);
-    border-top: 1px solid var(--color-border);
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    flex-wrap: wrap;
-  }
-  .mobile-menu__footer-link {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text);
-    text-decoration: none;
-  }
-  .mobile-menu__footer-link:hover { color: var(--color-primary); }
+  .mobile-menu__footer-locale{flex:1;min-width:120px}
 </style>
 
 <script>
-  (function () {
+  (function(){
     'use strict';
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
+    var menu = document.getElementById('mobile-menu');
+    var overlay = document.getElementById('mobile-menu-overlay');
+    if(!menu) return;
+    var triggers = document.querySelectorAll('[data-mobile-menu-open]');
+    var closers = document.querySelectorAll('[data-mobile-menu-close]');
+    var prevFocus = null;
+
+    function open(){
+      prevFocus = document.activeElement;
+      menu.classList.add('is-open');
+      overlay.classList.add('is-open');
+      menu.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      triggers.forEach(function(t){ t.setAttribute('aria-expanded', 'true'); });
+      var first = menu.querySelector('button, a, input');
+      if(first) first.focus();
     }
-
-    function init() {
-      // Performance improvement 4: only init if element exists
-      const menu = document.getElementById('mobile-menu');
-      const overlay = document.getElementById('mobile-menu-overlay');
-      if (!menu) return;
-
-      const triggers = document.querySelectorAll('[data-mobile-menu-open]');
-      const closeBtns = document.querySelectorAll('[data-mobile-menu-close]');
-      let focusableEls = [];
-      let firstFocusable, lastFocusable;
-      let previousFocus = null;
-
-      function openMenu() {
-        previousFocus = document.activeElement;
-        menu.classList.add('is-open');
-        overlay.classList.add('is-open');
-        menu.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-        // Collect focusable elements for trap
-        focusableEls = Array.from(menu.querySelectorAll('a[href], button, input, select, [tabindex]:not([tabindex="-1"])'));
-        firstFocusable = focusableEls[0];
-        lastFocusable = focusableEls[focusableEls.length - 1];
-        if (firstFocusable) firstFocusable.focus();
-      }
-
-      function closeMenu() {
-        menu.classList.remove('is-open');
-        overlay.classList.remove('is-open');
-        menu.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-        if (previousFocus) previousFocus.focus();
-      }
-
-      triggers.forEach(t => t.addEventListener('click', openMenu));
-      closeBtns.forEach(b => b.addEventListener('click', closeMenu));
-      overlay.addEventListener('click', closeMenu);
-
-      // ESC key
-      menu.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeMenu();
-
-        // Focus trap
-        if (e.key === 'Tab') {
-          focusableEls = Array.from(menu.querySelectorAll('a[href], button:not([disabled]), input, select, [tabindex]:not([tabindex="-1"])'));
-          firstFocusable = focusableEls[0];
-          lastFocusable = focusableEls[focusableEls.length - 1];
-
-          if (e.shiftKey && document.activeElement === firstFocusable) {
-            e.preventDefault();
-            lastFocusable.focus();
-          } else if (!e.shiftKey && document.activeElement === lastFocusable) {
-            e.preventDefault();
-            firstFocusable.focus();
-          }
-        }
-      });
-
-      // Update aria-expanded on hamburger buttons
-      triggers.forEach(t => {
-        new MutationObserver(() => {
-          const isOpen = menu.classList.contains('is-open');
-          t.setAttribute('aria-expanded', isOpen.toString());
-        }).observe(menu, { attributes: true, attributeFilter: ['class'] });
-      });
+    function close(){
+      menu.classList.remove('is-open');
+      overlay.classList.remove('is-open');
+      menu.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      triggers.forEach(function(t){ t.setAttribute('aria-expanded', 'false'); });
+      if(prevFocus) prevFocus.focus();
     }
+    triggers.forEach(function(t){ t.addEventListener('click', open); });
+    closers.forEach(function(c){ c.addEventListener('click', close); });
+    overlay.addEventListener('click', close);
+    menu.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') close();
+      if(e.key === 'Tab'){
+        var focusable = menu.querySelectorAll('a[href], button:not([disabled]), input, select, [tabindex]:not([tabindex="-1"])');
+        if(!focusable.length) return;
+        var first = focusable[0], last = focusable[focusable.length - 1];
+        if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+        else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+      }
+    });
   })();
 </script>

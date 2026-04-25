@@ -1,258 +1,128 @@
-{% comment %}
-  ZELEXTO THEME — snippets/product-card.liquid
-  Reusable product card with lazy loading, srcset, hover image swap,
-  quick view trigger, and animation support.
+{%- comment -%}
+  Zelexto v2 — product-card.liquid
+  Apple-style minimal product card. Image (with optional hover swap),
+  title, vendor, price, optional rating, optional quick-view CTA.
 
   Accepts:
-    product        — product object (required)
-    show_vendor    — boolean
-    show_rating    — boolean
-    show_quick_view — boolean
-    animation      — string (e.g. "animate-slide-up")
-    animation_delay — number (ms)
-{% endcomment %}
+    product          — required
+    show_vendor      — default settings.card_show_vendor
+    show_rating      — default settings.card_show_rating
+    show_quick_view  — default settings.card_quick_view
+    show_hover_image — default settings.card_hover_image
+    image_ratio      — default settings.card_image_ratio
+    sizes            — img sizes (default responsive PLP grid)
+    loading          — default 'lazy'
+    index            — for analytics list position
+{%- endcomment -%}
 
 {%- liquid
-  assign card_product = product
-  assign image_ratio = settings.card_image_ratio | default: 'portrait'
-  assign show_vendor  = show_vendor | default: settings.card_show_vendor
-  assign show_rating  = show_rating | default: settings.card_show_rating
-  assign show_qv      = show_quick_view | default: settings.enable_quick_view
-  assign has_second_image = false
-  if card_product.images.size > 1 and settings.card_hover_image
-    assign has_second_image = true
+  assign p = product
+  assign image_ratio = image_ratio | default: settings.card_image_ratio | default: '3/4'
+  assign show_vendor_attr = show_vendor
+  if show_vendor_attr == nil
+    assign show_vendor_attr = settings.card_show_vendor
   endif
-  assign selected_variant = card_product.selected_or_first_available_variant
+  assign show_rating_attr = show_rating
+  if show_rating_attr == nil
+    assign show_rating_attr = settings.card_show_rating
+  endif
+  assign show_qv_attr = show_quick_view
+  if show_qv_attr == nil
+    assign show_qv_attr = settings.card_quick_view
+  endif
+  if show_qv_attr and settings.enable_quick_view == false
+    assign show_qv_attr = false
+  endif
+  assign show_hover = show_hover_image
+  if show_hover == nil
+    assign show_hover = settings.card_hover_image
+  endif
+
+  assign first_variant = p.selected_or_first_available_variant
+  assign on_sale = false
+  if first_variant.compare_at_price and first_variant.compare_at_price > first_variant.price
+    assign on_sale = true
+  endif
+
+  assign img_sizes = sizes | default: '(min-width:1024px) 25vw, (min-width:640px) 33vw, 50vw'
+  assign img_loading = loading | default: 'lazy'
+  assign hover_img = nil
+  if show_hover and p.images.size > 1
+    assign hover_img = p.images[1]
+  endif
 -%}
 
-<div
-  class="product-card hover-zoom{% if animation != blank %} {{ animation }}{% endif %}"
-  data-animate="{{ animation | default: 'animate-slide-up' }}"
-  {% if animation_delay %}style="--animation-delay: {{ animation_delay }}ms;"{% endif %}
-  data-product-id="{{ card_product.id }}"
-  data-handle="{{ card_product.handle }}">
+<article
+  class="product-card"
+  data-product-card
+  data-product-id="{{ p.id }}"
+  data-product-handle="{{ p.handle }}"
+  {% if index %}data-list-index="{{ index }}"{% endif %}>
 
-  <!-- Media -->
-  <div class="product-card__media ratio-{{ image_ratio }}">
-
-    <!-- Primary image -->
-    <a href="{{ card_product.url }}" class="product-card__image-link" aria-label="{{ card_product.title | escape }}" tabindex="-1">
-      {%- if card_product.featured_image -%}
-        <img
-          src="{{ card_product.featured_image | image_url: width: 540 }}"
-          srcset="{{ card_product.featured_image | image_url: width: 300 }} 300w,
-                  {{ card_product.featured_image | image_url: width: 540 }} 540w,
-                  {{ card_product.featured_image | image_url: width: 720 }} 720w"
-          sizes="(max-width: 480px) calc(50vw - 1rem), (max-width: 1024px) calc(33vw - 1rem), 280px"
-          alt="{{ card_product.featured_image.alt | escape | default: card_product.title }}"
-          width="540"
-          height="{{ 540 | divided_by: card_product.featured_image.aspect_ratio | round }}"
-          loading="lazy"
-          decoding="async"
-          class="product-card__image product-card__image--primary">
-
-        {%- if has_second_image -%}
-          <img
-            src="{{ card_product.images[1] | image_url: width: 540 }}"
-            srcset="{{ card_product.images[1] | image_url: width: 300 }} 300w,
-                    {{ card_product.images[1] | image_url: width: 540 }} 540w"
-            sizes="(max-width: 480px) calc(50vw - 1rem), 280px"
-            alt="{{ card_product.images[1].alt | escape | default: card_product.title }}"
-            width="540"
-            height="{{ 540 | divided_by: card_product.images[1].aspect_ratio | round }}"
-            loading="lazy"
-            decoding="async"
-            class="product-card__image product-card__image--secondary"
-            aria-hidden="true">
+  <a class="product-card__media-link" href="{{ p.url | within: collection }}" aria-label="{{ p.title | escape }}">
+    <div class="product-card__media aspect" style="aspect-ratio: {{ image_ratio }};">
+      {%- if p.featured_image -%}
+        {% render 'responsive-image',
+           image: p.featured_image,
+           alt: p.featured_image.alt | default: p.title,
+           sizes: img_sizes,
+           loading: img_loading,
+           class: 'product-card__img product-card__img--primary',
+           aspect_ratio: image_ratio %}
+        {%- if hover_img -%}
+          {% render 'responsive-image',
+             image: hover_img,
+             alt: hover_img.alt | default: p.title,
+             sizes: img_sizes,
+             loading: 'lazy',
+             class: 'product-card__img product-card__img--hover',
+             aspect_ratio: image_ratio %}
         {%- endif -%}
-
       {%- else -%}
-        <div class="product-card__no-image">
-          {%- render 'icon', name: 'grid', size: 40 -%}
+        <div class="product-card__placeholder">
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
         </div>
       {%- endif -%}
-    </a>
 
-    <!-- Badges -->
-    <div class="product-card__badges">
-      {%- if card_product.available == false -%}
-        <span class="badge badge--sold-out">{{ 'product.sold_out' | t }}</span>
-      {%- elsif selected_variant.compare_at_price > selected_variant.price -%}
-        {%- assign savings_pct = selected_variant.compare_at_price | minus: selected_variant.price | times: 100 | divided_by: selected_variant.compare_at_price | round -%}
-        <span class="badge badge--sale">-{{ savings_pct }}%</span>
-      {%- endif -%}
-    </div>
-
-    <!-- Quick view button overlay -->
-    {%- if show_qv and settings.enable_quick_view -%}
-      <div class="product-card__quick-view">
-        <button
-          class="btn btn--secondary btn--sm product-card__qv-btn"
-          type="button"
-          data-quick-view="{{ card_product.handle }}"
-          aria-label="{{ 'product.view_full_details' | t }}: {{ card_product.title | escape }}">
-          {{ 'product.view_full_details' | t }}
-        </button>
+      <div class="product-card__badges">
+        {%- if p.available == false -%}
+          <span class="badge badge--soldout">{{ 'product.sold_out' | t }}</span>
+        {%- elsif on_sale -%}
+          {%- assign pct = first_variant.compare_at_price | minus: first_variant.price | times: 100 | divided_by: first_variant.compare_at_price | round -%}
+          <span class="badge badge--sale">&minus;{{ pct }}%</span>
+        {%- endif -%}
       </div>
-    {%- endif -%}
+    </div>
+  </a>
 
-  </div>
+  {%- if show_qv_attr and p.available -%}
+    <div class="product-card__qv">
+      <button
+        type="button"
+        class="btn btn--secondary btn--sm product-card__qv-btn"
+        data-quick-view
+        data-product-handle="{{ p.handle }}"
+        aria-label="{{ 'product.quick_view' | t | default: 'Quick view' }}: {{ p.title | escape }}">
+        {{ 'product.quick_view' | t | default: 'Quick view' }}
+      </button>
+    </div>
+  {%- endif -%}
 
-  <!-- Info -->
   <div class="product-card__body">
-
-    {%- if show_vendor -%}
-      <p class="product-card__vendor">{{ card_product.vendor }}</p>
+    {%- if show_vendor_attr and p.vendor != blank -%}
+      <p class="product-card__vendor">{{ p.vendor }}</p>
     {%- endif -%}
 
     <h3 class="product-card__title">
-      <a href="{{ card_product.url }}" class="product-card__title-link">
-        {{ card_product.title | escape }}
-      </a>
+      <a href="{{ p.url | within: collection }}" class="product-card__title-link">{{ p.title }}</a>
     </h3>
 
-    {%- if show_rating and card_product.metafields.reviews.rating.value -%}
-      <div class="product-card__rating">
-        {%- render 'rating-stars',
-          rating: card_product.metafields.reviews.rating.value,
-          count: card_product.metafields.reviews.rating_count.value -%}
-      </div>
+    {%- if show_rating_attr -%}
+      {% render 'rating-stars', product: p, size: 'sm' %}
     {%- endif -%}
 
     <div class="product-card__price">
-      {%- render 'price', product: card_product, show_badge: false -%}
+      {% render 'price', product: p, show_badge: false %}
     </div>
-
   </div>
-
-</div>
-
-<style>
-  .product-card {
-    background: var(--color-bg);
-    border-radius: var(--radius-card);
-    overflow: hidden;
-    transition: box-shadow var(--transition-base);
-    position: relative;
-  }
-
-  .product-card:hover { box-shadow: var(--shadow-lg); }
-
-  /* Media container */
-  .product-card__media {
-    position: relative;
-    overflow: hidden;
-    background-color: var(--color-surface);
-    border-radius: var(--radius-card) var(--radius-card) 0 0;
-  }
-
-  .product-card__image-link {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  .product-card__image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    inset: 0;
-    transition: opacity var(--transition-slow), transform var(--transition-slow);
-  }
-
-  .product-card__image--secondary {
-    opacity: 0;
-  }
-
-  .product-card:hover .product-card__image--primary {
-    opacity: 0;
-  }
-
-  .product-card:hover .product-card__image--secondary {
-    opacity: 1;
-  }
-
-  .product-card__no-image {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-border);
-    position: absolute;
-    inset: 0;
-  }
-
-  /* Badges */
-  .product-card__badges {
-    position: absolute;
-    top: var(--space-3);
-    left: var(--space-3);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-    z-index: 1;
-  }
-
-  [dir="rtl"] .product-card__badges { left: auto; right: var(--space-3); }
-
-  /* Quick view overlay */
-  .product-card__quick-view {
-    position: absolute;
-    bottom: var(--space-3);
-    left: 50%;
-    transform: translateX(-50%) translateY(8px);
-    opacity: 0;
-    transition: opacity var(--transition-fast), transform var(--transition-fast);
-    white-space: nowrap;
-  }
-
-  .product-card:hover .product-card__quick-view {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  .product-card__qv-btn {
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    border-color: transparent;
-    box-shadow: var(--shadow-md);
-  }
-
-  /* Body */
-  .product-card__body {
-    padding: var(--space-3) var(--space-4) var(--space-4);
-  }
-
-  .product-card__vendor {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: var(--space-1);
-  }
-
-  .product-card__title {
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    line-height: var(--line-height-snug);
-    margin-bottom: var(--space-2);
-  }
-
-  .product-card__title-link {
-    text-decoration: none;
-    color: var(--color-text);
-    transition: color var(--transition-fast);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .product-card__title-link:hover { color: var(--color-primary); }
-
-  .product-card__rating { margin-bottom: var(--space-2); }
-  .product-card__price { margin-top: var(--space-2); }
-</style>
+</article>

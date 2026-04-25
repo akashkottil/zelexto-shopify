@@ -1,0 +1,49 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {}
+    },
+    "intro": {
+      "type": "rich-text",
+      "settings": {
+        "bg": "bg",
+        "text_align": "center"
+      },
+      "blocks": {
+        "eyebrow": { "type": "eyebrow", "settings": { "text": "Get in touch" } },
+        "heading": { "type": "heading", "settings": { "text": "We’re here to help." } },
+        "body":    { "type": "body",    "settings": { "text": "<p>Email <a href='mailto:support@example.com'>support@example.com</a> or fill the form below. We reply within 24 hours on business days.</p>" } }
+      },
+      "block_order": ["eyebrow", "heading", "body"]
+    },
+    "image-text": {
+      "type": "image-with-text",
+      "settings": {
+        "eyebrow": "Visit",
+        "heading": "Drop by our studio.",
+        "body": "<p>Open Monday to Friday, 10am–6pm IST. Walk-ins welcome — but we appreciate a heads-up.</p>",
+        "image_side": "left",
+        "cta_label": "Get directions",
+        "cta_url": "#",
+        "cta_style": "ghost",
+        "bg": "surface"
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "settings": {
+        "eyebrow": "Quick answers",
+        "heading": "Before you write…",
+        "bg": "bg"
+      },
+      "blocks": {
+        "q1": { "type": "qa", "settings": { "question": "How do I track my order?",          "answer": "<p>You’ll receive tracking via email. You can also check your <a href='/account'>account</a>.</p>" } },
+        "q2": { "type": "qa", "settings": { "question": "How long does shipping take?",      "answer": "<p>3–7 business days within India. Free above ₹999.</p>" } },
+        "q3": { "type": "qa", "settings": { "question": "Do you support Razorpay/UPI?",     "answer": "<p>Yes — UPI, cards, netbanking, EMI and wallets are all supported via Razorpay.</p>" } }
+      },
+      "block_order": ["q1", "q2", "q3"]
+    }
+  },
+  "order": ["main", "intro", "image-text", "faq"]
+}

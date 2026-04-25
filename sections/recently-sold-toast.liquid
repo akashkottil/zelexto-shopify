@@ -1,0 +1,136 @@
+{%- comment -%}
+  recently-sold-toast.liquid
+
+  Bottom-positioned social proof toast. Cycles through entries from
+  shop.metafields.zelexto.recent_sales (JSON list). Block-level entries also
+  supported as a fallback for stores without metafields.
+{%- endcomment -%}
+
+{%- liquid
+  if settings.enable_recently_sold == false
+    assign skip = true
+  endif
+  assign feed = shop.metafields.zelexto.recent_sales.value
+  assign max_items = section.settings.max_items | default: 8
+  assign interval = section.settings.interval | default: 6000
+  assign position = section.settings.position | default: 'bottom-left'
+-%}
+
+{%- unless skip -%}
+  <social-proof-toast
+    class="social-proof social-proof--{{ position }}"
+    data-module="social-proof.js"
+    data-interval="{{ interval }}"
+    data-max="{{ max_items }}"
+    role="status"
+    aria-live="polite"
+    hidden
+  >
+    <button class="social-proof__close" type="button" data-close aria-label="{{ 'general.close' | t }}">
+      {%- render 'icon', name: 'close', class: 'icon' -%}
+    </button>
+    <div class="social-proof__avatar" aria-hidden="true"></div>
+    <div class="social-proof__body">
+      <p class="social-proof__msg" data-msg></p>
+      <p class="social-proof__time" data-time></p>
+    </div>
+
+    <script type="application/json" data-feed>
+      {%- if feed != blank -%}
+        {{ feed | json }}
+      {%- else -%}
+        [
+          {%- for block in section.blocks -%}
+            { "name": {{ block.settings.name | json }}, "city": {{ block.settings.city | json }}, "product": {{ block.settings.product | json }}, "ago": {{ block.settings.ago | json }} }{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ]
+      {%- endif -%}
+    </script>
+  </social-proof-toast>
+
+  <style>
+    .social-proof {
+      position: fixed;
+      z-index: var(--z-toast);
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+      padding: var(--s-3) var(--s-4);
+      background: var(--c-bg);
+      border: 1px solid var(--c-line);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-2);
+      max-width: 320px;
+      transform: translateY(120%);
+      opacity: 0;
+      transition: transform var(--dur-base) var(--ease-standard),
+                  opacity var(--dur-base) var(--ease-standard);
+    }
+    .social-proof[hidden] { display: none; }
+    .social-proof.is-visible { transform: translateY(0); opacity: 1; }
+    .social-proof--bottom-left  { bottom: var(--s-5); left: var(--s-5); }
+    .social-proof--bottom-right { bottom: var(--s-5); right: var(--s-5); }
+    .social-proof__avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--c-elev);
+      flex-shrink: 0;
+    }
+    .social-proof__msg {
+      font-size: var(--fs-14);
+      line-height: var(--lh-snug);
+      margin: 0;
+      color: var(--c-ink);
+    }
+    .social-proof__time {
+      font-size: var(--fs-12);
+      color: var(--c-ink-muted);
+      margin: var(--s-1) 0 0;
+    }
+    .social-proof__close {
+      position: absolute;
+      top: var(--s-2);
+      right: var(--s-2);
+      color: var(--c-ink-muted);
+      padding: var(--s-1);
+      border-radius: var(--radius-sm);
+    }
+    .social-proof__close:hover { color: var(--c-ink); }
+    @media (max-width: 480px) {
+      .social-proof { left: var(--s-3); right: var(--s-3); max-width: none; }
+    }
+  </style>
+{%- endunless -%}
+
+{% schema %}
+{
+  "name": "Recently sold toast",
+  "settings": [
+    { "type": "paragraph", "content": "Reads shop.metafields.zelexto.recent_sales (JSON list of {name, city, product, ago}). Section blocks act as a fallback." },
+    {
+      "type": "select",
+      "id": "position",
+      "label": "Position",
+      "options": [
+        { "value": "bottom-left", "label": "Bottom left" },
+        { "value": "bottom-right", "label": "Bottom right" }
+      ],
+      "default": "bottom-left"
+    },
+    { "type": "range", "id": "interval", "label": "Cycle interval", "min": 3000, "max": 15000, "step": 500, "unit": "ms", "default": 6000 },
+    { "type": "range", "id": "max_items", "label": "Max items per session", "min": 1, "max": 30, "step": 1, "default": 8 }
+  ],
+  "blocks": [
+    {
+      "type": "sale",
+      "name": "Sale entry (fallback)",
+      "settings": [
+        { "type": "text", "id": "name",    "label": "Buyer name",  "default": "Anika" },
+        { "type": "text", "id": "city",    "label": "City",        "default": "Mumbai" },
+        { "type": "text", "id": "product", "label": "Product",     "default": "Aero Tee" },
+        { "type": "text", "id": "ago",     "label": "Time ago",    "default": "2 minutes ago" }
+      ]
+    }
+  ]
+}
+{% endschema %}

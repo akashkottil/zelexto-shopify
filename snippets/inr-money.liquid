@@ -1,0 +1,26 @@
+{%- comment -%}
+  Money line that activates lakh-grouping when shop currency is INR and
+  `settings.inr_lakh_format` is enabled.
+
+  Usage:
+    {% render 'inr-money', cents: line_item.final_line_price %}
+    {% render 'inr-money', cents: product.price, class: 'price__current' %}
+
+  The `[data-money-cents]` element is picked up by `inr-format.js` which
+  rewrites the text using Intl.NumberFormat('en-IN').
+{%- endcomment -%}
+
+{%- liquid
+  assign money_cents = cents | default: 0
+  assign css_class = class | default: ''
+  assign use_lakh = false
+  if settings.inr_lakh_format
+    assign use_lakh = true
+  endif
+-%}
+
+<span
+  class="money {{ css_class }}"
+  data-money-cents="{{ money_cents }}"
+  data-inr-format="{{ use_lakh }}"
+>{{ money_cents | money }}</span>

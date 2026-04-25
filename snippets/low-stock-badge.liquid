@@ -1,0 +1,71 @@
+{%- comment -%}
+  low-stock-badge.liquid
+
+  Renders an "Only N left" badge when the variant's tracked inventory is below
+  the configured threshold. Updates on variant change via tiny inline listener.
+
+  Accepts: product, class
+{%- endcomment -%}
+
+{%- liquid
+  if settings.enable_low_stock == false
+    assign skip = true
+  endif
+  assign threshold = settings.low_stock_threshold | default: 10
+  assign v = product.selected_or_first_available_variant
+-%}
+
+{%- unless skip -%}
+  {%- if v and v.inventory_management != blank and v.inventory_policy != 'continue' -%}
+    {%- assign qty = v.inventory_quantity -%}
+    {%- if qty != blank and qty > 0 and qty <= threshold -%}
+      <low-stock-indicator
+        class="low-stock {{ class }}"
+        data-product-id="{{ product.id }}"
+        data-threshold="{{ threshold }}"
+        data-initial-qty="{{ qty }}"
+        role="status"
+        aria-live="polite"
+      >
+        <span class="low-stock__dot" aria-hidden="true"></span>
+        <span class="low-stock__text" data-low-stock-text>
+          {{ 'urgency.low_stock' | t: count: qty }}
+        </span>
+        <script type="application/json" data-variants>
+          {
+            {%- for vv in product.variants -%}
+              "{{ vv.id }}": { "qty": {{ vv.inventory_quantity | default: 0 }}, "managed": {% if vv.inventory_management != blank %}true{% else %}false{% endif %}, "continue": {% if vv.inventory_policy == 'continue' %}true{% else %}false{% endif %} }{%- unless forloop.last -%},{%- endunless -%}
+            {%- endfor -%}
+          }
+        </script>
+      </low-stock-indicator>
+
+      <script>
+        (function () {
+          if (window.__zLowStockBound) return; window.__zLowStockBound = true;
+          if (!window.theme || !window.theme.on) return;
+          window.theme.on('variant:changed', function (detail) {
+            if (!detail) return;
+            var els = document.querySelectorAll('low-stock-indicator');
+            els.forEach(function (el) {
+              var data = el.querySelector('script[data-variants]');
+              if (!data) return;
+              var map = {};
+              try { map = JSON.parse(data.textContent); } catch (e) { return; }
+              var info = map[detail.variant && detail.variant.id];
+              var threshold = parseInt(el.dataset.threshold, 10);
+              var textEl = el.querySelector('[data-low-stock-text]');
+              var lowStockTpl = {{ 'urgency.low_stock' | t: count: '__N__' | json }};
+              if (!info || !info.managed || info.continue || !info.qty || info.qty > threshold) {
+                el.hidden = true;
+              } else {
+                el.hidden = false;
+                if (textEl) textEl.textContent = lowStockTpl.replace('__N__', info.qty);
+              }
+            });
+          });
+        })();
+      </script>
+    {%- endif -%}
+  {%- endif -%}
+{%- endunless -%}

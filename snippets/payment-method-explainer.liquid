@@ -1,0 +1,74 @@
+{%- comment -%}
+  Collapsible explainer that sits under the payment-method selector.
+  Three short rows, one per supported method.
+{%- endcomment -%}
+
+{%- liquid
+  assign cart_total = cart.total_price | default: 0
+  assign advance_pct = settings.partial_advance_percent | default: 20
+  assign advance_cents = cart_total | times: advance_pct | divided_by: 100
+  assign balance_cents = cart_total | minus: advance_cents
+
+  assign cart_total_money = cart_total | money
+  assign advance_money = advance_cents | money
+  assign balance_money = balance_cents | money
+-%}
+
+<details class="pay-method-explainer">
+  <summary class="pay-method-explainer__summary">
+    <span>{{ 'partial_pay.explainer' | t | default: 'How payment methods work' }}</span>
+    {%- render 'icon', name: 'chevron-down', class: 'icon icon--sm pay-method-explainer__chevron' -%}
+  </summary>
+  <div class="pay-method-explainer__body">
+    <p>
+      <strong>{{ 'payments.method_full' | t }}.</strong>
+      {{ 'payments.method_full_desc' | t: amount: cart_total_money }}
+    </p>
+    {%- if settings.partial_pay_provider != 'off' -%}
+      <p>
+        <strong>{{ 'payments.method_partial' | t }}.</strong>
+        {{ 'payments.method_partial_desc' | t: advance: advance_money, balance: balance_money }}
+      </p>
+    {%- endif -%}
+    {%- if settings.cod_provider != 'off' -%}
+      <p>
+        <strong>{{ 'payments.method_cod' | t }}.</strong>
+        {{ 'payments.method_cod_desc' | t: amount: cart_total_money }}
+      </p>
+    {%- endif -%}
+  </div>
+</details>
+
+<style>
+  .pay-method-explainer {
+    margin-top: var(--s-3);
+    border-top: 1px solid var(--c-line);
+    padding-top: var(--s-3);
+  }
+  .pay-method-explainer__summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-2);
+    font-size: var(--fs-14);
+    color: var(--c-ink-muted);
+    user-select: none;
+  }
+  .pay-method-explainer__summary::-webkit-details-marker { display: none; }
+  .pay-method-explainer__chevron {
+    transition: transform var(--dur-fast) var(--ease-standard);
+  }
+  .pay-method-explainer[open] .pay-method-explainer__chevron { transform: rotate(180deg); }
+  .pay-method-explainer__body {
+    margin-top: var(--s-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+    font-size: var(--fs-14);
+    color: var(--c-ink-muted);
+  }
+  .pay-method-explainer__body p { margin: 0; max-width: none; }
+  .pay-method-explainer__body strong { color: var(--c-ink); font-weight: var(--weight-medium); }
+</style>

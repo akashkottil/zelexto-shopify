@@ -1,0 +1,16 @@
+{%- comment -%}
+  Razorpay Magic Checkout app-block mount point.
+
+  This is intentionally an empty container. When the Razorpay Magic Checkout
+  app embed is installed and `settings.magic_checkout_enabled` is true, the app
+  injects its UI here. The theme contains no JS or styling for it on purpose —
+  the app is the source of truth.
+{%- endcomment -%}
+
+{%- if settings.magic_checkout_enabled -%}
+  <div
+    data-app-block="razorpay-magic"
+    data-app-mount="razorpay-magic-checkout"
+    hidden
+  ></div>
+{%- endif -%}

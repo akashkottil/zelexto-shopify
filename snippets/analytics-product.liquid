@@ -1,0 +1,40 @@
+{%- comment -%}
+  analytics-product.liquid
+
+  Inline `view_item` emitter for PDP first paint. Rendered by main-product.liquid.
+
+  Usage:
+    {% render 'analytics-product', product: product %}
+{%- endcomment -%}
+
+{%- liquid
+  assign p = product
+  assign current_variant = p.selected_or_first_available_variant
+-%}
+
+{%- if p -%}
+  <script>
+    (function () {
+      var fire = function () {
+        if (!window.ZAnalytics || typeof window.ZAnalytics.viewItem !== 'function') return;
+        window.ZAnalytics.viewItem({
+          id:       {{ p.id | json }},
+          handle:   {{ p.handle | json }},
+          name:     {{ p.title | json }},
+          price:    {{ current_variant.price | money_without_currency | replace: ',', '' | json }},
+          currency: {{ cart.currency.iso_code | default: shop.currency | json }},
+          brand:    {{ p.vendor | json }},
+          category: {{ p.type | json }},
+          sku:      {{ current_variant.sku | json }},
+          variants: [
+            {%- for v in p.variants -%}
+              { id: {{ v.id | json }}, title: {{ v.title | json }}, price: {{ v.price | money_without_currency | replace: ',', '' | json }}, available: {{ v.available | json }} }{%- unless forloop.last -%},{%- endunless -%}
+            {%- endfor -%}
+          ]
+        });
+      };
+      if (window.ZAnalytics) fire();
+      else document.addEventListener('zanalytics:ready', fire, { once: true });
+    })();
+  </script>
+{%- endif -%}

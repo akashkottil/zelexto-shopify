@@ -1,0 +1,25 @@
+{%- comment -%}
+  Zelexto v2 — app-block-host.liquid
+  Wrapper for sections with @app-type blocks. Renders all blocks of type
+  "@app" inside a styled host element.
+
+  Usage from a section:
+    {% render 'app-block-host', blocks: section.blocks %}
+
+  Or with a single block:
+    {% render 'app-block-host', block: block %}
+{%- endcomment -%}
+
+{%- if blocks -%}
+  {%- for b in blocks -%}
+    {%- if b.type == '@app' -%}
+      <div class="app-block" {{ b.shopify_attributes }}>
+        {% render b %}
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+{%- elsif block and block.type == '@app' -%}
+  <div class="app-block" {{ block.shopify_attributes }}>
+    {% render block %}
+  </div>
+{%- endif -%}

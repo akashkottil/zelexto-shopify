@@ -1,365 +1,155 @@
 {
-    "sections": {
-        "announcement-bar": {
-            "type": "announcement-bar",
-            "settings": {
-                "show_bar": true,
-                "text": "🎉 Free shipping on orders over $50",
-                "bg_color": "#1a1a1a",
-                "text_color": "#ffffff"
-            }
-        },
-        "story-hero": {
-            "type": "story-hero",
-            "settings": {
-                "eyebrow": "Welcome to Zelexto",
-                "heading": "Designed for everyday performance.",
-                "subheading": "Premium quality meets modern design. Experience the difference.",
-                "btn_primary_label": "Shop Now",
-                "btn_secondary_label": "Our Story",
-                "overlay_opacity": 45,
-                "min_height": 100,
-                "text_color": "#ffffff",
-                "accent_color": "#6366f1",
-                "enable_animation": true
-            }
-        },
-        "story-brand": {
-            "type": "story-brand",
-            "settings": {
-                "eyebrow": "Our story",
-                "heading": "Built for people who expect more.",
-                "body_text": "We believe great products change daily routines. Every detail is carefully crafted to deliver a premium experience.",
-                "btn_label": "Learn our story",
-                "image_side": "left",
-                "bg_color": "#ffffff",
-                "text_color": "#0a0a0a",
-                "accent_color": "#6366f1",
-                "enable_animation": true
-            },
-            "blocks": {
-                "val-1": {
-                    "type": "value",
-                    "settings": {
-                        "value": "Premium quality materials"
-                    }
-                },
-                "val-2": {
-                    "type": "value",
-                    "settings": {
-                        "value": "Sustainably designed"
-                    }
-                },
-                "val-3": {
-                    "type": "value",
-                    "settings": {
-                        "value": "Engineered for performance"
-                    }
-                }
-            },
-            "blocks_order": [
-                "val-1",
-                "val-2",
-                "val-3"
-            ]
-        },
-        "story-features": {
-            "type": "story-features",
-            "settings": {
-                "eyebrow": "Why choose us",
-                "heading": "Built different, by design.",
-                "text_align": "center",
-                "columns": "4",
-                "bg_color": "#f8f8f8",
-                "text_color": "#0a0a0a",
-                "accent_color": "#6366f1",
-                "enable_animation": true
-            },
-            "blocks": {
-                "feat-1": {
-                    "type": "feature",
-                    "settings": {
-                        "icon": "star",
-                        "title": "Premium Materials",
-                        "text": "Crafted from the finest materials for lasting quality."
-                    }
-                },
-                "feat-2": {
-                    "type": "feature",
-                    "settings": {
-                        "icon": "shield",
-                        "title": "Long Lasting",
-                        "text": "Built to withstand the test of time and daily use."
-                    }
-                },
-                "feat-3": {
-                    "type": "feature",
-                    "settings": {
-                        "icon": "leaf",
-                        "title": "Sustainable Design",
-                        "text": "Eco-conscious materials and responsible manufacturing."
-                    }
-                },
-                "feat-4": {
-                    "type": "feature",
-                    "settings": {
-                        "icon": "zap",
-                        "title": "Engineered Performance",
-                        "text": "Precision engineering that delivers results every time."
-                    }
-                }
-            },
-            "blocks_order": [
-                "feat-1",
-                "feat-2",
-                "feat-3",
-                "feat-4"
-            ]
-        },
-        "story-product-parallax": {
-            "type": "story-product-parallax",
-            "settings": {
-                "eyebrow": "Bestseller",
-                "heading": "Our flagship product",
-                "body_text": "Precision-engineered for those who demand the best. Discover the difference quality makes.",
-                "btn_label": "Shop now",
-                "bg_color": "#080808",
-                "text_color": "#ffffff",
-                "accent_color": "#6366f1",
-                "glow_color": "#6366f1",
-                "enable_animation": true
-            },
-            "blocks": {
-                "ben-1": {
-                    "type": "benefit",
-                    "settings": {
-                        "benefit": "Premium materials sourced globally"
-                    }
-                },
-                "ben-2": {
-                    "type": "benefit",
-                    "settings": {
-                        "benefit": "Engineered for maximum durability"
-                    }
-                },
-                "ben-3": {
-                    "type": "benefit",
-                    "settings": {
-                        "benefit": "30-day satisfaction guarantee"
-                    }
-                }
-            },
-            "blocks_order": [
-                "ben-1",
-                "ben-2",
-                "ben-3"
-            ]
-        },
-        "story-social-proof": {
-            "type": "story-social-proof",
-            "settings": {
-                "eyebrow": "Testimonials",
-                "heading": "Loved by thousands.",
-                "aggregate_rating": 5,
-                "review_count": 2847,
-                "bg_color": "#ffffff",
-                "text_color": "#0a0a0a",
-                "accent_color": "#6366f1",
-                "enable_animation": true
-            },
-            "blocks": {
-                "rev-1": {
-                    "type": "review",
-                    "settings": {
-                        "quote": "Life-changing quality. Recommended it to everyone I know.",
-                        "author": "James L.",
-                        "location": "London",
-                        "rating": 5
-                    }
-                },
-                "rev-2": {
-                    "type": "review",
-                    "settings": {
-                        "quote": "Fast shipping, beautiful packaging, exceeded all expectations.",
-                        "author": "Mia T.",
-                        "location": "Sydney",
-                        "rating": 5
-                    }
-                },
-                "rev-3": {
-                    "type": "review",
-                    "settings": {
-                        "quote": "Best purchase of the year. Worth every penny.",
-                        "author": "Carlos R.",
-                        "location": "Madrid",
-                        "rating": 5
-                    }
-                },
-                "rev-4": {
-                    "type": "review",
-                    "settings": {
-                        "quote": "Stunning design and exceptional functionality.",
-                        "author": "Emma W.",
-                        "location": "Vancouver",
-                        "rating": 5
-                    }
-                }
-            },
-            "blocks_order": [
-                "rev-1",
-                "rev-2",
-                "rev-3",
-                "rev-4"
-            ]
-        },
-        "story-collections": {
-            "type": "story-collections",
-            "settings": {
-                "eyebrow": "Explore",
-                "heading": "Shop by collection.",
-                "view_all_label": "View all collections",
-                "columns": "4",
-                "bg_color": "#ffffff",
-                "text_color": "#0a0a0a",
-                "accent_color": "#6366f1",
-                "enable_animation": true
-            },
-            "blocks": {
-                "col-1": {
-                    "type": "collection_tile",
-                    "settings": {
-                        "label": "Best Sellers",
-                        "cta_label": "Shop now"
-                    }
-                },
-                "col-2": {
-                    "type": "collection_tile",
-                    "settings": {
-                        "label": "New Arrivals",
-                        "cta_label": "Shop now"
-                    }
-                },
-                "col-3": {
-                    "type": "collection_tile",
-                    "settings": {
-                        "label": "Trending Now",
-                        "cta_label": "Shop now"
-                    }
-                },
-                "col-4": {
-                    "type": "collection_tile",
-                    "settings": {
-                        "label": "Limited Edition",
-                        "cta_label": "Shop now"
-                    }
-                }
-            },
-            "blocks_order": [
-                "col-1",
-                "col-2",
-                "col-3",
-                "col-4"
-            ]
-        },
-        "story-lifestyle": {
-            "type": "story-lifestyle",
-            "settings": {
-                "eyebrow": "Our world",
-                "heading": "Life is better with quality.",
-                "body_text": "Designed for the moments that matter. Experience life elevated.",
-                "btn_label": "Explore the story",
-                "overlay_opacity": 50,
-                "min_height": 80,
-                "parallax_speed": 5,
-                "text_position": "left",
-                "text_color": "#ffffff",
-                "accent_color": "#a5b4fc",
-                "btn_bg_color": "#ffffff",
-                "btn_text_color": "#0a0a0a",
-                "enable_animation": true
-            }
-        },
-        "story-final-product": {
-            "type": "story-final-product",
-            "settings": {
-                "eyebrow": "Bestseller",
-                "heading": "Your next favourite product.",
-                "body_text": "Join thousands of customers who've made this their go-to. Order today and feel the difference.",
-                "btn_label": "Get yours today",
-                "trust_text": "Free shipping · 30-day returns · Secure checkout",
-                "image_side": "right",
-                "bg_color": "#0a0a0a",
-                "text_color": "#ffffff",
-                "accent_color": "#6366f1",
-                "glow_color": "#6366f1",
-                "enable_animation": true
-            },
-            "blocks": {
-                "blt-1": {
-                    "type": "bullet",
-                    "settings": {
-                        "bullet": "Free worldwide shipping included"
-                    }
-                },
-                "blt-2": {
-                    "type": "bullet",
-                    "settings": {
-                        "bullet": "30-day satisfaction guarantee"
-                    }
-                },
-                "blt-3": {
-                    "type": "bullet",
-                    "settings": {
-                        "bullet": "24/7 dedicated customer support"
-                    }
-                }
-            },
-            "blocks_order": [
-                "blt-1",
-                "blt-2",
-                "blt-3"
-            ]
-        },
-        "story-newsletter": {
-            "type": "story-newsletter",
-            "settings": {
-                "badge": "Exclusive offer",
-                "heading": "Join 50,000+ customers.",
-                "subheading": "Subscribe for exclusive deals, new arrivals, and a welcome discount on your first order.",
-                "input_placeholder": "Enter your email address",
-                "btn_label": "Subscribe",
-                "show_badges": true,
-                "badge_1": "No spam, ever",
-                "badge_2": "Unsubscribe anytime",
-                "badge_3": "Exclusive members-only offers",
-                "overlay_opacity": 0,
-                "bg_color": "#0a0a0a",
-                "text_color": "#ffffff",
-                "accent_color": "#6366f1",
-                "btn_color": "#6366f1",
-                "btn_text_color": "#ffffff",
-                "enable_animation": true
-            }
-        },
-        "footer": {
-            "type": "footer",
-            "settings": {
-                "show_newsletter": false,
-                "show_payment_icons": true
-            }
-        }
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "eyebrow": "New season",
+        "heading": "Designed for everyday.",
+        "subheading": "Considered products. Honest pricing. Delivered across India in 3–7 days.",
+        "cta_primary_label": "Shop the collection",
+        "cta_primary_url": "shopify://collections/all",
+        "cta_secondary_label": "Our story",
+        "cta_secondary_url": "/pages/about",
+        "height": "large",
+        "text_align": "left",
+        "overlay_opacity": 25,
+        "text_color": "#ffffff"
+      }
     },
-    "order": [
-        "announcement-bar",
-        "story-hero",
-        "story-brand",
-        "story-features",
-        "story-product-parallax",
-        "story-social-proof",
-        "story-collections",
-        "story-lifestyle",
-        "story-final-product",
-        "story-newsletter",
-        "footer"
-    ]
+    "feature-row-1": {
+      "type": "feature-row",
+      "settings": {
+        "eyebrow": "Why Zelexto",
+        "heading": "Built better, on purpose.",
+        "subheading": "Materials chosen with care. Details considered, never assumed.",
+        "bg": "bg"
+      },
+      "blocks": {
+        "row-1": {
+          "type": "row",
+          "settings": {
+            "eyebrow": "Materials",
+            "heading": "Sourced with intent.",
+            "body": "<p>We pick materials for how they age, not how they photograph. The result: products that feel right on day one, and on day one thousand.</p>",
+            "cta_label": "Learn more",
+            "cta_url": "/pages/materials",
+            "image_side": "auto"
+          }
+        },
+        "row-2": {
+          "type": "row",
+          "settings": {
+            "eyebrow": "Craft",
+            "heading": "Made with hands you can name.",
+            "body": "<p>Manufactured in small runs across India. We meet our partners. We pay them fairly. We sign the work.</p>",
+            "cta_label": "Inside the workshop",
+            "cta_url": "/pages/craft",
+            "image_side": "auto"
+          }
+        }
+      },
+      "block_order": ["row-1", "row-2"]
+    },
+    "spotlight": {
+      "type": "product-spotlight",
+      "settings": {
+        "eyebrow": "Bestseller",
+        "heading": "Our most-loved piece.",
+        "body": "<p>Engineered for everyday wear, designed to feel like a staple. Free shipping above ₹999, GST invoice on request.</p>",
+        "cta_label": "Shop the product",
+        "show_features": true,
+        "bg": "surface"
+      },
+      "blocks": {
+        "f1": { "type": "feature", "settings": { "text": "Free shipping above ₹999" } },
+        "f2": { "type": "feature", "settings": { "text": "30-day returns, no questions" } },
+        "f3": { "type": "feature", "settings": { "text": "GST invoice on request" } }
+      },
+      "block_order": ["f1", "f2", "f3"]
+    },
+    "bestsellers": {
+      "type": "grid-collection",
+      "settings": {
+        "eyebrow": "Shop",
+        "heading": "Bestsellers",
+        "product_limit": 8,
+        "columns": "4",
+        "show_view_all": true,
+        "view_all_label": "View all",
+        "bg": "bg"
+      }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "settings": {
+        "eyebrow": "What customers say",
+        "heading": "Loved across India.",
+        "aggregate_rating": 5,
+        "review_count": 2847,
+        "columns": "3",
+        "bg": "surface"
+      },
+      "blocks": {
+        "t1": { "type": "testimonial", "settings": { "quote": "Outstanding quality. Worth every rupee.", "author": "Aanya R.", "location": "Mumbai", "rating": 5 } },
+        "t2": { "type": "testimonial", "settings": { "quote": "Quick delivery, beautifully packaged.", "author": "Vikram S.", "location": "Bengaluru", "rating": 5 } },
+        "t3": { "type": "testimonial", "settings": { "quote": "Lives up to the hype, and then some.", "author": "Priya M.", "location": "Delhi", "rating": 5 } }
+      },
+      "block_order": ["t1", "t2", "t3"]
+    },
+    "marquee": {
+      "type": "marquee",
+      "settings": {
+        "heading": "As featured in",
+        "speed": 40,
+        "bg": "bg"
+      },
+      "blocks": {
+        "m1": { "type": "logo", "settings": { "text": "Vogue India" } },
+        "m2": { "type": "logo", "settings": { "text": "Forbes" } },
+        "m3": { "type": "logo", "settings": { "text": "GQ" } },
+        "m4": { "type": "logo", "settings": { "text": "Mint" } },
+        "m5": { "type": "logo", "settings": { "text": "Wired" } },
+        "m6": { "type": "logo", "settings": { "text": "Fast Company" } }
+      },
+      "block_order": ["m1", "m2", "m3", "m4", "m5", "m6"]
+    },
+    "image-with-text": {
+      "type": "image-with-text",
+      "settings": {
+        "eyebrow": "Our story",
+        "heading": "Designed in India. Built for the world.",
+        "body": "<p>We started Zelexto with a simple idea: world-class products don't need to come from elsewhere. We build here, with people we know, in materials we trust.</p>",
+        "cta_label": "Read the story",
+        "cta_url": "/pages/about",
+        "cta_style": "ghost",
+        "image_side": "right",
+        "bg": "bg"
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "settings": {
+        "eyebrow": "Help",
+        "heading": "Frequently asked",
+        "bg": "surface"
+      },
+      "blocks": {
+        "q1": { "type": "qa", "settings": { "question": "When will my order arrive?",     "answer": "<p>Most orders ship within 24 hours and arrive in 3–7 business days.</p>" } },
+        "q2": { "type": "qa", "settings": { "question": "Do you accept Cash on Delivery?", "answer": "<p>Yes — COD is available across most pincodes in India. A small fee may apply.</p>" } },
+        "q3": { "type": "qa", "settings": { "question": "Can I get a GST invoice?",        "answer": "<p>Add your GSTIN at checkout and we’ll email a tax invoice.</p>" } },
+        "q4": { "type": "qa", "settings": { "question": "What is your return policy?",     "answer": "<p>30-day returns on unused items in original packaging.</p>" } }
+      },
+      "block_order": ["q1", "q2", "q3", "q4"]
+    }
+  },
+  "order": [
+    "hero",
+    "feature-row-1",
+    "spotlight",
+    "bestsellers",
+    "testimonials",
+    "marquee",
+    "image-with-text",
+    "faq"
+  ]
 }

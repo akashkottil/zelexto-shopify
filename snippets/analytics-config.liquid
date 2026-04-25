@@ -1,0 +1,25 @@
+{%- comment -%}
+  analytics-config.liquid
+
+  Emits the global config object the analytics dispatcher needs at boot,
+  plus the dataLayer + gtag() stub so any inline calls work even before
+  GA/GTM scripts arrive. Render this in <head> BEFORE analytics-head.liquid
+  and BEFORE any analytics-* snippet.
+{%- endcomment -%}
+
+<script>
+  (function () {
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+    window.themeAnalyticsConfig = {
+      ga4Id:           {{ settings.ga4_measurement_id    | default: '' | json }},
+      gtmId:           {{ settings.gtm_container_id      | default: '' | json }},
+      metaPixelId:     {{ settings.meta_pixel_id         | default: '' | json }},
+      klaviyoKey:      {{ settings.klaviyo_public_key    | default: '' | json }},
+      requireConsent:  {{ settings.analytics_require_consent | json }},
+      currency:        {{ shop.currency | json }},
+      shop:            {{ shop.permanent_domain | json }},
+      locale:          {{ request.locale.iso_code | default: 'en' | json }}
+    };
+  })();
+</script>

@@ -1,0 +1,52 @@
+{%- comment -%}
+  Zelexto v2 — pagination.liquid
+  Numbered + prev/next pagination from a Liquid `paginate` object.
+
+  Usage:
+    {% paginate collection.products by 24 %}
+      ...
+      {% render 'pagination', paginate: paginate %}
+    {% endpaginate %}
+{%- endcomment -%}
+
+{%- if paginate.pages > 1 -%}
+  <nav class="pagination" role="navigation" aria-label="{{ 'general.pagination' | t | default: 'Pagination' }}">
+    {%- if paginate.previous -%}
+      <a class="pagination__nav" href="{{ paginate.previous.url }}" rel="prev" aria-label="{{ 'pagination.previous' | t | default: 'Previous page' }}">
+        {%- render 'icon', name: 'arrow-left' -%}
+        <span>{{ 'pagination.previous' | t | default: 'Previous' }}</span>
+      </a>
+    {%- else -%}
+      <span class="pagination__nav is-disabled" aria-disabled="true">
+        {%- render 'icon', name: 'arrow-left' -%}
+        <span>{{ 'pagination.previous' | t | default: 'Previous' }}</span>
+      </span>
+    {%- endif -%}
+
+    <ol class="pagination__pages" role="list">
+      {%- for part in paginate.parts -%}
+        {%- if part.is_link -%}
+          <li><a class="pagination__page" href="{{ part.url }}">{{ part.title }}</a></li>
+        {%- else -%}
+          {%- if part.title == paginate.current_page -%}
+            <li><span class="pagination__page is-current" aria-current="page">{{ part.title }}</span></li>
+          {%- else -%}
+            <li><span class="pagination__page is-ellipsis">{{ part.title }}</span></li>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </ol>
+
+    {%- if paginate.next -%}
+      <a class="pagination__nav" href="{{ paginate.next.url }}" rel="next" aria-label="{{ 'pagination.next' | t | default: 'Next page' }}">
+        <span>{{ 'pagination.next' | t | default: 'Next' }}</span>
+        {%- render 'icon', name: 'arrow-right' -%}
+      </a>
+    {%- else -%}
+      <span class="pagination__nav is-disabled" aria-disabled="true">
+        <span>{{ 'pagination.next' | t | default: 'Next' }}</span>
+        {%- render 'icon', name: 'arrow-right' -%}
+      </span>
+    {%- endif -%}
+  </nav>
+{%- endif -%}

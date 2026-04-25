@@ -1,0 +1,114 @@
+{%- comment -%}
+  Payment method badges (theme-side display only).
+
+  Usage:
+    {% render 'payment-badges', context: 'pdp' %}
+    {% render 'payment-badges', context: 'cart', product: product %}
+
+  Reads `settings.payment_methods_enabled` (a list). Renders a minimal,
+  monochrome badge row — wordmarks/icons in CSS-styled boxes (do not embed
+  high-fidelity copyrighted logos).
+{%- endcomment -%}
+
+{%- liquid
+  assign ctx = context | default: 'pdp'
+  assign methods = settings.payment_methods_enabled
+-%}
+
+{%- if methods != blank and methods.size > 0 -%}
+  <ul class="payment-badges payment-badges--{{ ctx }}" role="list" aria-label="{{ 'payments.accepted_methods' | t }}">
+    {%- for method in methods -%}
+      {%- case method -%}
+        {%- when 'upi' -%}
+          <li class="payment-badge" data-method="upi" aria-label="UPI">
+            <span class="payment-badge__mark">UPI</span>
+          </li>
+        {%- when 'visa' -%}
+          <li class="payment-badge" data-method="visa" aria-label="Visa">
+            <span class="payment-badge__mark payment-badge__mark--italic">VISA</span>
+          </li>
+        {%- when 'mastercard' -%}
+          <li class="payment-badge" data-method="mastercard" aria-label="Mastercard">
+            <span class="payment-badge__mark" aria-hidden="true">
+              <svg viewBox="0 0 32 20" fill="none" xmlns="http://www.w3.org/2000/svg" width="28" height="18">
+                <circle cx="13" cy="10" r="6" fill="currentColor" opacity="0.85"/>
+                <circle cx="19" cy="10" r="6" fill="currentColor" opacity="0.45"/>
+              </svg>
+            </span>
+            <span class="sr-only">Mastercard</span>
+          </li>
+        {%- when 'rupay' -%}
+          <li class="payment-badge" data-method="rupay" aria-label="RuPay">
+            <span class="payment-badge__mark">RuPay</span>
+          </li>
+        {%- when 'amex' -%}
+          <li class="payment-badge" data-method="amex" aria-label="American Express">
+            <span class="payment-badge__mark">AMEX</span>
+          </li>
+        {%- when 'netbanking' -%}
+          <li class="payment-badge" data-method="netbanking" aria-label="{{ 'payments.netbanking' | t }}">
+            <span class="payment-badge__mark">{{ 'payments.netbanking' | t }}</span>
+          </li>
+        {%- when 'wallets' -%}
+          <li class="payment-badge" data-method="wallets" aria-label="{{ 'payments.wallets' | t }}">
+            <span class="payment-badge__mark">{{ 'payments.wallets' | t }}</span>
+          </li>
+        {%- when 'emi' -%}
+          <li class="payment-badge" data-method="emi" aria-label="{{ 'payments.emi' | t }}">
+            <span class="payment-badge__mark">{{ 'payments.emi' | t }}</span>
+          </li>
+      {%- endcase -%}
+    {%- endfor -%}
+  </ul>
+
+  {%- unless ctx == 'footer' -%}
+    <p class="payment-badges__note" aria-hidden="false">
+      {%- render 'icon', name: 'shield', class: 'icon icon--sm' -%}
+      <span>{{ 'payments.secure_checkout' | t }}</span>
+    </p>
+  {%- endunless -%}
+
+  <style>
+    .payment-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-2);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .payment-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      height: 26px;
+      padding-inline: var(--s-2);
+      border: 1px solid var(--c-line);
+      border-radius: var(--radius-sm);
+      background: var(--c-bg);
+      color: var(--c-ink-muted);
+    }
+    .payment-badge__mark {
+      font-family: var(--font-display);
+      font-size: var(--fs-12);
+      font-weight: var(--weight-semibold);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .payment-badge__mark--italic { font-style: italic; letter-spacing: 0.06em; }
+    .payment-badge svg { display: block; }
+    .payment-badges--footer .payment-badge { background: transparent; }
+    .payment-badges--checkout { gap: var(--s-1); }
+    .payment-badges__note {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s-2);
+      margin-top: var(--s-3);
+      font-size: var(--fs-12);
+      color: var(--c-ink-muted);
+    }
+    .payment-badges__note .icon { width: 14px; height: 14px; }
+  </style>
+{%- endif -%}

@@ -1,0 +1,157 @@
+{%- liquid
+  assign height = section.settings.height | default: 'large'
+  assign align = section.settings.text_align | default: 'left'
+  assign overlay = section.settings.overlay_opacity | default: 0
+  assign text_color = section.settings.text_color | default: '#ffffff'
+-%}
+
+<section
+  class="hero hero--{{ height }} hero--align-{{ align }}{% if section.settings.image == blank %} hero--no-image{% endif %}"
+  data-section-id="{{ section.id }}"
+  style="--hero-text-color: {{ text_color }};">
+
+  {%- if section.settings.image != blank -%}
+    <div class="hero__media">
+      {%- if section.settings.mobile_image != blank -%}
+        <picture>
+          <source media="(max-width: 749px)" srcset="{{ section.settings.mobile_image | image_url: width: 750 }} 1x, {{ section.settings.mobile_image | image_url: width: 1100 }} 2x">
+          <img
+            src="{{ section.settings.image | image_url: width: 1920 }}"
+            srcset="{{ section.settings.image | image_url: width: 750 }} 750w, {{ section.settings.image | image_url: width: 1100 }} 1100w, {{ section.settings.image | image_url: width: 1500 }} 1500w, {{ section.settings.image | image_url: width: 1920 }} 1920w"
+            sizes="100vw"
+            alt="{{ section.settings.image.alt | escape | default: section.settings.heading }}"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}"
+            loading="eager"
+            fetchpriority="high"
+            decoding="sync">
+        </picture>
+      {%- else -%}
+        <img
+          src="{{ section.settings.image | image_url: width: 1920 }}"
+          srcset="{{ section.settings.image | image_url: width: 750 }} 750w, {{ section.settings.image | image_url: width: 1100 }} 1100w, {{ section.settings.image | image_url: width: 1500 }} 1500w, {{ section.settings.image | image_url: width: 1920 }} 1920w"
+          sizes="100vw"
+          alt="{{ section.settings.image.alt | escape | default: section.settings.heading }}"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          loading="eager"
+          fetchpriority="high"
+          decoding="sync">
+      {%- endif -%}
+    </div>
+    {%- if overlay > 0 -%}
+      <div class="hero__overlay" aria-hidden="true" style="opacity: {{ overlay | divided_by: 100.0 }}"></div>
+    {%- endif -%}
+  {%- endif -%}
+
+  <div class="container">
+    <div class="hero__inner">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="hero__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h1 class="hero__title">{{ section.settings.heading }}</h1>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="hero__subtitle">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+      {%- if section.settings.cta_primary_label != blank or section.settings.cta_secondary_label != blank -%}
+        <div class="hero__actions">
+          {%- if section.settings.cta_primary_label != blank -%}
+            <a href="{{ section.settings.cta_primary_url | default: '#' }}" class="btn btn--primary">{{ section.settings.cta_primary_label }}</a>
+          {%- endif -%}
+          {%- if section.settings.cta_secondary_label != blank -%}
+            <a href="{{ section.settings.cta_secondary_url | default: '#' }}" class="btn {% if section.settings.image != blank %}btn--invert{% else %}btn--ghost{% endif %}">{{ section.settings.cta_secondary_label }}</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} .hero{
+    position:relative;width:100%;overflow:hidden;
+    color:var(--hero-text-color, #fff);
+    background:var(--c-elev);
+  }
+  #shopify-section-{{ section.id }} .hero--small{min-height:60vh}
+  #shopify-section-{{ section.id }} .hero--medium{min-height:75vh}
+  #shopify-section-{{ section.id }} .hero--large{min-height:90vh}
+  #shopify-section-{{ section.id }} .hero--full{min-height:100vh;min-height:100dvh}
+  #shopify-section-{{ section.id }} .hero--no-image{
+    color:var(--c-ink);background:var(--c-bg);min-height:auto;
+    padding-block:var(--s-9);
+  }
+  #shopify-section-{{ section.id }} .hero__media{position:absolute;inset:0;z-index:0}
+  #shopify-section-{{ section.id }} .hero__media img{width:100%;height:100%;object-fit:cover}
+  #shopify-section-{{ section.id }} .hero__overlay{position:absolute;inset:0;background:#000;z-index:1}
+  #shopify-section-{{ section.id }} .hero__inner{
+    position:relative;z-index:2;
+    display:flex;flex-direction:column;justify-content:center;
+    min-height:inherit;
+    padding-block:clamp(var(--s-7), 8vw, var(--s-9));
+    max-width:760px;
+    color:inherit;
+  }
+  #shopify-section-{{ section.id }} .hero--align-center .hero__inner{margin-inline:auto;align-items:center;text-align:center}
+  #shopify-section-{{ section.id }} .hero--align-right .hero__inner{margin-left:auto;align-items:flex-end;text-align:right}
+  #shopify-section-{{ section.id }} .hero__eyebrow{
+    font-size:var(--fs-14);font-weight:var(--weight-medium);
+    letter-spacing:.04em;text-transform:uppercase;
+    margin-bottom:var(--s-3);opacity:.86;
+  }
+  #shopify-section-{{ section.id }} .hero__title{
+    font-family:var(--font-display);font-weight:var(--weight-semibold);
+    font-size:clamp(var(--fs-40), 6vw, var(--fs-80));
+    line-height:var(--lh-tight);letter-spacing:var(--tracking-display);
+    margin-bottom:var(--s-4);color:inherit;
+  }
+  #shopify-section-{{ section.id }} .hero__subtitle{
+    font-size:clamp(var(--fs-16), 2vw, var(--fs-21));
+    line-height:1.4;max-width:60ch;margin-bottom:var(--s-5);opacity:.92;
+  }
+  #shopify-section-{{ section.id }} .hero__actions{display:flex;flex-wrap:wrap;gap:var(--s-3)}
+  #shopify-section-{{ section.id }} .hero--align-center .hero__actions{justify-content:center}
+</style>
+
+{% schema %}
+{
+  "name": "Hero",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "New" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Designed for everyday." },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Crafted in India. Engineered for the world." },
+    { "type": "image_picker", "id": "image", "label": "Background image (desktop)" },
+    { "type": "image_picker", "id": "mobile_image", "label": "Background image (mobile)" },
+    { "type": "range", "id": "overlay_opacity", "label": "Image overlay opacity", "min": 0, "max": 80, "step": 5, "default": 25, "unit": "%" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
+    {
+      "type": "select", "id": "height", "label": "Height",
+      "options": [
+        { "value": "small",  "label": "Small (60vh)" },
+        { "value": "medium", "label": "Medium (75vh)" },
+        { "value": "large",  "label": "Large (90vh)" },
+        { "value": "full",   "label": "Full (100vh)" }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "select", "id": "text_align", "label": "Text alignment",
+      "options": [
+        { "value": "left",   "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right" }
+      ],
+      "default": "left"
+    },
+    { "type": "header", "content": "Buttons" },
+    { "type": "text", "id": "cta_primary_label", "label": "Primary CTA label", "default": "Shop now" },
+    { "type": "url",  "id": "cta_primary_url",   "label": "Primary CTA link" },
+    { "type": "text", "id": "cta_secondary_label", "label": "Secondary CTA label", "default": "Learn more" },
+    { "type": "url",  "id": "cta_secondary_url",   "label": "Secondary CTA link" }
+  ],
+  "presets": [{ "name": "Hero" }]
+}
+{% endschema %}

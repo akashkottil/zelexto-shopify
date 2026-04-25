@@ -1,0 +1,117 @@
+{%- comment -%}
+  free-shipping-bar.liquid
+
+  Progress bar toward the free-shipping threshold. Reads cart total and
+  settings.free_shipping_threshold (currency units, multiplied by 100 for
+  cents comparison). Updates live when cart:updated fires.
+
+  Accepts: context ('drawer' | 'cart' | 'announcement')
+{%- endcomment -%}
+
+{%- liquid
+  assign threshold = settings.free_shipping_threshold | default: 0
+  if threshold <= 0
+    assign skip = true
+  endif
+  assign threshold_cents = threshold | times: 100
+  assign current = cart.total_price | default: 0
+  assign remaining = threshold_cents | minus: current
+  if remaining < 0
+    assign remaining = 0
+  endif
+  assign pct = 0
+  if threshold_cents > 0
+    assign pct = current | times: 100 | divided_by: threshold_cents
+  endif
+  if pct > 100
+    assign pct = 100
+  endif
+  assign ctx = context | default: 'drawer'
+-%}
+
+{%- unless skip -%}
+  <free-shipping-bar
+    class="free-ship free-ship--{{ ctx }}"
+    data-threshold-cents="{{ threshold_cents }}"
+    data-cart-listener
+  >
+    <p class="free-ship__msg" data-msg>
+      {%- if remaining <= 0 -%}
+        {{ 'cart.free_shipping' | t }}
+      {%- else -%}
+        {%- assign rem_money = remaining | money -%}
+        {{ 'cart.free_shipping_progress' | t: amount: rem_money }}
+      {%- endif -%}
+    </p>
+    <div class="free-ship__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ pct }}">
+      <div class="free-ship__fill" data-fill style="width: {{ pct }}%;"></div>
+    </div>
+  </free-shipping-bar>
+
+  <style>
+    .free-ship {
+      display: block;
+      padding: var(--s-3) var(--s-4);
+      background: var(--c-elev);
+      border-radius: var(--radius-md);
+    }
+    .free-ship--drawer { border-radius: 0; padding-inline: var(--s-5); }
+    .free-ship--announcement { background: transparent; padding: 0; }
+    .free-ship__msg {
+      margin: 0 0 var(--s-2);
+      font-size: var(--fs-14);
+      color: var(--c-ink);
+    }
+    .free-ship__track {
+      position: relative;
+      height: 4px;
+      border-radius: var(--radius-pill);
+      background: color-mix(in srgb, var(--c-line) 50%, transparent);
+      overflow: hidden;
+    }
+    .free-ship__fill {
+      position: absolute; inset: 0 auto 0 0;
+      background: var(--c-accent);
+      width: 0%;
+      transition: width var(--dur-base) var(--ease-standard);
+    }
+    .free-ship.is-complete .free-ship__fill { background: var(--c-success); }
+  </style>
+
+  <script>
+    (function () {
+      if (window.__zFreeShipBound) return; window.__zFreeShipBound = true;
+      function fmt(cents) {
+        try { return window.theme.formatMoney(cents); } catch (e) { return cents / 100; }
+      }
+      function update(cart) {
+        document.querySelectorAll('free-shipping-bar[data-cart-listener]').forEach(function (el) {
+          var threshold = parseInt(el.dataset.thresholdCents, 10) || 0;
+          if (threshold <= 0) return;
+          var total = cart && cart.total_price != null ? cart.total_price : 0;
+          var remaining = Math.max(0, threshold - total);
+          var pct = Math.min(100, Math.round((total / threshold) * 100));
+          var fill = el.querySelector('[data-fill]');
+          var msg = el.querySelector('[data-msg]');
+          var track = el.querySelector('.free-ship__track');
+          if (fill) fill.style.width = pct + '%';
+          if (track) track.setAttribute('aria-valuenow', pct);
+          if (msg) {
+            if (remaining <= 0) {
+              msg.textContent = {{ 'cart.free_shipping' | t | json }};
+              el.classList.add('is-complete');
+            } else {
+              var tpl = {{ 'cart.free_shipping_progress' | t: amount: '__AMOUNT__' | json }};
+              msg.textContent = tpl.replace('__AMOUNT__', fmt(remaining));
+              el.classList.remove('is-complete');
+            }
+          }
+        });
+      }
+      if (window.theme && window.theme.on) {
+        window.theme.on('cart:updated', update);
+        window.theme.on('cart:item-added', function (d) { update(d && d.cart); });
+      }
+    })();
+  </script>
+{%- endunless -%}

@@ -1,0 +1,128 @@
+{%- liquid
+  assign bg = section.settings.bg | default: 'bg'
+  assign align = section.settings.text_align | default: 'center'
+-%}
+
+<section class="rich-text rich-text--{{ bg }} rich-text--{{ align }} section" data-section-id="{{ section.id }}">
+  <div class="container rich-text__container">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'eyebrow' -%}
+          {%- if block.settings.text != blank -%}
+            <p class="rich-text__eyebrow" {{ block.shopify_attributes }}>{{ block.settings.text }}</p>
+          {%- endif -%}
+        {%- when 'heading' -%}
+          {%- if block.settings.text != blank -%}
+            <h2 class="rich-text__heading" {{ block.shopify_attributes }}>{{ block.settings.text }}</h2>
+          {%- endif -%}
+        {%- when 'body' -%}
+          {%- if block.settings.text != blank -%}
+            <div class="rich-text__body" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
+          {%- endif -%}
+        {%- when 'cta' -%}
+          {%- if block.settings.label != blank -%}
+            <div class="rich-text__cta-wrap" {{ block.shopify_attributes }}>
+              <a href="{{ block.settings.url | default: '#' }}" class="btn btn--{{ block.settings.style | default: 'primary' }}">
+                {{ block.settings.label }}
+              </a>
+            </div>
+          {%- endif -%}
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} .rich-text--bg{background:var(--c-bg);color:var(--c-ink)}
+  #shopify-section-{{ section.id }} .rich-text--surface{background:var(--c-surface);color:var(--c-ink)}
+  #shopify-section-{{ section.id }} .rich-text--elev{background:var(--c-elev);color:var(--c-ink)}
+  #shopify-section-{{ section.id }} .rich-text--ink{background:var(--c-ink);color:var(--c-bg)}
+
+  #shopify-section-{{ section.id }} .rich-text__container{max-width:760px}
+  #shopify-section-{{ section.id }} .rich-text--center .rich-text__container{text-align:center}
+  #shopify-section-{{ section.id }} .rich-text--left .rich-text__container{text-align:left}
+  #shopify-section-{{ section.id }} .rich-text--right .rich-text__container{text-align:right}
+
+  #shopify-section-{{ section.id }} .rich-text__eyebrow{
+    font-size:var(--fs-14);font-weight:var(--weight-medium);
+    letter-spacing:.04em;text-transform:uppercase;
+    color:var(--c-ink-muted);margin-bottom:var(--s-3);
+  }
+  #shopify-section-{{ section.id }} .rich-text--ink .rich-text__eyebrow{color:rgba(255,255,255,.7)}
+  #shopify-section-{{ section.id }} .rich-text__heading{
+    font-size:clamp(var(--fs-28), 4vw, var(--fs-56));
+    line-height:var(--lh-snug);margin-bottom:var(--s-4);
+  }
+  #shopify-section-{{ section.id }} .rich-text__body{
+    font-size:var(--fs-19);line-height:1.5;
+    color:var(--c-ink-muted);
+  }
+  #shopify-section-{{ section.id }} .rich-text--ink .rich-text__body{color:rgba(255,255,255,.78)}
+  #shopify-section-{{ section.id }} .rich-text__body p{margin:0 0 var(--s-3)}
+  #shopify-section-{{ section.id }} .rich-text__body p:last-child{margin:0}
+  #shopify-section-{{ section.id }} .rich-text__cta-wrap{margin-top:var(--s-5)}
+</style>
+
+{% schema %}
+{
+  "name": "Rich text",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "select", "id": "bg", "label": "Background",
+      "options": [
+        { "value": "bg",      "label": "White" },
+        { "value": "surface", "label": "Surface" },
+        { "value": "elev",    "label": "Elevated" },
+        { "value": "ink",     "label": "Dark" }
+      ],
+      "default": "bg"
+    },
+    {
+      "type": "select", "id": "text_align", "label": "Alignment",
+      "options": [
+        { "value": "left",   "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right" }
+      ],
+      "default": "center"
+    }
+  ],
+  "blocks": [
+    { "type": "eyebrow", "name": "Eyebrow", "limit": 1, "settings": [
+      { "type": "text", "id": "text", "label": "Text", "default": "Our story" }
+    ]},
+    { "type": "heading", "name": "Heading", "limit": 1, "settings": [
+      { "type": "text", "id": "text", "label": "Text", "default": "Built with intent." }
+    ]},
+    { "type": "body", "name": "Body", "limit": 1, "settings": [
+      { "type": "richtext", "id": "text", "label": "Text", "default": "<p>We design products that earn their place. Every detail considered, nothing extra.</p>" }
+    ]},
+    { "type": "cta", "name": "Button", "limit": 2, "settings": [
+      { "type": "text", "id": "label", "label": "Label", "default": "Learn more" },
+      { "type": "url",  "id": "url",   "label": "Link" },
+      {
+        "type": "select", "id": "style", "label": "Style",
+        "options": [
+          { "value": "primary",   "label": "Primary" },
+          { "value": "secondary", "label": "Secondary" },
+          { "value": "ghost",     "label": "Ghost" }
+        ],
+        "default": "primary"
+      }
+    ]}
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {
+      "name": "Rich text",
+      "blocks": [
+        { "type": "eyebrow" },
+        { "type": "heading" },
+        { "type": "body" },
+        { "type": "cta" }
+      ]
+    }
+  ]
+}
+{% endschema %}

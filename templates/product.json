@@ -1,15 +1,31 @@
 {
-    "sections": {
-        "main": {
-            "type": "main-product",
-            "settings": {
-                "show_vendor": true,
-                "show_rating": true,
-                "enable_tabs": true
-            }
-        }
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "settings": {
+        "show_vendor": true,
+        "show_rating": true,
+        "enable_tabs": true
+      }
     },
-    "order": [
-        "main"
-    ]
+    "recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "heading": "You might also like",
+        "products_to_show": 4
+      }
+    },
+    "spotlight": {
+      "type": "product-spotlight",
+      "settings": {
+        "eyebrow": "Pairs well",
+        "heading": "Make it a set.",
+        "body": "<p>Hand-picked by our team to complete the look.</p>",
+        "cta_label": "Shop the spotlight",
+        "show_features": false,
+        "bg": "surface"
+      }
+    }
+  },
+  "order": ["main", "recommendations", "spotlight"]
 }

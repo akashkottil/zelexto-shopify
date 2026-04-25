@@ -1,87 +1,70 @@
-{% comment %}
-  ZELEXTO THEME — snippets/price.liquid
-  Displays product price with compare-at price and sale badge.
-  Accepts: product, variant (optional), show_badge (true/false)
-{% endcomment %}
+{%- comment -%}
+  Zelexto v2 — price.liquid
+  Apple-style price block. Renders compare-at strikethrough, sale badge,
+  sold-out state. Wraps money in [data-money-cents] so Agent C's INR formatter
+  can post-process via inr-format.js.
+
+  Accepts:
+    product       — product object
+    variant       — optional, defaults to selected_or_first_available_variant
+    show_badge    — default true; hide for compact card use
+    show_compare  — default true
+    class         — extra css class
+    use_variant   — true to always render variant price even if it varies
+{%- endcomment -%}
 
 {%- liquid
   assign target = variant | default: product.selected_or_first_available_variant
-  assign compare_price = target.compare_at_price
-  assign current_price = target.price
+  assign current = target.price
+  assign compare = target.compare_at_price
   assign price_varies = product.price_varies
-
-  if compare_price > current_price
+  assign on_sale = false
+  if compare and compare > current
     assign on_sale = true
-    assign savings = compare_price | minus: current_price
-    assign savings_pct = savings | times: 100 | divided_by: compare_price | round
-  else
-    assign on_sale = false
+    assign savings_pct = compare | minus: current | times: 100 | divided_by: compare | round
   endif
+  assign sold_out = false
+  if target.available == false
+    assign sold_out = true
+  endif
+  assign show_badge_attr = show_badge
+  if show_badge_attr == nil
+    assign show_badge_attr = true
+  endif
+  assign show_compare_attr = show_compare
+  if show_compare_attr == nil
+    assign show_compare_attr = true
+  endif
+  assign extra_class = class | default: ''
 -%}
 
-<div class="price{% if on_sale %} price--on-sale{% endif %}{% if target.available == false %} price--sold-out{% endif %}">
-
-  {%- if show_badge != false and on_sale -%}
-    <span class="badge badge--sale" aria-label="{{ 'product.sale_badge' | t: savings: savings_pct | append: '%' }}">
-      -{{ savings_pct }}%
-    </span>
-  {%- endif -%}
-
+<div class="price{% if on_sale %} price--on-sale{% endif %}{% if sold_out %} price--sold-out{% endif %} {{ extra_class }}">
   <div class="price__values">
-    <span class="price__current" aria-label="{{ 'product.price' | t }}">
-      {%- if price_varies and variant == blank -%}
-        <span class="price__from">{{ 'product.from' | t }}</span>
-      {%- endif -%}
-      {{ current_price | money }}
+    {%- if price_varies and variant == nil and use_variant != true -%}
+      <span class="price__from">{{ 'product.from' | t | default: 'From' }}</span>
+    {%- endif -%}
+
+    <span
+      class="price__current"
+      data-money-cents="{{ current }}"
+      data-currency="{{ cart.currency.iso_code }}">
+      {{ current | money }}
     </span>
 
-    {%- if on_sale -%}
-      <s class="price__compare" aria-label="{{ 'product.compare_at_price' | t }}">
-        {{ compare_price | money }}
+    {%- if on_sale and show_compare_attr -%}
+      <s class="price__compare" data-money-cents="{{ compare }}" aria-label="{{ 'product.compare_at_price' | t | default: 'Original price' }}">
+        {{ compare | money }}
       </s>
+    {%- endif -%}
+
+    {%- if sold_out -%}
+      <span class="price__sold-out">{{ 'product.sold_out' | t }}</span>
     {%- endif -%}
   </div>
 
+  {%- if on_sale and show_badge_attr -%}
+    <span class="price__badge" aria-label="{{ 'product.on_sale' | t | default: 'Sale' }}">
+      &minus;{{ savings_pct }}%
+    </span>
+  {%- endif -%}
 </div>
-
-<style>
-  .price {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
-  .price__values {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-2);
-    flex-wrap: wrap;
-  }
-
-  .price__current {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text);
-  }
-
-  .price--on-sale .price__current {
-    color: var(--color-accent);
-  }
-
-  .price__compare {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-    text-decoration: line-through;
-  }
-
-  .price__from {
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-normal);
-    text-transform: lowercase;
-    margin-right: 2px;
-  }
-
-  /* Compact version for cards */
-  .price--compact .price__current { font-size: var(--font-size-md); }
-</style>

@@ -1,214 +1,89 @@
-{% comment %}
-  ZELEXTO THEME — snippets/product-tabs.liquid
-  Tabbed content area on product page.
-  Blocks: description, custom_text, metafield, app_block.
-  Keyboard accessible via arrow keys.
-{% endcomment %}
+{%- comment -%}
+  Zelexto v2 — product-tabs.liquid
+  Apple-style accordion using <details>/<summary>. Supports description,
+  shipping/returns, size_guide, custom_text, metafield, app blocks.
+
+  Accepts:
+    product — required
+    section — section context for blocks
+{%- endcomment -%}
 
 {%- if section.blocks.size > 0 -%}
-  <div class="product-tabs" id="product-tabs" data-product-tabs>
+  <div class="product-tabs">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
 
-    <!-- Tab list -->
-    <div class="product-tabs__nav" role="tablist" aria-label="{{ 'product.tabs.label' | t | default: 'Product information' }}">
-      {%- for block in section.blocks -%}
-        <button
-          class="product-tabs__tab{% if forloop.first %} is-active{% endif %}"
-          type="button"
-          role="tab"
-          id="tab-btn-{{ block.id }}"
-          aria-controls="tab-panel-{{ block.id }}"
-          aria-selected="{{ forloop.first }}"
-          data-tab="{{ block.id }}"
-          {{ block.shopify_attributes }}>
-          {{ block.settings.tab_label | default: block.type | capitalize }}
-        </button>
-      {%- endfor -%}
-    </div>
+        {%- when 'description' -%}
+          <details class="product-tabs__item" {{ block.shopify_attributes }} {% if forloop.first %}open{% endif %}>
+            <summary class="product-tabs__summary">
+              <span>{{ block.settings.tab_label | default: 'Description' }}</span>
+              {% render 'icon', name: 'chevron-down', class: 'product-tabs__chevron' %}
+            </summary>
+            <div class="product-tabs__panel rte">{{ product.description }}</div>
+          </details>
 
-    <!-- Tab panels -->
-    <div class="product-tabs__panels">
-      {%- for block in section.blocks -%}
-        <div
-          class="product-tabs__panel{% if forloop.first %} is-active{% endif %}"
-          id="tab-panel-{{ block.id }}"
-          role="tabpanel"
-          aria-labelledby="tab-btn-{{ block.id }}"
-          tabindex="0"
-          hidden="{{ forloop.first | json | replace: 'true', 'false' | replace: 'false', 'true' }}"
-          {{ block.shopify_attributes }}>
+        {%- when 'shipping' -%}
+          <details class="product-tabs__item" {{ block.shopify_attributes }}>
+            <summary class="product-tabs__summary">
+              <span>{{ block.settings.tab_label | default: 'Shipping' }}</span>
+              {% render 'icon', name: 'chevron-down', class: 'product-tabs__chevron' %}
+            </summary>
+            <div class="product-tabs__panel rte">
+              {% if block.settings.content != blank %}{{ block.settings.content }}{% else %}<p>{{ 'product.shipping_default' | t | default: 'Free shipping on prepaid orders.' }}</p>{% endif %}
+            </div>
+          </details>
 
-          {%- case block.type -%}
+        {%- when 'returns' -%}
+          <details class="product-tabs__item" {{ block.shopify_attributes }}>
+            <summary class="product-tabs__summary">
+              <span>{{ block.settings.tab_label | default: 'Returns' }}</span>
+              {% render 'icon', name: 'chevron-down', class: 'product-tabs__chevron' %}
+            </summary>
+            <div class="product-tabs__panel rte">
+              {% if block.settings.content != blank %}{{ block.settings.content }}{% else %}<p>{{ 'product.returns_default' | t | default: '7-day easy returns.' }}</p>{% endif %}
+            </div>
+          </details>
 
-            {%- when 'description' -%}
-              <div class="product-tabs__content rte">
-                {{ product.description }}
-              </div>
+        {%- when 'size_guide' -%}
+          <details class="product-tabs__item" {{ block.shopify_attributes }}>
+            <summary class="product-tabs__summary">
+              <span>{{ block.settings.tab_label | default: 'Size guide' }}</span>
+              {% render 'icon', name: 'chevron-down', class: 'product-tabs__chevron' %}
+            </summary>
+            <div class="product-tabs__panel rte">{{ block.settings.content }}</div>
+          </details>
 
-            {%- when 'custom_text' -%}
-              <div class="product-tabs__content rte">
-                {{ block.settings.content }}
-              </div>
+        {%- when 'custom' -%}
+          <details class="product-tabs__item" {{ block.shopify_attributes }}>
+            <summary class="product-tabs__summary">
+              <span>{{ block.settings.tab_label | default: 'Details' }}</span>
+              {% render 'icon', name: 'chevron-down', class: 'product-tabs__chevron' %}
+            </summary>
+            <div class="product-tabs__panel rte">{{ block.settings.content }}</div>
+          </details>
 
-            {%- when 'metafield' -%}
-              {%- liquid
-                assign mf_ns   = block.settings.metafield_namespace
-                assign mf_key  = block.settings.metafield_key
-                assign mf_value = product.metafields[mf_ns][mf_key]
-              -%}
-              {%- if mf_value != blank -%}
-                <div class="product-tabs__content rte">{{ mf_value }}</div>
-              {%- else -%}
-                <p class="product-tabs__empty">{{ 'product.tabs.no_content' | t | default: 'No content available.' }}</p>
-              {%- endif -%}
+        {%- when 'metafield' -%}
+          {%- assign mf = product.metafields[block.settings.namespace][block.settings.key] -%}
+          {%- if mf != blank -%}
+            <details class="product-tabs__item" {{ block.shopify_attributes }}>
+              <summary class="product-tabs__summary">
+                <span>{{ block.settings.tab_label | default: block.settings.key }}</span>
+                {% render 'icon', name: 'chevron-down', class: 'product-tabs__chevron' %}
+              </summary>
+              <div class="product-tabs__panel rte">{{ mf }}</div>
+            </details>
+          {%- endif -%}
 
-            {%- when 'size_guide' -%}
-              <div class="product-tabs__content rte">
-                {{ block.settings.size_guide_content }}
-              </div>
+        {%- when '@app' -%}
+          <details class="product-tabs__item product-tabs__item--app" {{ block.shopify_attributes }}>
+            <summary class="product-tabs__summary">
+              <span>{{ 'product.more_info' | t | default: 'More info' }}</span>
+              {% render 'icon', name: 'chevron-down', class: 'product-tabs__chevron' %}
+            </summary>
+            <div class="product-tabs__panel">{% render block %}</div>
+          </details>
 
-            {%- when 'shipping_returns' -%}
-              <div class="product-tabs__content rte">
-                {%- if block.settings.content != blank -%}
-                  {{ block.settings.content }}
-                {%- else -%}
-                  <p>{{ 'product.tabs.shipping_default' | t | default: 'Free shipping on orders over $50. Returns accepted within 30 days.' }}</p>
-                {%- endif -%}
-              </div>
-
-          {%- endcase -%}
-
-        </div>
-      {%- endfor -%}
-    </div>
-
+      {%- endcase -%}
+    {%- endfor -%}
   </div>
-
-  <script>
-    (function () {
-      'use strict';
-      const tabsContainer = document.getElementById('product-tabs');
-      if (!tabsContainer) return;
-
-      const tabs   = tabsContainer.querySelectorAll('[role="tab"]');
-      const panels = tabsContainer.querySelectorAll('[role="tabpanel"]');
-
-      function activateTab(tab) {
-        // Deactivate all
-        tabs.forEach(t => {
-          t.classList.remove('is-active');
-          t.setAttribute('aria-selected', 'false');
-          t.setAttribute('tabindex', '-1');
-        });
-        panels.forEach(p => {
-          p.classList.remove('is-active');
-          p.hidden = true;
-        });
-
-        // Activate target
-        tab.classList.add('is-active');
-        tab.setAttribute('aria-selected', 'true');
-        tab.setAttribute('tabindex', '0');
-
-        const panel = document.getElementById(tab.getAttribute('aria-controls'));
-        if (panel) {
-          panel.classList.add('is-active');
-          panel.hidden = false;
-        }
-      }
-
-      // Click
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => activateTab(tab));
-      });
-
-      // Keyboard — arrow keys move between tabs
-      tabs.forEach((tab, idx) => {
-        tab.addEventListener('keydown', (e) => {
-          let targetIdx = idx;
-          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-            e.preventDefault();
-            targetIdx = (idx + 1) % tabs.length;
-          } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-            e.preventDefault();
-            targetIdx = (idx - 1 + tabs.length) % tabs.length;
-          } else if (e.key === 'Home') {
-            e.preventDefault();
-            targetIdx = 0;
-          } else if (e.key === 'End') {
-            e.preventDefault();
-            targetIdx = tabs.length - 1;
-          } else {
-            return;
-          }
-          activateTab(tabs[targetIdx]);
-          tabs[targetIdx].focus();
-        });
-      });
-
-      // Init — first tab open, all others hidden
-      tabs.forEach((tab, idx) => {
-        tab.setAttribute('tabindex', idx === 0 ? '0' : '-1');
-      });
-
-    })();
-  </script>
-
-  <style>
-    .product-tabs { margin-top: var(--space-8); }
-
-    .product-tabs__nav {
-      display: flex;
-      gap: 0;
-      border-bottom: 2px solid var(--color-border);
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .product-tabs__nav::-webkit-scrollbar { display: none; }
-
-    .product-tabs__tab {
-      flex-shrink: 0;
-      padding: var(--space-3) var(--space-5);
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-medium);
-      color: var(--color-text-secondary);
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: color var(--transition-fast), border-color var(--transition-fast);
-    }
-
-    .product-tabs__tab:hover { color: var(--color-text); }
-
-    .product-tabs__tab.is-active {
-      color: var(--color-primary);
-      border-bottom-color: var(--color-primary);
-      font-weight: var(--font-weight-semibold);
-    }
-
-    .product-tabs__tab:focus-visible {
-      outline: 2px solid var(--color-primary);
-      outline-offset: -2px;
-      border-radius: var(--radius) var(--radius) 0 0;
-    }
-
-    .product-tabs__panel {
-      padding: var(--space-6) 0;
-    }
-
-    .product-tabs__content.rte { line-height: var(--line-height-relaxed); font-size: var(--font-size-md); }
-    .product-tabs__content.rte h2,
-    .product-tabs__content.rte h3 { margin-top: var(--space-5); margin-bottom: var(--space-3); }
-    .product-tabs__content.rte ul,
-    .product-tabs__content.rte ol { padding-left: var(--space-6); margin-bottom: var(--space-4); }
-    .product-tabs__content.rte li { margin-bottom: var(--space-2); }
-    .product-tabs__content.rte p { margin-bottom: var(--space-4); }
-    .product-tabs__content.rte table { width: 100%; border-collapse: collapse; }
-    .product-tabs__content.rte td,
-    .product-tabs__content.rte th { padding: var(--space-3); border: 1px solid var(--color-border); text-align: left; }
-
-    .product-tabs__empty { color: var(--color-text-secondary); font-size: var(--font-size-sm); }
-  </style>
 {%- endif -%}

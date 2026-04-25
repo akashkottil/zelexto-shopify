@@ -1,271 +1,61 @@
-{% comment %}
-  ZELEXTO THEME — sections/search-modal.liquid
-  Full-screen search modal overlay using native <dialog>.
-  Results pulled from Shopify Predictive Search API via component-search.js.
-{% endcomment %}
+{%- comment -%}
+  Zelexto v2 — sections/search-modal.liquid
+  Full-screen search dialog. Eager-loaded since it must respond to the
+  global `search:open` event from the header.
+{%- endcomment -%}
 
-<dialog
+<predictive-search
   class="search-modal"
-  id="search-modal"
-  aria-label="{{ 'search.title' | t }}"
-  aria-modal="true">
+  data-module="search.js"
+  data-module-eager
+  hidden
+  role="dialog"
+  aria-modal="true"
+  aria-label="{{ 'search.title' | t | default: 'Search' }}">
 
-  <div class="search-modal__inner">
+  <div class="search-modal__backdrop" data-search-backdrop></div>
 
-    <!-- Search form -->
-    <div class="search-modal__form-wrap">
-      <form
-        action="{{ routes.search_url }}"
-        method="get"
-        role="search"
-        class="search-modal__form"
-        id="search-form">
-        <input type="hidden" name="type" value="product,article,page,collection">
+  <div class="search-modal__panel" data-search-panel>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-modal__form" data-search-form>
+      <input type="hidden" name="type" value="product,article,page,collection">
 
-        <div class="search-modal__input-wrap">
-          <label for="search-input" class="visually-hidden">{{ 'search.placeholder' | t }}</label>
-          <span class="search-modal__search-icon" aria-hidden="true">
-            {%- render 'icon', name: 'search', size: 20 -%}
-          </span>
-          <input
-            type="search"
-            name="q"
-            id="search-input"
-            class="search-modal__input"
-            placeholder="{{ 'search.placeholder' | t }}"
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="false"
-            autofocus
-            data-search-input
-            aria-autocomplete="list"
-            aria-controls="search-results"
-            aria-expanded="false">
-
-          <!-- Clear button -->
-          <button
-            type="button"
-            class="search-modal__clear"
-            aria-label="{{ 'search.clear' | t }}"
-            data-search-clear
-            hidden>
-            {%- render 'icon', name: 'close', size: 16 -%}
-          </button>
-        </div>
-
-        <button type="submit" class="btn btn--primary search-modal__submit">
-          {{ 'search.title' | t }}
+      <label class="search-modal__field">
+        <span class="sr-only">{{ 'search.placeholder' | t }}</span>
+        {% render 'icon', name: 'search', class: 'search-modal__icon' %}
+        <input
+          type="search"
+          name="q"
+          class="search-modal__input"
+          placeholder="{{ 'search.placeholder' | t | default: 'Search products, articles…' }}"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          aria-controls="predictive-results"
+          aria-autocomplete="list"
+          aria-expanded="false"
+          data-search-input>
+        <button type="button" class="search-modal__clear" data-search-clear hidden aria-label="{{ 'search.clear' | t | default: 'Clear' }}">
+          {% render 'icon', name: 'close' %}
         </button>
-      </form>
+      </label>
 
-      <button
-        type="button"
-        class="search-modal__close btn btn--ghost btn--sm"
-        aria-label="{{ 'general.close' | t }}"
-        data-search-close>
-        {{ 'general.close' | t }}
-        {%- render 'icon', name: 'close', size: 16 -%}
+      <button type="button" class="btn btn--ghost btn--sm search-modal__close" data-search-close aria-label="{{ 'general.close' | t | default: 'Close' }}">
+        {{ 'general.close' | t | default: 'Close' }}
       </button>
+    </form>
+
+    <div class="search-modal__results" id="predictive-results" data-search-results role="listbox" aria-live="polite">
+      <div class="search-modal__hint" data-search-hint>{{ 'search.hint' | t | default: 'Start typing to see suggestions.' }}</div>
     </div>
-
-    <!-- Results container -->
-    <div
-      class="search-modal__results"
-      id="search-results"
-      role="listbox"
-      aria-label="{{ 'search.results_for' | t: terms: '' }}"
-      data-search-results>
-
-      <!-- Results injected by component-search.js -->
-      <div class="search-modal__loading" id="search-loading" hidden aria-live="polite">
-        <div class="spinner"></div>
-        <span class="visually-hidden">{{ 'search.loading' | t }}</span>
-      </div>
-
-      <div class="search-modal__empty" id="search-empty" hidden>
-        <p>{{ 'search.no_results' | t: terms: '' }}</p>
-      </div>
-
-    </div>
-
-    <!-- Popular / trending (shown before user types) -->
-    {%- unless settings.enable_predictive_search == false -%}
-    <div class="search-modal__trending" id="search-trending" data-search-trending>
-      <p class="search-modal__section-title">{{ 'search.title' | t }}</p>
-    </div>
-    {%- endunless -%}
-
   </div>
-</dialog>
+</predictive-search>
 
-<!-- Search result snippets are injected by JS — but Liquid templates are defined inline for reference -->
-<template id="tmpl-search-product">
-  <!-- Populated by snippets/search-result-product.liquid logic, cloned in JS -->
-</template>
-
-<style>
-  .search-modal {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    max-width: 100%;
-    height: 100%;
-    max-height: 100%;
-    margin: 0;
-    padding: 0;
-    border: none;
-    background: transparent;
-    overflow: hidden;
-  }
-
-  .search-modal::backdrop {
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-
-  /* Animate in */
-  .search-modal[open] {
-    animation: searchModalIn 0.3s var(--animation-easing, ease) forwards;
-  }
-
-  @keyframes searchModalIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  .search-modal__inner {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    max-height: 80vh;
-    max-height: 80dvh;
-    background: var(--color-bg);
-    border-radius: 0 0 var(--radius-card) var(--radius-card);
-    box-shadow: var(--shadow-xl);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    animation: slideDown 0.3s var(--animation-easing, ease) forwards;
-  }
-
-  @keyframes slideDown {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-
-  .search-modal__form-wrap {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-4) var(--space-6);
-    border-bottom: 1px solid var(--color-border);
-    flex-shrink: 0;
-  }
-
-  .search-modal__form { flex: 1; }
-
-  .search-modal__input-wrap {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: var(--space-3) var(--space-4);
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-  }
-
-  .search-modal__input-wrap:focus-within {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
-  }
-
-  .search-modal__search-icon { color: var(--color-text-secondary); flex-shrink: 0; }
-
-  .search-modal__input {
-    flex: 1;
-    background: none;
-    border: none;
-    outline: none;
-    font-family: var(--font-body);
-    font-size: var(--font-size-md);
-    color: var(--color-text);
-  }
-
-  .search-modal__input::placeholder { color: var(--color-text-secondary); }
-
-  .search-modal__clear {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--color-text-secondary);
-    padding: var(--space-1);
-    border-radius: var(--radius);
-    transition: color var(--transition-fast), background-color var(--transition-fast);
-    flex-shrink: 0;
-  }
-  .search-modal__clear:hover { color: var(--color-text); background: var(--color-border); }
-
-  .search-modal__submit { flex-shrink: 0; }
-  .search-modal__close { flex-shrink: 0; }
-
-  /* Results */
-  .search-modal__results {
-    flex: 1;
-    overflow-y: auto;
-    padding: var(--space-4) var(--space-6);
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-  }
-
-  @media (min-width: 768px) {
-    .search-modal__results {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  .search-modal__section-title {
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-text-secondary);
-    margin-bottom: var(--space-3);
-    grid-column: 1 / -1;
-  }
-
-  .search-modal__trending {
-    padding: var(--space-2) var(--space-6) var(--space-6);
-    flex-shrink: 0;
-  }
-
-  .search-modal__loading,
-  .search-modal__empty {
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--space-8);
-    color: var(--color-text-secondary);
-    gap: var(--space-3);
-  }
-
-  @media (max-width: 768px) {
-    .search-modal__form-wrap {
-      flex-wrap: wrap;
-      padding: var(--space-3) var(--space-4);
-    }
-    .search-modal__submit { display: none; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .search-modal[open],
-    .search-modal__inner {
-      animation: none;
-    }
-  }
-</style>
+{% schema %}
+{
+  "name": "Search modal",
+  "tag": "section",
+  "class": "section--search-modal",
+  "settings": []
+}
+{% endschema %}

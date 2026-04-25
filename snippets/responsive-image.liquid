@@ -1,0 +1,61 @@
+{%- comment -%}
+  Canonical responsive image renderer.
+
+  Usage:
+    {% render 'responsive-image',
+       image: product.featured_image,
+       alt: product.title,
+       sizes: '(min-width:768px) 50vw, 100vw',
+       widths: '320,480,640,750,900,1100,1500,1800',
+       loading: 'lazy',          (default 'lazy'; pass 'eager' for LCP)
+       fetchpriority: 'auto',    ('high' for LCP)
+       aspect_ratio: '1/1',      (forces CLS-safe box; falls back to image natural)
+       class: 'product-card__media'
+    %}
+{%- endcomment -%}
+
+{%- liquid
+  assign img       = image
+  assign alt_text  = alt | default: img.alt | default: ''
+  assign load_attr = loading | default: 'lazy'
+  assign fp_attr   = fetchpriority | default: 'auto'
+  assign sz_attr   = sizes | default: '100vw'
+  assign w_list    = widths | default: '320,480,640,750,900,1100,1500,1800'
+  assign css_class = class | default: ''
+  assign ratio     = aspect_ratio | default: ''
+-%}
+
+{%- if img == blank -%}
+  <div
+    class="responsive-image responsive-image--placeholder {{ css_class }}"
+    {%- if ratio != blank %} style="aspect-ratio:{{ ratio }};"{% endif -%}
+    role="img"
+    aria-label="{{ alt_text | escape }}"
+  >
+    {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+  </div>
+{%- else -%}
+  {%- assign widths_array = w_list | split: ',' -%}
+  {%- capture srcset -%}
+    {%- for w in widths_array -%}
+      {%- assign wn = w | strip | times: 1 -%}
+      {%- if wn <= img.width -%}
+        {{ img | image_url: width: wn }} {{ wn }}w{%- unless forloop.last %}, {% endunless -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  <img
+    class="responsive-image {{ css_class }}"
+    src="{{ img | image_url: width: 750 }}"
+    srcset="{{ srcset | strip }}"
+    sizes="{{ sz_attr }}"
+    alt="{{ alt_text | escape }}"
+    width="{{ img.width }}"
+    height="{{ img.height }}"
+    loading="{{ load_attr }}"
+    decoding="async"
+    fetchpriority="{{ fp_attr }}"
+    {%- if ratio != blank %} style="aspect-ratio:{{ ratio }};"{% endif %}
+  >
+{%- endif -%}

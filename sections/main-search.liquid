@@ -1,290 +1,111 @@
-{% comment %}
-  ZELEXTO THEME — sections/main-search.liquid
-  Search results page: products, articles, pages tabs.
-  Uses same filter-sidebar + sort as collection page.
-{% endcomment %}
+{%- comment -%}
+  Zelexto v2 — sections/main-search.liquid
+  Search results page. Reuses filter-sidebar + product-card + pagination.
+  Native Shopify search results (search.results).
+{%- endcomment -%}
 
 {%- liquid
-  assign search_performed = search.performed
-  assign terms            = search.terms
-  assign results_count    = search.results_count
-  assign show_filters     = section.settings.enable_filtering
-  assign enable_anim      = section.settings.enable_animation
-  assign products_per_page = section.settings.products_per_page | default: 24
-
-  assign product_results  = search.results | where: 'object_type', 'product'
-  assign article_results  = search.results | where: 'object_type', 'article'
-  assign page_results     = search.results | where: 'object_type', 'page'
+  assign per_page = section.settings.products_per_page | default: 24
 -%}
 
-<div class="search-page" id="search-page">
+<div class="search-results">
   <div class="container">
+    <header class="search-results__header">
+      {% render 'breadcrumb' %}
+      <h1 class="search-results__title">
+        {%- if search.performed -%}
+          {{ 'search.results_for' | t: terms: search.terms }}
+        {%- else -%}
+          {{ 'search.title' | t | default: 'Search' }}
+        {%- endif -%}
+      </h1>
 
-    <!-- Search bar -->
-    <div class="search-page__bar">
-      <h1 class="search-page__heading visually-hidden">{{ 'search.title' | t | default: 'Search' }}</h1>
-      <form action="{{ routes.search_url }}" method="get" class="search-page__form" role="search">
-        <input type="hidden" name="type" value="{{ section.settings.search_type | default: 'product,article,page' }}">
-        <div class="search-page__input-wrap">
-          {%- render 'icon', name: 'search', size: 20 -%}
+      <form action="{{ routes.search_url }}" method="get" class="search-results__form" role="search">
+        <input type="hidden" name="type" value="product,article,page">
+        <label class="field search-results__field">
+          <span class="sr-only">{{ 'search.placeholder' | t }}</span>
+          {% render 'icon', name: 'search', class: 'search-results__icon' %}
           <input
             type="search"
             name="q"
-            id="search-page-input"
             value="{{ search.terms | escape }}"
-            class="search-page__input"
-            placeholder="{{ 'search.placeholder' | t | default: 'Search products...' }}"
-            aria-label="{{ 'search.placeholder' | t | default: 'Search products' }}"
-            autocomplete="off"
-            autofocus>
-          {%- if search.terms != blank -%}
-            <a href="{{ routes.search_url }}" class="search-page__clear" aria-label="{{ 'general.clear' | t | default: 'Clear search' }}">
-              {%- render 'icon', name: 'close', size: 16 -%}
-            </a>
-          {%- endif -%}
-        </div>
+            class="field__input"
+            placeholder="{{ 'search.placeholder' | t }}"
+            autocomplete="off">
+        </label>
         <button type="submit" class="btn btn--primary">{{ 'search.submit' | t | default: 'Search' }}</button>
       </form>
-    </div>
+    </header>
 
-    {%- if search_performed -%}
+    {%- if search.performed -%}
+      {%- paginate search.results by per_page -%}
+        {%- if search.results.size > 0 -%}
+          <p class="search-results__summary" aria-live="polite">
+            {{ 'search.results_count' | t: count: search.results_count | default: search.results_count | append: ' results' }}
+          </p>
 
-      <!-- Results summary -->
-      <p class="search-page__summary" aria-live="polite">
-        {%- if results_count > 0 -%}
-          {{ 'search.results_count' | t: count: results_count, terms: terms | default: results_count | append: ' results for "' | append: terms | append: '"' }}
-        {%- else -%}
-          {{ 'search.no_results' | t: terms: terms | default: 'No results for "' | append: terms | append: '"' }}
-        {%- endif -%}
-      </p>
-
-      {%- if results_count > 0 -%}
-
-        <!-- Tabs for result types -->
-        {%- if product_results.size > 0 or article_results.size > 0 or page_results.size > 0 -%}
-          <div class="search-tabs" role="tablist" aria-label="{{ 'search.result_types' | t | default: 'Result types' }}">
-            {%- if product_results.size > 0 -%}
-              <button class="search-tab is-active" role="tab" data-search-tab="products" aria-selected="true">
-                {{ 'search.products' | t | default: 'Products' }} ({{ product_results.size }})
-              </button>
+          <div class="search-results__layout">
+            {%- if section.settings.enable_filters -%}
+              <aside class="search-results__facets">
+                {% render 'filter-sidebar', collection: search, section: section %}
+              </aside>
             {%- endif -%}
-            {%- if article_results.size > 0 -%}
-              <button class="search-tab" role="tab" data-search-tab="articles" aria-selected="false">
-                {{ 'search.articles' | t | default: 'Articles' }} ({{ article_results.size }})
-              </button>
-            {%- endif -%}
-            {%- if page_results.size > 0 -%}
-              <button class="search-tab" role="tab" data-search-tab="pages" aria-selected="false">
-                {{ 'search.pages' | t | default: 'Pages' }} ({{ page_results.size }})
-              </button>
-            {%- endif -%}
-          </div>
-        {%- endif -%}
 
-        <!-- Products panel -->
-        {%- if product_results.size > 0 -%}
-          <div class="search-panel is-active" id="search-panel-products" data-search-panel="products">
-            <div class="search-page__layout{% if show_filters %} search-page__layout--sidebar{% endif %}">
-
-              {%- if show_filters -%}
-                <aside class="collection-sidebar" aria-label="{{ 'collection.filters.label' | t | default: 'Filters' }}">
-                  {%- render 'filter-sidebar', collection: search, section: section -%}
-                </aside>
-              {%- endif -%}
-
-              <div class="collection-main">
-                <div class="collection-toolbar">
-                  <div class="collection-toolbar__left">
-                    <p class="collection-toolbar__count">{{ product_results.size }} {{ 'search.products' | t | default: 'products' }}</p>
-                  </div>
-                  <div class="collection-toolbar__right">
-                    {%- if section.settings.enable_sorting -%}
-                      <select id="sort-select" class="form-select collection-sort">
-                        {%- for option in search.sort_options -%}
-                          <option value="{{ option.value }}" {% if option.value == search.sort_by %}selected{% endif %}>{{ option.name }}</option>
-                        {%- endfor -%}
-                      </select>
-                    {%- endif -%}
-                  </div>
-                </div>
-
-                <div class="collection-grid grid grid--products" id="collection-products" data-stagger>
-                  {%- for item in product_results -%}
-                    {%- render 'product-card',
-                      product: item,
-                      animation: 'animate-slide-up',
-                      animation_delay: forloop.index0 | modulo: 8 | times: 60 -%}
-                  {%- endfor -%}
-                </div>
+            <div class="search-results__main">
+              <div class="search-results__grid grid">
+                {%- for item in search.results -%}
+                  {%- case item.object_type -%}
+                    {%- when 'product' -%}
+                      {% render 'product-card', product: item, index: forloop.index %}
+                    {%- when 'article' -%}
+                      <article class="article-card article-card--search">
+                        {%- if item.image -%}
+                          <a href="{{ item.url }}" class="article-card__media aspect" style="aspect-ratio: 16/10;">
+                            {% render 'responsive-image', image: item.image, alt: item.title, sizes: '(min-width:1024px) 33vw, 50vw', loading: 'lazy' %}
+                          </a>
+                        {%- endif -%}
+                        <div class="article-card__body">
+                          <span class="pill">{{ 'search.articles' | t | default: 'Article' }}</span>
+                          <h2 class="article-card__title"><a href="{{ item.url }}">{{ item.title }}</a></h2>
+                          {%- if item.excerpt_or_content -%}<p>{{ item.excerpt_or_content | strip_html | truncate: 120 }}</p>{%- endif -%}
+                        </div>
+                      </article>
+                    {%- when 'page' -%}
+                      <a href="{{ item.url }}" class="search-page-result">
+                        <span class="pill">{{ 'search.pages' | t | default: 'Page' }}</span>
+                        <strong>{{ item.title }}</strong>
+                        {%- if item.content -%}<p>{{ item.content | strip_html | truncate: 140 }}</p>{%- endif -%}
+                      </a>
+                  {%- endcase -%}
+                {%- endfor -%}
               </div>
+              {% render 'pagination', paginate: paginate %}
             </div>
           </div>
-        {%- endif -%}
-
-        <!-- Articles panel -->
-        {%- if article_results.size > 0 -%}
-          <div class="search-panel" id="search-panel-articles" data-search-panel="articles">
-            <div class="blog-grid" data-stagger>
-              {%- for item in article_results -%}
-                <article class="blog-card{% if enable_anim %} animate-slide-up{% endif %}" {% if enable_anim %}data-animate="animate-slide-up" style="--animation-delay: {{ forloop.index0 | times: 60 }}ms;"{% endif %}>
-                  {%- if item.image -%}
-                    <a href="{{ item.url }}" class="blog-card__image-wrap" tabindex="-1">
-                      <img src="{{ item.image | image_url: width: 600 }}" alt="{{ item.image.alt | escape | default: item.title }}" width="600" height="400" loading="lazy" decoding="async" class="blog-card__image">
-                    </a>
-                  {%- endif -%}
-                  <div class="blog-card__body">
-                    <h2 class="blog-card__title"><a href="{{ item.url }}" class="blog-card__title-link">{{ item.title }}</a></h2>
-                    {%- if item.excerpt != blank -%}<p class="blog-card__excerpt">{{ item.excerpt | strip_html | truncate: 120 }}</p>{%- endif -%}
-                    <a href="{{ item.url }}" class="blog-card__read-more">{{ 'blog.read_more' | t | default: 'Read more' }}</a>
-                  </div>
-                </article>
-              {%- endfor -%}
-            </div>
+        {%- else -%}
+          <div class="search-results__empty">
+            <h2>{{ 'search.no_results' | t: terms: search.terms }}</h2>
+            <p>{{ 'search.try_again' | t | default: 'Try different keywords or browse all products.' }}</p>
+            <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">{{ 'general.browse_all' | t | default: 'Browse all products' }}</a>
           </div>
         {%- endif -%}
-
-        <!-- Pages panel -->
-        {%- if page_results.size > 0 -%}
-          <div class="search-panel" id="search-panel-pages" data-search-panel="pages">
-            <ul class="search-pages-list">
-              {%- for item in page_results -%}
-                <li class="search-pages-list__item{% if enable_anim %} animate-slide-up{% endif %}" {% if enable_anim %}data-animate="animate-slide-up" style="--animation-delay: {{ forloop.index0 | times: 60 }}ms;"{% endif %}>
-                  <a href="{{ item.url }}" class="search-pages-list__link">
-                    {%- render 'icon', name: 'document', size: 18 -%}
-                    <span>{{ item.title }}</span>
-                  </a>
-                </li>
-              {%- endfor -%}
-            </ul>
-          </div>
-        {%- endif -%}
-
-      {%- else -%}
-
-        <!-- No results -->
-        <div class="search-no-results">
-          {%- render 'icon', name: 'search', size: 64 -%}
-          <h2>{{ 'search.no_results_title' | t | default: 'No results found' }}</h2>
-          <p>{{ 'search.no_results_tip' | t | default: 'Try different keywords, check spelling, or browse our collections.' }}</p>
-          <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">{{ 'general.browse_all' | t | default: 'Browse all products' }}</a>
-        </div>
-
-      {%- endif -%}
-
+      {%- endpaginate -%}
     {%- else -%}
-      <p class="search-page__prompt">{{ 'search.prompt' | t | default: 'Enter a keyword to search our store.' }}</p>
+      <p class="search-results__prompt">{{ 'search.prompt' | t | default: 'Enter a search term to begin.' }}</p>
     {%- endif -%}
-
   </div>
 </div>
 
-<script>
-  (function () {
-    'use strict';
-    const tabs  = document.querySelectorAll('[data-search-tab]');
-    const panels = document.querySelectorAll('[data-search-panel]');
-    if (!tabs.length) return;
-
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const target = tab.dataset.searchTab;
-        tabs.forEach(t => { t.classList.remove('is-active'); t.setAttribute('aria-selected','false'); });
-        panels.forEach(p => p.classList.remove('is-active'));
-        tab.classList.add('is-active'); tab.setAttribute('aria-selected','true');
-        document.getElementById(`search-panel-${target}`)?.classList.add('is-active');
-      });
-    });
-  })();
-</script>
-
-<style>
-  .search-page { padding-block: var(--space-8); }
-
-  /* Search bar */
-  .search-page__bar { margin-bottom: var(--space-6); }
-  .search-page__form { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; }
-  .search-page__input-wrap {
-    flex: 1; min-width: 260px;
-    display: flex; align-items: center; gap: var(--space-2);
-    border: 1.5px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: 0 var(--space-3);
-    background: var(--color-bg);
-  }
-  .search-page__input-wrap:focus-within { border-color: var(--color-primary); }
-  .search-page__input {
-    flex: 1; border: none; outline: none; padding-block: var(--space-3);
-    font-family: var(--font-body); font-size: var(--font-size-md);
-    background: transparent; color: var(--color-text);
-  }
-  .search-page__clear { color: var(--color-text-secondary); display: flex; }
-  .search-page__summary { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--space-5); }
-  .search-page__prompt { text-align: center; color: var(--color-text-secondary); padding: var(--space-16) 0; }
-
-  /* Tabs */
-  .search-tabs {
-    display: flex; gap: 0;
-    border-bottom: 2px solid var(--color-border);
-    margin-bottom: var(--space-6);
-    overflow-x: auto; scrollbar-width: none;
-  }
-  .search-tab {
-    flex-shrink: 0; padding: var(--space-3) var(--space-5);
-    background: none; border: none; border-bottom: 2px solid transparent;
-    margin-bottom: -2px; cursor: pointer;
-    font-size: var(--font-size-sm); font-weight: var(--font-weight-medium);
-    color: var(--color-text-secondary);
-    transition: color var(--transition-fast), border-color var(--transition-fast);
-  }
-  .search-tab.is-active { color: var(--color-primary); border-bottom-color: var(--color-primary); font-weight: var(--font-weight-semibold); }
-
-  /* Panels */
-  .search-panel { display: none; }
-  .search-panel.is-active { display: block; }
-
-  /* Sidebar layout */
-  .search-page__layout { display: block; }
-  .search-page__layout--sidebar { display: grid; grid-template-columns: 260px 1fr; gap: var(--space-8); align-items: start; }
-  @media (max-width: 1024px) { .search-page__layout--sidebar { grid-template-columns: 1fr; } .collection-sidebar { display: none; } }
-
-  /* Pages list */
-  .search-pages-list { list-style: none; display: flex; flex-direction: column; gap: var(--space-2); max-width: 600px; }
-  .search-pages-list__link {
-    display: flex; align-items: center; gap: var(--space-3);
-    padding: var(--space-4) var(--space-5);
-    border: 1px solid var(--color-border); border-radius: var(--radius-card);
-    text-decoration: none; color: var(--color-text);
-    transition: border-color var(--transition-fast), background-color var(--transition-fast);
-  }
-  .search-pages-list__link:hover { border-color: var(--color-primary); background: var(--color-surface); }
-
-  /* No results */
-  .search-no-results {
-    text-align: center; padding: var(--space-16) 0;
-    display: flex; flex-direction: column; align-items: center; gap: var(--space-5);
-    color: var(--color-text-secondary);
-  }
-  .search-no-results svg { opacity: 0.25; }
-  .search-no-results h2 { font-size: var(--font-size-2xl); color: var(--color-text); }
-</style>
-
 {% schema %}
 {
-  "name": "Search page",
+  "name": "t:sections.search.name",
+  "tag": "section",
+  "class": "section section--search",
   "settings": [
-    { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 24 },
-    { "type": "checkbox", "id": "enable_filtering", "label": "Enable filtering", "default": true },
-    { "type": "checkbox", "id": "enable_sorting", "label": "Enable sorting", "default": true },
-    { "type": "checkbox", "id": "enable_animation", "label": "Enable animations", "default": true },
-    {
-      "type": "select", "id": "search_type", "label": "Search types",
-      "options": [
-        {"value":"product,article,page","label":"Products, articles & pages"},
-        {"value":"product","label":"Products only"}
-      ],
-      "default": "product,article,page"
-    }
+    { "type": "checkbox", "id": "enable_filters", "label": "Enable filters", "default": true },
+    { "type": "checkbox", "id": "show_filter_count", "label": "Show count per filter", "default": true },
+    { "type": "range", "id": "products_per_page", "label": "Results per page", "min": 8, "max": 48, "step": 4, "default": 24 }
   ],
-  "presets": [{ "name": "Search page" }]
+  "presets": [{ "name": "Search" }]
 }
 {% endschema %}

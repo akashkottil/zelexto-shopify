@@ -1,67 +1,55 @@
-{% comment %}
-  ZELEXTO THEME — sections/product-recommendations.liquid
-  Shopify Product Recommendations API — rendered server-side via Section Rendering.
-  Uses intent: 'related' by default.
-{% endcomment %}
+{%- comment -%}
+  Zelexto v2 — sections/product-recommendations.liquid
+  Shopify Recommendations API. Hydrated by quick-add.js / fetch on the
+  outer <product-recommendations> element using Section Rendering API.
+{%- endcomment -%}
 
-{%- if recommendations.performed? and recommendations.products_count > 0 -%}
+{%- liquid
+  assign limit = section.settings.products_to_show | default: 4
+  assign intent = section.settings.intent | default: 'related'
+  assign heading = section.settings.heading | default: 'You may also like'
+-%}
 
-  <section class="product-recs section" id="product-recs-{{ section.id }}">
-    <div class="container">
-      <div class="section-header animate-fade-in" data-animate="animate-fade-in">
-        <h2 class="section-header__title">{{ section.settings.heading | default: 'You may also like' }}</h2>
-      </div>
+<product-recommendations
+  class="recommendations"
+  data-module="quick-add.js"
+  data-section-id="{{ section.id }}"
+  data-product-id="{{ product.id }}"
+  data-limit="{{ limit }}"
+  data-intent="{{ intent }}"
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ limit }}&intent={{ intent }}">
 
-      <div class="product-recs__grid grid grid--products" data-stagger>
-        {%- for product in recommendations.products -%}
-          {%- render 'product-card',
-            product: product,
-            animation: 'animate-slide-up',
-            animation_delay: forloop.index0 | times: 60 -%}
+  {%- if recommendations.performed and recommendations.products_count > 0 -%}
+    <div class="container recommendations__container">
+      <h2 class="recommendations__heading">{{ heading }}</h2>
+      <div class="recommendations__grid grid">
+        {%- for p in recommendations.products -%}
+          {% render 'product-card', product: p, index: forloop.index %}
         {%- endfor -%}
       </div>
     </div>
-  </section>
+  {%- endif -%}
 
-{%- endif -%}
-
-{%- unless recommendations.performed? -%}
-  <!-- Placeholder that gets replaced by Section Rendering API -->
-  <div
-    id="product-recs-{{ section.id }}"
-    data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}&intent=related">
-  </div>
-
-  <script>
-    (function () {
-      'use strict';
-      const container = document.getElementById('product-recs-{{ section.id }}');
-      if (!container) return;
-
-      fetch(container.dataset.url, {
-        headers: { 'Accept': 'text/html, */*' }
-      })
-      .then(r => r.text())
-      .then(html => {
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        const newSection = doc.querySelector('.product-recs, #product-recs-{{ section.id }}');
-        if (newSection) {
-          container.replaceWith(newSection);
-          if (window.ThemeAnimations) window.ThemeAnimations.refresh();
-        }
-      })
-      .catch(err => console.warn('[ProductRecs]', err));
-    })();
-  </script>
-{%- endunless -%}
+</product-recommendations>
 
 {% schema %}
 {
   "name": "Product recommendations",
   "tag": "section",
+  "class": "section section--recommendations",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Section heading", "default": "You may also like" },
-    { "type": "range", "id": "products_to_show", "label": "Products to show", "min": 2, "max": 8, "step": 1, "default": 4 }
+    { "type": "text", "id": "heading", "label": "Heading", "default": "You may also like" },
+    { "type": "range", "id": "products_to_show", "label": "Products to show", "min": 2, "max": 12, "step": 1, "default": 4 },
+    {
+      "type": "select",
+      "id": "intent",
+      "label": "Recommendation intent",
+      "options": [
+        { "value": "related", "label": "Related" },
+        { "value": "complementary", "label": "Complementary" }
+      ],
+      "default": "related"
+    }
   ],
   "presets": [{ "name": "Product recommendations" }]
 }

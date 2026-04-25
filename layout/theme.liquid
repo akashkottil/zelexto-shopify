@@ -2,60 +2,43 @@
 <html
   lang="{{ request.locale.iso_code }}"
   dir="{% if request.locale.iso_code == 'ar' %}rtl{% else %}ltr{% endif %}"
-  class="no-js">
+  class="no-js"
+  data-asset-base="{{ '' | asset_url }}">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="{{ settings.color_background | default: '#ffffff' }}">
 
-  <!-- ================================================================
-    TITLE & META
-  ================================================================= -->
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32 }}">
+    <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 192 }}">
+  {%- endif -%}
+
   <title>
     {%- if template == 'index' -%}
       {{ shop.name }}{% if page_title != shop.name %} — {{ page_title }}{% endif %}
     {%- else -%}
-      {{ page_title }}{% if current_tags %} – {{ current_tags | join: ', ' }}{% endif %} — {{ shop.name }}
+      {{ page_title }}{% if current_tags %} — {{ current_tags | join: ', ' }}{% endif %} — {{ shop.name }}
     {%- endif -%}
   </title>
 
-  {%- if page_description -%}
+  {%- if page_description != blank -%}
     <meta name="description" content="{{ page_description | escape }}">
   {%- endif -%}
 
-  <!-- Canonical -->
-  <link rel="canonical" href="{{ canonical_url }}">
-
-  <!-- ================================================================
-    FAVICON
-  ================================================================= -->
-  {%- if settings.favicon -%}
-    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32 }}">
-  {%- endif -%}
-
-  <!-- ================================================================
-    OPEN GRAPH & TWITTER CARD
-  ================================================================= -->
-  {%- render 'open-graph' -%}
-
-  <!-- ================================================================
-    RESOURCE HINTS — Performance improvement 2
-  ================================================================= -->
-  <link rel="preconnect" href="https://cdn.shopify.com">
-  <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+  {%- comment -%} Resource hints {%- endcomment -%}
+  <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.shopify.com">
-  {%- if settings.font_heading.system? == false -%}
-    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
-  {%- endif -%}
+  <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
 
-  <!-- ================================================================
-    FONTS — font-display: swap prevents FOIT
-  ================================================================= -->
+  {%- comment -%} Fonts — preload only weights used; font-display: swap {%- endcomment -%}
   {%- unless settings.font_heading.system? -%}
-    <link rel="preload" as="font" href="{{ settings.font_heading | font_url }}" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="{{ settings.font_heading | font_url }}" crossorigin>
   {%- endunless -%}
   {%- unless settings.font_body.system? -%}
-    <link rel="preload" as="font" href="{{ settings.font_body | font_url }}" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="{{ settings.font_body | font_url }}" crossorigin>
   {%- endunless -%}
 
   <style>
@@ -63,232 +46,114 @@
     {{ settings.font_body | font_face: font_display: 'swap' }}
   </style>
 
-  <!-- ================================================================
-    CRITICAL CSS — Inlined for above-fold (header + hero baseline)
-    Prevents render-blocking. Secondary CSS loaded async below.
-  ================================================================= -->
-  <style>
-    /* Critical reset + above-fold baseline */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: {{ settings.font_size_base | default: 16 }}px; }
-    body {
-      font-family: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
-      color: {{ settings.color_text }};
-      background: {{ settings.color_background }};
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
-    img, video { display: block; max-width: 100%; height: auto; }
-    /* Header critical — prevent layout shift */
-    .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 200;
-      width: 100%;
-      background: {{ settings.color_background }};
-      height: 64px;
-      display: flex;
-      align-items: center;
-    }
-    {%- if settings.header_sticky == false -%}
-    .site-header { position: relative; }
-    {%- endif -%}
-    {%- if settings.header_transparent -%}
-    .site-header--transparent { background: transparent; position: absolute; }
-    {%- endif -%}
-    /* CLS prevention: reserve space for above-fold hero */
-    main { display: block; }
-    .skip-link {
-      position: absolute; top: 1rem; left: 1rem; z-index: 600;
-      background: {{ settings.color_primary }}; color: #fff;
-      padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none;
-      transform: translateY(-200%); transition: transform 200ms;
-    }
-    .skip-link:focus { transform: translateY(0); }
-  </style>
+  {%- comment -%}
+    Critical CSS — async-loaded with high priority. Shopify Liquid cannot read
+    asset file contents inline at runtime, so we treat critical.css as an early
+    blocking stylesheet (very small, ~3KB) and async-load the rest below.
+  {%- endcomment -%}
+  <link rel="stylesheet" href="{{ 'critical.css' | asset_url }}">
 
-  <!-- ================================================================
-    HERO IMAGE PRELOAD — LCP optimization (Performance improvement 1)
-    Only preload the hero image if one exists on this template.
-  ================================================================= -->
-  {%- if template == 'index' -%}
+  {%- comment -%} LCP image preload — homepage hero {%- endcomment -%}
+  {%- if template.name == 'index' -%}
     {%- for section in template.sections -%}
-      {%- if section.type == 'hero-banner' and section.settings.image -%}
+      {%- if section.type == 'hero' and section.settings.image != blank -%}
         <link
           rel="preload"
           as="image"
+          fetchpriority="high"
           href="{{ section.settings.image | image_url: width: 1920 }}"
-          imagesrcset="{{ section.settings.image | image_url: width: 750 }} 750w,
-                       {{ section.settings.image | image_url: width: 1100 }} 1100w,
-                       {{ section.settings.image | image_url: width: 1920 }} 1920w"
+          imagesrcset="{{ section.settings.image | image_url: width: 750 }} 750w, {{ section.settings.image | image_url: width: 1100 }} 1100w, {{ section.settings.image | image_url: width: 1500 }} 1500w, {{ section.settings.image | image_url: width: 1920 }} 1920w"
           imagesizes="100vw">
         {%- break -%}
       {%- endif -%}
     {%- endfor -%}
   {%- endif -%}
 
-  <!-- ================================================================
-    THEME CSS — Async loaded after critical styles
-  ================================================================= -->
-  <link
-    rel="preload"
-    href="{{ 'theme.css' | asset_url }}"
-    as="style"
-    onload="this.onload=null;this.rel='stylesheet'">
+  {%- comment -%} Async CSS — preload pattern with noscript fallback {%- endcomment -%}
+  <link rel="preload" href="{{ 'base.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="{{ 'components.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="{{ 'templates.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="{{ 'motion.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript>
-    <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
+    <link rel="stylesheet" href="{{ 'base.css' | asset_url }}">
+    <link rel="stylesheet" href="{{ 'components.css' | asset_url }}">
+    <link rel="stylesheet" href="{{ 'templates.css' | asset_url }}">
+    <link rel="stylesheet" href="{{ 'motion.css' | asset_url }}">
   </noscript>
 
-  <link
-    rel="preload"
-    href="{{ 'theme-animations.css' | asset_url }}"
-    as="style"
-    onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="{{ 'theme-animations.css' | asset_url }}">
-  </noscript>
+  {%- comment -%} Analytics config first, then head tags {%- endcomment -%}
+  {%- render 'analytics-config' -%}
+  {%- render 'analytics-head' -%}
 
-  <!-- ================================================================
-    STRUCTURED DATA — JSON-LD
-  ================================================================= -->
+  {%- comment -%} SEO {%- endcomment -%}
+  {%- render 'meta-tags' -%}
   {%- render 'structured-data' -%}
 
-  <!-- ================================================================
-    SHOPIFY REQUIRED HOOK — Must be present for app scripts etc.
-  ================================================================= -->
-  {{ content_for_header }}
-
-  <!-- ================================================================
-    THEME SETTINGS — Passed to JS
-  ================================================================= -->
+  {%- comment -%} Theme settings exposed to JS {%- endcomment -%}
   <script>
     window.themeSettings = {
-      animationsEnabled: {{ settings.enable_animations | json }},
-      defaultAnimation: {{ settings.default_animation | json }},
-      animationDuration: {{ settings.animation_duration | default: 600 | json }},
-      cartType: {{ settings.cart_type | json }},
+      cartType: {{ settings.cart_type | default: 'drawer' | json }},
+      currency: {{ cart.currency.iso_code | json }},
+      moneyFormat: {{ shop.money_format | json }},
+      moneyWithCurrencyFormat: {{ shop.money_with_currency_format | json }},
+      locale: {{ request.locale.iso_code | json }},
+      country: {{ localization.country.iso_code | json }},
       freeShippingThreshold: {{ settings.free_shipping_threshold | default: 0 | json }},
+      lowStockThreshold: {{ settings.low_stock_threshold | default: 10 | json }},
       enableQuickView: {{ settings.enable_quick_view | json }},
       enableRecentlyViewed: {{ settings.enable_recently_viewed | json }},
       enableBackToTop: {{ settings.enable_back_to_top | json }},
       enableStickyCart: {{ settings.enable_sticky_cart | json }},
       enablePredictiveSearch: {{ settings.enable_predictive_search | json }},
-      currency: {{ cart.currency.iso_code | json }},
-      moneyFormat: {{ shop.money_format | json }},
       routes: {
-        root: "{{ routes.root_url }}",
-        cart: "{{ routes.cart_url }}",
-        cartAdd: "{{ routes.cart_add_url }}",
-        cartChange: "{{ routes.cart_change_url }}",
-        predictiveSearch: "{{ routes.predictive_search_url }}",
-        account: "{{ routes.account_url }}"
+        root: {{ routes.root_url | json }},
+        cart: {{ routes.cart_url | json }},
+        cartAdd: {{ routes.cart_add_url | json }},
+        cartChange: {{ routes.cart_change_url | json }},
+        cartUpdate: {{ routes.cart_update_url | json }},
+        predictiveSearch: {{ routes.predictive_search_url | json }},
+        search: {{ routes.search_url | json }},
+        account: {{ routes.account_url | json }},
+        accountLogin: {{ routes.account_login_url | json }}
       }
     };
   </script>
 
+  {{ content_for_header }}
 </head>
 
 <body
-  id="body"
-  class="template-{{ template.name | replace: '.', '-' | handle }}"
-  data-cart-type="{{ settings.cart_type }}">
+  class="template-{{ template.name | replace: '.', '-' | handle }}{% if template.suffix %} template-suffix-{{ template.suffix }}{% endif %}"
+  data-cart-type="{{ settings.cart_type | default: 'drawer' }}"
+  data-template="{{ template.name }}">
 
-  <!-- Skip to content (accessibility) -->
-  <a class="skip-link" href="#main-content">
-    {{ 'general.skip_to_content' | t }}
-  </a>
+  <a class="skip-to-content" href="#main">{{ 'general.skip_to_content' | t }}</a>
 
-  <!-- ================================================================
-    ANNOUNCEMENT BAR
-  ================================================================= -->
-  {% section 'announcement-bar' %}
+  {% sections 'header-group' %}
 
-  <!-- ================================================================
-    HEADER
-  ================================================================= -->
-  {% section 'header' %}
-
-  <!-- ================================================================
-    MAIN CONTENT
-  ================================================================= -->
-  <main id="main-content" role="main" tabindex="-1">
+  <main id="main" role="main" tabindex="-1">
     {{ content_for_layout }}
   </main>
 
-  <!-- ================================================================
-    FOOTER
-  ================================================================= -->
-  {% section 'footer' %}
+  {% sections 'footer-group' %}
 
-  <!-- ================================================================
-    GLOBAL OVERLAYS & MODALS
-    These are rendered once and reused across the page.
-  ================================================================= -->
-
-  <!-- Search Modal -->
+  {%- comment -%} Global overlays — rendered once {%- endcomment -%}
   {% section 'search-modal' %}
 
-  <!-- Cart Drawer -->
   {%- if settings.cart_type == 'drawer' -%}
     {% section 'cart-drawer' %}
   {%- endif -%}
 
-  <!-- Back to Top -->
+  {% section 'exit-intent-modal' %}
+  {% section 'recently-sold-toast' %}
+
   {%- if settings.enable_back_to_top -%}
     {% section 'back-to-top' %}
   {%- endif -%}
 
-  <!-- ================================================================
-    JAVASCRIPT — All deferred. Zero render-blocking scripts.
+  {%- comment -%} Theme JS — single deferred entry, lazy-loads modules {%- endcomment -%}
+  <script src="{{ 'theme.js' | asset_url }}" type="module" defer></script>
 
-    LOADING ORDER:
-    1. theme-events.js   — event bus (must load before components)
-    2. theme-animations.js — animation engine
-    3. component-cart.js — cart drawer + ajax
-    4. component-search.js — predictive search
-    5. component-product.js — only on product templates
-    6. component-filters.js — only on collection templates
-    7. component-quick-view.js — only when feature enabled
-  ================================================================= -->
-
-  <!-- 1. Event bus — loads first, all components depend on it -->
-  <script src="{{ 'theme-events.js' | asset_url }}" defer></script>
-
-  <!-- 2. Animation engine -->
-  <script src="{{ 'theme-animations.js' | asset_url }}" defer></script>
-
-  <!-- 3. Cart — always needed -->
-  <script src="{{ 'component-cart.js' | asset_url }}" defer></script>
-
-  <!-- 4. Predictive search -->
-  {%- if settings.enable_predictive_search -%}
-    <script src="{{ 'component-search.js' | asset_url }}" defer></script>
-  {%- endif -%}
-
-  <!-- 5. Product page scripts — only on product template -->
-  {%- if template.name == 'product' -%}
-    <script src="{{ 'component-product.js' | asset_url }}" defer></script>
-    <script src="{{ 'component-product-gallery.js' | asset_url }}" defer></script>
-    <script src="{{ 'component-countdown.js' | asset_url }}" defer></script>
-  {%- endif -%}
-
-  <!-- 6. Collection filters — only on collection template -->
-  {%- if template.name == 'collection' or template.name == 'search' -%}
-    <script src="{{ 'component-filters.js' | asset_url }}" defer></script>
-  {%- endif -%}
-
-  <!-- 7. Quick view — only when enabled -->
-  {%- if settings.enable_quick_view -%}
-    <script src="{{ 'component-quick-view.js' | asset_url }}" defer></script>
-  {%- endif -%}
-
-  <!-- 8. Stats counter — only on pages using story-statistics section -->
-  {%- if template.name == 'index' or template.name == 'page' -%}
-    <script src="{{ 'component-stats-counter.js' | asset_url }}" defer></script>
-  {%- endif -%}
-
-  <!-- Remove no-js class once JS is available -->
   <script>document.documentElement.classList.remove('no-js');</script>
-
 </body>
 </html>

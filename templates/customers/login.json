@@ -1,11 +1,9 @@
 {
-    "sections": {
-        "main": {
-            "type": "customers-login",
-            "settings": {}
-        }
-    },
-    "order": [
-        "main"
-    ]
+  "sections": {
+    "main": {
+      "type": "customers-login",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
 }

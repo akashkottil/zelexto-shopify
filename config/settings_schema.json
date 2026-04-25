@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "Zelexto",
-    "theme_version": "1.0.0",
+    "theme_version": "2.0.0",
     "theme_author": "Zelexto",
     "theme_documentation_url": "https://zelexto.com/docs",
     "theme_support_url": "https://zelexto.com/support"
@@ -10,113 +10,39 @@
   {
     "name": "Colors",
     "settings": [
-      {
-        "type": "color",
-        "id": "color_primary",
-        "label": "Primary color",
-        "default": "#1a1a1a"
-      },
-      {
-        "type": "color",
-        "id": "color_primary_hover",
-        "label": "Primary hover color",
-        "default": "#333333"
-      },
-      {
-        "type": "color",
-        "id": "color_secondary",
-        "label": "Secondary color",
-        "default": "#6b7280"
-      },
-      {
-        "type": "color",
-        "id": "color_accent",
-        "label": "Accent color",
-        "default": "#e63946"
-      },
-      {
-        "type": "color",
-        "id": "color_background",
-        "label": "Page background",
-        "default": "#ffffff"
-      },
-      {
-        "type": "color",
-        "id": "color_surface",
-        "label": "Surface / card background",
-        "default": "#f9fafb"
-      },
-      {
-        "type": "color",
-        "id": "color_border",
-        "label": "Border color",
-        "default": "#e5e7eb"
-      },
-      {
-        "type": "color",
-        "id": "color_text",
-        "label": "Body text color",
-        "default": "#111827"
-      },
-      {
-        "type": "color",
-        "id": "color_text_secondary",
-        "label": "Secondary text color",
-        "default": "#6b7280"
-      },
-      {
-        "type": "color",
-        "id": "color_success",
-        "label": "Success color",
-        "default": "#10b981"
-      },
-      {
-        "type": "color",
-        "id": "color_warning",
-        "label": "Warning color",
-        "default": "#f59e0b"
-      },
-      {
-        "type": "color",
-        "id": "color_error",
-        "label": "Error color",
-        "default": "#ef4444"
-      }
+      { "type": "header", "content": "Surface" },
+      { "type": "color", "id": "color_bg", "label": "Page background", "default": "#ffffff" },
+      { "type": "color", "id": "color_surface", "label": "Soft surface", "default": "#fbfbfd" },
+      { "type": "color", "id": "color_elev", "label": "Card / elevated", "default": "#f5f5f7" },
+      { "type": "color", "id": "color_line", "label": "Border / hairline", "default": "#d2d2d7" },
+
+      { "type": "header", "content": "Ink" },
+      { "type": "color", "id": "color_ink", "label": "Primary ink", "default": "#1d1d1f" },
+      { "type": "color", "id": "color_ink_muted", "label": "Muted ink", "default": "#6e6e73" },
+
+      { "type": "header", "content": "Accent", "info": "Used only on CTAs and links. Keep restrained." },
+      { "type": "color", "id": "color_accent", "label": "Accent", "default": "#0071e3" },
+      { "type": "color", "id": "color_accent_ink", "label": "Accent ink (text on accent)", "default": "#ffffff" },
+
+      { "type": "header", "content": "Status" },
+      { "type": "color", "id": "color_success", "label": "Success", "default": "#1f8f4e" },
+      { "type": "color", "id": "color_warning", "label": "Warning", "default": "#b25e09" },
+      { "type": "color", "id": "color_danger", "label": "Danger", "default": "#c8102e" }
     ]
   },
   {
     "name": "Typography",
     "settings": [
-      {
-        "type": "font_picker",
-        "id": "font_heading",
-        "label": "Heading font",
-        "default": "inter_n7"
-      },
-      {
-        "type": "font_picker",
-        "id": "font_body",
-        "label": "Body font",
-        "default": "inter_n4"
-      },
-      {
-        "type": "range",
-        "id": "font_size_base",
-        "label": "Base font size",
-        "min": 14,
-        "max": 20,
-        "step": 1,
-        "unit": "px",
-        "default": 16
-      },
+      { "type": "font_picker", "id": "font_display", "label": "Display font", "default": "inter_n6" },
+      { "type": "font_picker", "id": "font_body", "label": "Body font", "default": "inter_n4" },
+      { "type": "range", "id": "font_size_base", "label": "Base font size", "min": 14, "max": 18, "step": 1, "unit": "px", "default": 16 },
       {
         "type": "select",
         "id": "heading_text_transform",
-        "label": "Heading text transform",
+        "label": "Heading transform",
         "options": [
           { "value": "none", "label": "Normal" },
-          { "value": "uppercase", "label": "Uppercase" },
-          { "value": "capitalize", "label": "Capitalize" }
+          { "value": "uppercase", "label": "Uppercase" }
         ],
         "default": "none"
       }
@@ -125,96 +51,21 @@
   {
     "name": "Layout",
     "settings": [
-      {
-        "type": "range",
-        "id": "container_max_width",
-        "label": "Container max width",
-        "min": 1000,
-        "max": 1600,
-        "step": 40,
-        "unit": "px",
-        "default": 1280
-      },
-      {
-        "type": "range",
-        "id": "section_spacing_vertical",
-        "label": "Section vertical spacing",
-        "min": 20,
-        "max": 120,
-        "step": 4,
-        "unit": "px",
-        "default": 64
-      },
-      {
-        "type": "range",
-        "id": "grid_gap",
-        "label": "Grid gap",
-        "min": 8,
-        "max": 48,
-        "step": 4,
-        "unit": "px",
-        "default": 24
-      },
-      {
-        "type": "range",
-        "id": "border_radius",
-        "label": "Border radius",
-        "min": 0,
-        "max": 24,
-        "step": 2,
-        "unit": "px",
-        "default": 8
-      },
-      {
-        "type": "range",
-        "id": "card_radius",
-        "label": "Card border radius",
-        "min": 0,
-        "max": 32,
-        "step": 2,
-        "unit": "px",
-        "default": 12
-      }
+      { "type": "range", "id": "container_max_width", "label": "Container max width", "min": 1080, "max": 1440, "step": 40, "unit": "px", "default": 1240 },
+      { "type": "range", "id": "section_spacing_vertical", "label": "Section vertical spacing", "min": 32, "max": 160, "step": 8, "unit": "px", "default": 96 },
+      { "type": "range", "id": "grid_gap", "label": "Grid gap", "min": 8, "max": 48, "step": 4, "unit": "px", "default": 24 },
+      { "type": "range", "id": "border_radius", "label": "Border radius", "min": 0, "max": 24, "step": 2, "unit": "px", "default": 12 },
+      { "type": "range", "id": "card_radius", "label": "Card border radius", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 18 }
     ]
   },
   {
     "name": "Header",
     "settings": [
-      {
-        "type": "checkbox",
-        "id": "header_sticky",
-        "label": "Sticky header",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "header_transparent",
-        "label": "Transparent header on hero",
-        "info": "Header becomes transparent when placed over a hero section",
-        "default": false
-      },
-      {
-        "type": "range",
-        "id": "logo_width",
-        "label": "Logo width",
-        "min": 60,
-        "max": 300,
-        "step": 10,
-        "unit": "px",
-        "default": 140
-      },
-      {
-        "type": "checkbox",
-        "id": "show_language_selector",
-        "label": "Show language selector",
-        "default": false
-      },
-      {
-        "type": "checkbox",
-        "id": "show_currency_selector",
-        "label": "Show currency selector",
-        "default": false
-      }
+      { "type": "checkbox", "id": "header_sticky", "label": "Sticky header", "default": true },
+      { "type": "checkbox", "id": "header_transparent", "label": "Transparent over hero", "default": true },
+      { "type": "range", "id": "logo_width", "label": "Logo width", "min": 60, "max": 240, "step": 10, "unit": "px", "default": 120 },
+      { "type": "checkbox", "id": "show_locale_selector", "label": "Show language selector", "default": true },
+      { "type": "checkbox", "id": "show_currency_selector", "label": "Show currency selector", "default": true }
     ]
   },
   {
@@ -223,27 +74,16 @@
       {
         "type": "select",
         "id": "cart_type",
-        "label": "Cart type",
+        "label": "Cart behaviour",
         "options": [
           { "value": "drawer", "label": "Slide-out drawer" },
           { "value": "page", "label": "Cart page" },
-          { "value": "notification", "label": "Notification only" }
+          { "value": "notification", "label": "Notification" }
         ],
         "default": "drawer"
       },
-      {
-        "type": "checkbox",
-        "id": "cart_notes",
-        "label": "Enable cart notes",
-        "default": true
-      },
-      {
-        "type": "number",
-        "id": "free_shipping_threshold",
-        "label": "Free shipping threshold",
-        "info": "Set to 0 to disable free shipping bar",
-        "default": 50
-      }
+      { "type": "checkbox", "id": "cart_notes", "label": "Enable cart notes", "default": true },
+      { "type": "number", "id": "free_shipping_threshold", "label": "Free shipping threshold (in shop currency)", "info": "Set to 0 to disable free shipping bar", "default": 999 }
     ]
   },
   {
@@ -259,146 +99,143 @@
           { "value": "portrait", "label": "Portrait (3:4)" },
           { "value": "landscape", "label": "Landscape (4:3)" }
         ],
-        "default": "portrait"
+        "default": "square"
       },
-      {
-        "type": "checkbox",
-        "id": "card_show_vendor",
-        "label": "Show vendor on cards",
-        "default": false
-      },
-      {
-        "type": "checkbox",
-        "id": "card_show_rating",
-        "label": "Show rating on cards",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "card_quick_view",
-        "label": "Enable quick view",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "card_hover_image",
-        "label": "Show second image on hover",
-        "default": true
-      }
+      { "type": "checkbox", "id": "card_show_vendor", "label": "Show vendor", "default": false },
+      { "type": "checkbox", "id": "card_show_rating", "label": "Show rating", "default": true },
+      { "type": "checkbox", "id": "card_quick_view", "label": "Enable quick view", "default": true },
+      { "type": "checkbox", "id": "card_hover_image", "label": "Show second image on hover", "default": true }
     ]
   },
   {
-    "name": "Animations",
+    "name": "Motion",
     "settings": [
+      { "type": "checkbox", "id": "enable_animations", "label": "Enable motion", "info": "Always respects prefers-reduced-motion", "default": true },
+      { "type": "range", "id": "motion_duration", "label": "Default duration", "min": 120, "max": 600, "step": 20, "unit": "ms", "default": 280 }
+    ]
+  },
+  {
+    "name": "Payments (India)",
+    "settings": [
+      { "type": "header", "content": "Razorpay & methods" },
+      { "type": "paragraph", "content": "Razorpay is enabled in Shopify Admin → Settings → Payments. These settings only control theme-side display." },
       {
-        "type": "checkbox",
-        "id": "enable_animations",
-        "label": "Enable animations",
-        "info": "Disable for maximum performance. Animations respect user's reduced-motion preference automatically.",
-        "default": true
+        "type": "checkbox_group",
+        "id": "payment_methods_enabled",
+        "label": "Methods to badge",
+        "options": [
+          { "value": "upi", "label": "UPI" },
+          { "value": "visa", "label": "Visa" },
+          { "value": "mastercard", "label": "Mastercard" },
+          { "value": "rupay", "label": "RuPay" },
+          { "value": "amex", "label": "American Express" },
+          { "value": "netbanking", "label": "Netbanking" },
+          { "value": "wallets", "label": "Wallets (Paytm/PhonePe/GPay)" },
+          { "value": "emi", "label": "EMI" }
+        ]
       },
+      { "type": "checkbox", "id": "show_emi_calculator", "label": "Show EMI from / month line", "default": true },
+      { "type": "number", "id": "emi_min_amount", "label": "EMI minimum amount (INR)", "default": 3000 },
+      { "type": "checkbox", "id": "magic_checkout_enabled", "label": "Razorpay Magic Checkout installed", "info": "Toggle on if the Magic Checkout app embed is installed", "default": false },
+
+      { "type": "header", "content": "Cash on Delivery" },
       {
         "type": "select",
-        "id": "default_animation",
-        "label": "Default animation style",
+        "id": "cod_provider",
+        "label": "Pincode serviceability source",
         "options": [
-          { "value": "fade-in", "label": "Fade in" },
-          { "value": "slide-up", "label": "Slide up" },
-          { "value": "slide-left", "label": "Slide from left" },
-          { "value": "scale-in", "label": "Scale in" }
+          { "value": "metafield", "label": "Metafield list (shop.metafields.zelexto.cod_pincodes)" },
+          { "value": "gokwik", "label": "GoKwik App Proxy" },
+          { "value": "shipway", "label": "Shipway App Proxy" },
+          { "value": "off", "label": "Disabled" }
         ],
-        "default": "slide-up"
+        "default": "metafield"
       },
+      { "type": "number", "id": "cod_fee_amount", "label": "COD handling fee (INR)", "default": 49 },
+      { "type": "number", "id": "cod_free_above", "label": "Waive COD fee above (INR)", "default": 1499 },
+
+      { "type": "header", "content": "Partial payment" },
       {
-        "type": "range",
-        "id": "animation_duration",
-        "label": "Animation duration",
-        "min": 200,
-        "max": 1200,
-        "step": 100,
-        "unit": "ms",
-        "default": 600
-      }
+        "type": "select",
+        "id": "partial_pay_provider",
+        "label": "Partial payment app",
+        "options": [
+          { "value": "off", "label": "Disabled" },
+          { "value": "gokwik", "label": "GoKwik Advance COD" },
+          { "value": "razorpay_magic", "label": "Razorpay Magic Checkout" },
+          { "value": "simpl", "label": "Simpl" }
+        ],
+        "default": "off"
+      },
+      { "type": "range", "id": "partial_advance_percent", "label": "Advance %", "min": 10, "max": 90, "step": 5, "unit": "%", "default": 20 },
+      { "type": "number", "id": "partial_pay_min_order", "label": "Partial pay minimum order (INR)", "default": 999 }
     ]
   },
   {
-    "name": "Feature flags",
+    "name": "India Compliance",
     "settings": [
-      {
-        "type": "checkbox",
-        "id": "enable_quick_view",
-        "label": "Enable quick view",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_recently_viewed",
-        "label": "Enable recently viewed products",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_back_to_top",
-        "label": "Enable back to top button",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_sticky_cart",
-        "label": "Enable sticky add-to-cart bar",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_predictive_search",
-        "label": "Enable predictive search",
-        "default": true
-      }
+      { "type": "checkbox", "id": "enable_gst_field", "label": "Show GSTIN field on cart", "default": true },
+      { "type": "text", "id": "default_gst_state", "label": "Default GST state code (2 digits)" },
+      { "type": "checkbox", "id": "show_hsn_codes", "label": "Show HSN codes on PDP", "default": true },
+      { "type": "checkbox", "id": "inr_lakh_format", "label": "Format INR with lakh notation (₹1,00,000)", "default": true },
+      { "type": "textarea", "id": "business_address", "label": "Registered business address" },
+      { "type": "text", "id": "cin_number", "label": "CIN number" },
+      { "type": "text", "id": "shop_gstin", "label": "Shop GSTIN" }
+    ]
+  },
+  {
+    "name": "CRO",
+    "settings": [
+      { "type": "header", "content": "Urgency" },
+      { "type": "checkbox", "id": "enable_low_stock", "label": "Show low-stock badge", "default": true },
+      { "type": "number", "id": "low_stock_threshold", "label": "Low-stock threshold", "default": 10 },
+      { "type": "checkbox", "id": "enable_recently_sold", "label": "Show recently-sold toast", "default": true },
+
+      { "type": "header", "content": "Cart upsells" },
+      { "type": "checkbox", "id": "enable_cart_cross_sell", "label": "Cross-sell carousel in cart drawer", "default": true },
+      { "type": "checkbox", "id": "enable_bundles", "label": "Bundle / volume tier UI", "default": true },
+
+      { "type": "header", "content": "Email capture" },
+      { "type": "checkbox", "id": "enable_exit_intent", "label": "Exit-intent modal", "default": true },
+      { "type": "range", "id": "exit_intent_scroll_pct", "label": "Trigger after scroll %", "min": 0, "max": 90, "step": 10, "unit": "%", "default": 50 },
+      { "type": "range", "id": "exit_intent_time_seconds", "label": "Trigger after seconds on page", "min": 0, "max": 120, "step": 5, "unit": "s", "default": 30 },
+      { "type": "number", "id": "exit_intent_cooldown_days", "label": "Cooldown days", "default": 7 },
+
+      { "type": "header", "content": "Misc" },
+      { "type": "checkbox", "id": "enable_recently_viewed", "label": "Recently viewed products", "default": true },
+      { "type": "checkbox", "id": "enable_back_to_top", "label": "Back to top button", "default": true },
+      { "type": "checkbox", "id": "enable_sticky_atc", "label": "Sticky mobile add-to-cart", "default": true },
+      { "type": "checkbox", "id": "enable_predictive_search", "label": "Predictive search", "default": true },
+      { "type": "checkbox", "id": "enable_quick_view", "label": "Quick view", "default": true }
+    ]
+  },
+  {
+    "name": "Analytics",
+    "settings": [
+      { "type": "paragraph", "content": "Enter IDs to enable each channel. Purchase events fire from Shopify Admin → Customer events → Custom pixel (paste assets/customer-events-pixel.js)." },
+      { "type": "text", "id": "ga4_measurement_id", "label": "GA4 Measurement ID", "placeholder": "G-XXXXXXX" },
+      { "type": "text", "id": "gtm_container_id", "label": "GTM Container ID", "placeholder": "GTM-XXXXXXX" },
+      { "type": "text", "id": "meta_pixel_id", "label": "Meta Pixel ID" },
+      { "type": "text", "id": "klaviyo_public_key", "label": "Klaviyo public API key" },
+      { "type": "checkbox", "id": "analytics_require_consent", "label": "Require cookie consent before firing", "default": true }
     ]
   },
   {
     "name": "Social media",
     "settings": [
-      {
-        "type": "text",
-        "id": "social_instagram",
-        "label": "Instagram URL"
-      },
-      {
-        "type": "text",
-        "id": "social_facebook",
-        "label": "Facebook URL"
-      },
-      {
-        "type": "text",
-        "id": "social_tiktok",
-        "label": "TikTok URL"
-      },
-      {
-        "type": "text",
-        "id": "social_twitter",
-        "label": "Twitter / X URL"
-      },
-      {
-        "type": "text",
-        "id": "social_youtube",
-        "label": "YouTube URL"
-      },
-      {
-        "type": "text",
-        "id": "social_pinterest",
-        "label": "Pinterest URL"
-      }
+      { "type": "text", "id": "social_instagram", "label": "Instagram URL" },
+      { "type": "text", "id": "social_facebook", "label": "Facebook URL" },
+      { "type": "text", "id": "social_tiktok", "label": "TikTok URL" },
+      { "type": "text", "id": "social_twitter", "label": "Twitter / X URL" },
+      { "type": "text", "id": "social_youtube", "label": "YouTube URL" },
+      { "type": "text", "id": "social_pinterest", "label": "Pinterest URL" },
+      { "type": "text", "id": "social_whatsapp", "label": "WhatsApp Business URL" }
     ]
   },
   {
     "name": "Favicon",
     "settings": [
-      {
-        "type": "image_picker",
-        "id": "favicon",
-        "label": "Favicon"
-      }
+      { "type": "image_picker", "id": "favicon", "label": "Favicon" }
     ]
   }
 ]

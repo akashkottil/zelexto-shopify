@@ -1,0 +1,26 @@
+{%- comment -%}
+  Zelexto v2 — meta-tags.liquid
+  Title, description, canonical, robots. Render in <head>.
+{%- endcomment -%}
+
+<title>
+  {{ page_title }}
+  {%- if current_tags %} &ndash; {{ 'general.tagged' | t | default: 'Tagged' }}: {{ current_tags | join: ', ' }}{%- endif -%}
+  {%- if current_page != 1 %} &ndash; {{ 'general.page_n' | t: page: current_page | default: 'Page ' | append: current_page }}{%- endif -%}
+  {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{%- endunless -%}
+</title>
+
+{%- if page_description != blank -%}
+  <meta name="description" content="{{ page_description | strip_html | truncate: 160 | escape }}">
+{%- elsif shop.description != blank -%}
+  <meta name="description" content="{{ shop.description | strip_html | truncate: 160 | escape }}">
+{%- endif -%}
+
+<link rel="canonical" href="{{ canonical_url }}">
+
+<meta name="theme-color" content="{{ settings.color_bg | default: '#ffffff' }}">
+<meta name="format-detection" content="telephone=no">
+
+{%- if template.name == 'search' and search.performed -%}
+  <meta name="robots" content="noindex,follow">
+{%- endif -%}

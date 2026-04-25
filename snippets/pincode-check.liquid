@@ -1,0 +1,87 @@
+{%- comment -%}
+  Pincode serviceability check.
+
+  Usage:
+    {% render 'pincode-check', context: 'pdp' %}
+
+  Reads `settings.cod_provider`. For `metafield` mode, embeds the JSON map from
+  `shop.metafields.zelexto.cod_pincodes`. For `gokwik` / `shipway`, the JS
+  module hits the Shopify App Proxy at `/apps/proxy/pincode?zip=`.
+{%- endcomment -%}
+
+{%- liquid
+  assign ctx = context | default: 'pdp'
+  assign provider = settings.cod_provider | default: 'metafield'
+-%}
+
+{%- if provider != 'off' -%}
+  <pincode-check
+    class="pincode-check pincode-check--{{ ctx }}"
+    data-module="pincode.js"
+    data-provider="{{ provider }}"
+    data-context="{{ ctx }}"
+  >
+    {%- if provider == 'metafield' and shop.metafields.zelexto.cod_pincodes -%}
+      <script type="application/json" data-pincodes>
+        {{ shop.metafields.zelexto.cod_pincodes | json }}
+      </script>
+    {%- endif -%}
+
+    <form class="pincode-check__form" data-pincode-form novalidate>
+      <label class="field">
+        <span class="field__label">{{ 'cod.check_pincode' | t }}</span>
+        <span class="pincode-check__row">
+          <input
+            type="text"
+            inputmode="numeric"
+            pattern="[0-9]{6}"
+            maxlength="6"
+            minlength="6"
+            autocomplete="postal-code"
+            class="field__input"
+            name="zip"
+            data-pincode-input
+            placeholder="{{ 'cod.pincode_placeholder' | t }}"
+            aria-describedby="pincode-result-{{ ctx }}"
+            required
+          >
+          <button
+            type="submit"
+            class="btn btn--ghost pincode-check__submit"
+            data-pincode-submit
+          >
+            <span data-pincode-label>{{ 'cod.pincode_check' | t }}</span>
+            <span class="sr-only" data-pincode-loading hidden>{{ 'cod.checking' | t }}</span>
+          </button>
+        </span>
+        <span class="field__error" data-pincode-error hidden>{{ 'cod.pincode_invalid' | t }}</span>
+      </label>
+    </form>
+
+    <div
+      class="pincode-check__result"
+      id="pincode-result-{{ ctx }}"
+      data-pincode-result
+      aria-live="polite"
+    ></div>
+  </pincode-check>
+
+  <style>
+    .pincode-check { display: block; margin-block: var(--s-4); }
+    .pincode-check__row {
+      display: flex;
+      gap: var(--s-2);
+      align-items: stretch;
+    }
+    .pincode-check__row .field__input {
+      flex: 1 1 auto;
+      letter-spacing: 0.08em;
+    }
+    .pincode-check__submit {
+      flex: 0 0 auto;
+      min-height: 48px;
+    }
+    .pincode-check__result { margin-top: var(--s-3); }
+    .pincode-check[data-state="loading"] .pincode-check__submit { opacity: 0.6; pointer-events: none; }
+  </style>
+{%- endif -%}

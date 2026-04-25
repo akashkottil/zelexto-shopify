@@ -1,143 +1,88 @@
-{% comment %}
-  ZELEXTO THEME — snippets/header-icons.liquid
-  Search, cart, account, language/currency selectors for the header.
-{% endcomment %}
+{%- comment -%}
+  snippets/header-icons.liquid
+  Search, account, cart triggers + currency/locale selectors.
+  Accepts:
+    show_currency_selector (bool)
+    show_locale_selector (bool)
+{%- endcomment -%}
 
-<div class="header-icons flex flex--center" style="gap: var(--space-2);">
+<div class="header-icons">
 
-  <!-- Search trigger -->
-  <button
-    class="header-icon-btn"
-    type="button"
-    aria-label="{{ 'header.search_label' | t }}"
-    data-search-toggle
-    aria-expanded="false"
-    aria-controls="search-modal">
-    {%- render 'icon', name: 'search', size: 22 -%}
-  </button>
+  {%- if show_locale_selector and localization.available_languages.size > 1 -%}
+    <div class="header-icons__locale">
+      {%- render 'locale-selector' -%}
+    </div>
+  {%- endif -%}
 
-  <!-- Account -->
+  {%- if show_currency_selector and localization.available_countries.size > 1 -%}
+    <div class="header-icons__currency">
+      {%- render 'currency-selector' -%}
+    </div>
+  {%- endif -%}
+
+  {%- if settings.enable_predictive_search != false -%}
+    <button
+      type="button"
+      class="header-icon-btn"
+      aria-label="{{ 'header.search_label' | t | default: 'Search' }}"
+      aria-expanded="false"
+      aria-controls="search-modal"
+      data-search-toggle>
+      {%- render 'icon', name: 'search', class: 'icon' -%}
+    </button>
+  {%- endif -%}
+
   <a
     href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
     class="header-icon-btn"
     aria-label="{{ 'header.account_label' | t }}">
-    {%- render 'icon', name: 'account', size: 22 -%}
+    {%- render 'icon', name: 'account', class: 'icon' -%}
   </a>
 
-  <!-- Cart -->
   <button
-    class="header-icon-btn header-icon-btn--cart"
     type="button"
-    aria-label="{{ 'header.cart_label' | t }}: {{ cart.item_count }} {{ 'header.cart_count' | t: count: cart.item_count }}"
-    data-cart-toggle
+    class="header-icon-btn header-icon-btn--cart"
+    aria-label="{{ 'header.cart_label' | t }}"
     aria-expanded="false"
-    aria-controls="cart-drawer">
-    {%- render 'icon', name: 'cart', size: 22 -%}
+    aria-controls="cart-drawer"
+    data-cart-toggle>
+    {%- render 'icon', name: 'cart', class: 'icon' -%}
     <span
-      class="cart-count{% if cart.item_count == 0 %} cart-count--empty{% endif %}"
-      id="cart-count"
+      class="cart-count"
+      data-cart-count
+      data-empty="{% if cart.item_count == 0 %}true{% else %}false{% endif %}"
       aria-live="polite"
-      aria-atomic="true">
-      {{- cart.item_count -}}
-    </span>
+      aria-atomic="true">{{ cart.item_count }}</span>
   </button>
-
-  <!-- Language selector -->
-  {%- if settings.show_language_selector and localization.available_languages.size > 1 -%}
-    <div class="locale-selector hide-mobile">
-      {%- form 'localization', id: 'lang-form-header' -%}
-        <select
-          name="locale_code"
-          class="locale-selector__select form-select"
-          aria-label="{{ 'header.language_selector' | t }}"
-          onchange="this.form.submit()">
-          {%- for language in localization.available_languages -%}
-            <option
-              value="{{ language.iso_code }}"
-              {%- if language.iso_code == request.locale.iso_code %} selected{%- endif -%}>
-              {{- language.endonym_name | capitalize -}}
-            </option>
-          {%- endfor -%}
-        </select>
-      {%- endform -%}
-    </div>
-  {%- endif -%}
-
-  <!-- Currency selector -->
-  {%- if settings.show_currency_selector and localization.available_countries.size > 1 -%}
-    <div class="locale-selector hide-mobile">
-      {%- form 'localization', id: 'currency-form-header' -%}
-        <select
-          name="country_code"
-          class="locale-selector__select form-select"
-          aria-label="{{ 'header.currency_selector' | t }}"
-          onchange="this.form.submit()">
-          {%- for country in localization.available_countries -%}
-            <option
-              value="{{ country.iso_code }}"
-              {%- if country.iso_code == localization.country.iso_code %} selected{%- endif -%}>
-              {{- country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol -}})
-            </option>
-          {%- endfor -%}
-        </select>
-      {%- endform -%}
-    </div>
-  {%- endif -%}
-
 </div>
 
 <style>
-  .header-icon-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: 44px;
-    height: 44px;
-    background: none;
-    border: none;
-    border-radius: var(--radius);
-    cursor: pointer;
-    color: var(--color-text);
-    transition: background-color var(--transition-fast), color var(--transition-fast);
-    text-decoration: none;
+  .header-icons{
+    display:flex;align-items:center;gap:var(--s-1);
   }
-  .header-icon-btn:hover {
-    background-color: var(--color-surface);
+  .header-icons__locale,.header-icons__currency{display:none}
+  @media (min-width:769px){
+    .header-icons__locale,.header-icons__currency{display:flex;align-items:center}
   }
-  .header-icon-btn:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
+  .header-icon-btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    position:relative;width:44px;height:44px;border-radius:var(--radius-pill);
+    color:inherit;background:none;
+    transition:background-color var(--dur-fast) var(--ease-standard),
+               color var(--dur-fast) var(--ease-standard);
   }
-
-  /* Cart count badge */
-  .cart-count {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 4px;
-    background-color: var(--color-accent);
-    color: #fff;
-    font-size: 10px;
-    font-weight: 700;
-    line-height: 18px;
-    border-radius: var(--radius-full);
-    text-align: center;
-    transition: transform var(--transition-fast);
+  .header-icon-btn:hover{background:var(--c-elev)}
+  .site-header--transparent:not(.is-scrolled) .header-icon-btn:hover{
+    background:rgba(255,255,255,.12)
   }
-  .cart-count--empty {
-    display: none;
+  .header-icon-btn .icon{width:22px;height:22px}
+  .cart-count{
+    position:absolute;top:6px;right:6px;
+    min-width:18px;height:18px;padding:0 5px;
+    background:var(--c-accent);color:var(--c-accent-ink);
+    font-size:11px;font-weight:var(--weight-semibold);
+    line-height:18px;border-radius:var(--radius-pill);
+    text-align:center;
   }
-
-  /* Currency/language selects */
-  .locale-selector__select {
-    font-size: var(--font-size-xs);
-    padding: var(--space-1) var(--space-2);
-    height: 32px;
-    border-color: transparent;
-    background: transparent;
-    cursor: pointer;
-  }
+  .cart-count[data-empty="true"]{display:none}
 </style>

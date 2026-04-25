@@ -1,0 +1,60 @@
+{%- comment -%}
+  Legal footer block for Indian-market compliance.
+  Renders CIN + GSTIN + business address (all from settings). Designed to be
+  rendered by the footer section.
+{%- endcomment -%}
+
+{%- liquid
+  assign cin = settings.cin_number
+  assign gstin = settings.shop_gstin
+  assign address = settings.business_address
+  assign has_any = false
+  if cin != blank or gstin != blank or address != blank
+    assign has_any = true
+  endif
+-%}
+
+{%- if has_any -%}
+  <div class="legal-footer">
+    {%- if address != blank -%}
+      <address class="legal-footer__address">{{ address | newline_to_br }}</address>
+    {%- endif -%}
+    <p class="legal-footer__ids">
+      {%- if cin != blank -%}
+        <span><span class="legal-footer__label">CIN</span> {{ cin }}</span>
+      {%- endif -%}
+      {%- if gstin != blank -%}
+        <span><span class="legal-footer__label">GSTIN</span> {{ gstin }}</span>
+      {%- endif -%}
+    </p>
+  </div>
+
+  <style>
+    .legal-footer {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-2);
+      padding-block: var(--s-4);
+      font-size: var(--fs-12);
+      color: var(--c-ink-muted);
+    }
+    .legal-footer__address {
+      font-style: normal;
+      max-width: 60ch;
+      line-height: var(--lh-body);
+    }
+    .legal-footer__ids {
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-2) var(--s-5);
+    }
+    .legal-footer__label {
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 0.7em;
+      color: var(--c-ink-muted);
+      margin-right: var(--s-1);
+    }
+  </style>
+{%- endif -%}

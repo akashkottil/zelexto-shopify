@@ -1,0 +1,158 @@
+{%- comment -%}
+  bundle-builder.liquid
+
+  Volume / Buy-X-Get-Y tier UI. Reads tiers from
+  product.metafields.custom.bundle_tiers (JSON, [{qty, percent, label}])
+  with section blocks as fallback.
+
+  Adds line item with `properties[_bundle_tier]` so a Shopify Function /
+  Discounts app can apply the corresponding discount.
+{%- endcomment -%}
+
+{%- liquid
+  if settings.enable_bundles == false
+    assign skip = true
+  endif
+
+  assign current_product = product
+  if section.settings.product != blank
+    assign current_product = all_products[section.settings.product]
+  endif
+
+  assign meta_tiers = current_product.metafields.custom.bundle_tiers.value
+  assign base_cents = current_product.selected_or_first_available_variant.price | default: 0
+-%}
+
+{%- unless skip -%}
+  {%- if current_product != blank -%}
+    <section class="section bundle-section">
+      <div class="container">
+        <header class="bundle-section__head stack">
+          <h2 class="bundle-section__title">{{ section.settings.heading | default: 'bundle.title' | t }}</h2>
+          {%- if section.settings.subheading != blank -%}
+            <p class="bundle-section__sub">{{ section.settings.subheading }}</p>
+          {%- endif -%}
+        </header>
+
+        <bundle-builder
+          class="bundle"
+          data-module="bundle.js"
+          data-product-id="{{ current_product.id }}"
+          data-variant-id="{{ current_product.selected_or_first_available_variant.id }}"
+          data-base-cents="{{ base_cents }}"
+        >
+          <div class="bundle__tiers" role="radiogroup" aria-label="{{ 'bundle.title' | t }}">
+            {%- if meta_tiers != blank -%}
+              {%- for tier in meta_tiers -%}
+                {% render 'bundle-card',
+                   index: forloop.index0,
+                   qty: tier.qty,
+                   percent: tier.percent,
+                   label: tier.label,
+                   base_price: base_cents %}
+              {%- endfor -%}
+            {%- else -%}
+              {%- for block in section.blocks -%}
+                {% render 'bundle-card',
+                   index: forloop.index0,
+                   qty: block.settings.qty,
+                   percent: block.settings.percent,
+                   label: block.settings.label,
+                   base_price: base_cents %}
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+
+          <div class="bundle__summary">
+            <div class="bundle__summary-row">
+              <span class="bundle__summary-label">{{ 'product.quantity' | t }}</span>
+              <span class="bundle__summary-value" data-summary-qty>1</span>
+            </div>
+            <div class="bundle__summary-row">
+              <span class="bundle__summary-label">{{ 'cart.subtotal' | t }}</span>
+              <span class="bundle__summary-value" data-summary-total>{{ base_cents | money }}</span>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn--primary btn--full bundle__cta" data-bundle-add>
+            {{ 'product.add_to_cart' | t }}
+          </button>
+          <p class="bundle__msg" data-bundle-msg aria-live="polite"></p>
+        </bundle-builder>
+      </div>
+    </section>
+
+    <style>
+      .bundle { display: grid; gap: var(--s-4); max-width: 720px; margin-inline: auto; }
+      .bundle__tiers { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+      .bundle-card { display: block; cursor: pointer; }
+      .bundle-card__inner {
+        display: grid;
+        gap: var(--s-1);
+        padding: var(--s-4);
+        border: 1px solid var(--c-line);
+        border-radius: var(--radius-md);
+        background: var(--c-bg);
+        transition: border-color var(--dur-fast) var(--ease-standard),
+                    background var(--dur-fast) var(--ease-standard);
+        text-align: center;
+        position: relative;
+      }
+      .bundle-card:hover .bundle-card__inner { border-color: var(--c-ink); }
+      .bundle-card__radio:checked + .bundle-card__inner {
+        border-color: var(--c-accent);
+        background: color-mix(in srgb, var(--c-accent) 6%, var(--c-bg));
+      }
+      .bundle-card__qty { font-size: var(--fs-19); font-weight: var(--weight-semibold); }
+      .bundle-card__label { font-size: var(--fs-14); color: var(--c-ink-muted); }
+      .bundle-card__save {
+        font-size: var(--fs-12);
+        color: var(--c-accent);
+        font-weight: var(--weight-medium);
+      }
+      .bundle-card__price { font-size: var(--fs-14); display: inline-flex; gap: var(--s-2); justify-content: center; }
+      .bundle-card__strike { color: var(--c-ink-muted); }
+      .bundle__summary {
+        display: grid;
+        gap: var(--s-2);
+        padding: var(--s-3) var(--s-4);
+        background: var(--c-elev);
+        border-radius: var(--radius-md);
+      }
+      .bundle__summary-row { display: flex; justify-content: space-between; font-size: var(--fs-14); }
+      .bundle__summary-label { color: var(--c-ink-muted); }
+      .bundle__msg { font-size: var(--fs-14); color: var(--c-ink-muted); margin: 0; min-height: 1em; text-align: center; }
+    </style>
+  {%- endif -%}
+{%- endunless -%}
+
+{% schema %}
+{
+  "name": "Bundle builder",
+  "tag": "div",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product (optional)", "info": "Defaults to the current product when on a PDP" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Save more, buy more" },
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "paragraph", "content": "Tiers come from product.metafields.custom.bundle_tiers (JSON list of {qty, percent, label}). Section blocks below act as a fallback." }
+  ],
+  "blocks": [
+    {
+      "type": "tier",
+      "name": "Tier (fallback)",
+      "settings": [
+        { "type": "number", "id": "qty",     "label": "Quantity", "default": 1 },
+        { "type": "number", "id": "percent", "label": "Discount %", "default": 0 },
+        { "type": "text",   "id": "label",   "label": "Label" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Bundle builder", "blocks": [
+      { "type": "tier", "settings": { "qty": 1, "percent": 0, "label": "Just one" } },
+      { "type": "tier", "settings": { "qty": 2, "percent": 10, "label": "Save 10%" } },
+      { "type": "tier", "settings": { "qty": 3, "percent": 20, "label": "Best value" } }
+    ]}
+  ]
+}
+{% endschema %}

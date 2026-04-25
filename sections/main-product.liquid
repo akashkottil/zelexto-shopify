@@ -1,478 +1,340 @@
-{% comment %}
-  ZELEXTO THEME — sections/main-product.liquid
-  Full product page: gallery, info, variant picker, ATC, tabs.
-  Sticky mobile ATC bar, low-stock, trust badges, recently-viewed hook.
-{% endcomment %}
+{%- comment -%}
+  Zelexto v2 — sections/main-product.liquid
+  Apple-style PDP: breadcrumb, gallery, title/vendor/rating, price,
+  variant picker, qty, ATC + buy-it-now, accordion, share, sticky mobile ATC.
+  Hooks render Agent C/D snippets that they own.
+{%- endcomment -%}
 
 {%- liquid
   assign current_variant = product.selected_or_first_available_variant
   assign product_form_id = 'product-form-' | append: section.id
-  assign show_vendor     = section.settings.show_vendor
-  assign show_rating     = section.settings.show_rating
-  assign enable_tabs     = section.settings.enable_tabs
-  assign enable_sticky   = section.settings.enable_sticky_atc | default: settings.enable_sticky_cart
 -%}
 
-<div class="product-page container" id="product-page">
+<product-form
+  class="product"
+  data-module="product-form.js"
+  data-section-id="{{ section.id }}"
+  data-product-handle="{{ product.handle }}"
+  data-product-id="{{ product.id }}"
+  data-update-url="{{ product.url }}">
 
-  <!-- Breadcrumb -->
-  {%- render 'breadcrumb' -%}
-
-  <div class="product-page__grid">
-
-    <!-- ============================================================
-      LEFT: Gallery
-    ============================================================= -->
-    <div class="product-page__gallery">
-      {%- render 'product-gallery', product: product -%}
+  <div class="container product__container">
+    <div class="product__breadcrumb">
+      {% render 'breadcrumb' %}
     </div>
 
-    <!-- ============================================================
-      RIGHT: Product info
-    ============================================================= -->
-    <div class="product-page__info">
-
-      <!-- Brand / vendor -->
-      {%- if show_vendor and product.vendor != blank -%}
-        <a href="{{ product.vendor | url_for_vendor }}" class="product-page__vendor">
-          {{ product.vendor }}
-        </a>
-      {%- endif -%}
-
-      <!-- Title -->
-      <h1 class="product-page__title">{{ product.title }}</h1>
-
-      <!-- Rating -->
-      {%- if show_rating and product.metafields.reviews.rating.value -%}
-        <div class="product-page__rating">
-          {%- render 'rating-stars',
-            rating: product.metafields.reviews.rating.value,
-            count: product.metafields.reviews.rating_count.value -%}
-        </div>
-      {%- endif -%}
-
-      <!-- Price -->
-      <div class="product-page__price" id="product-price">
-        {%- render 'price', product: product, variant: current_variant -%}
+    <div class="product__layout">
+      <div class="product__media">
+        {% render 'product-gallery', product: product %}
       </div>
 
-      <!-- Low stock warning -->
-      {%- if current_variant.inventory_management == 'shopify'
-            and current_variant.available
-            and current_variant.inventory_quantity > 0
-            and current_variant.inventory_quantity <= 5 -%}
-        <div class="product-page__low-stock" id="product-low-stock">
-          {%- render 'icon', name: 'check', size: 14 -%}
-          {{ 'product.low_stock' | t: count: current_variant.inventory_quantity | default: 'Only ' | append: current_variant.inventory_quantity | append: ' left!' }}
-          <span data-low-stock-count hidden>{{ current_variant.inventory_quantity }}</span>
-        </div>
-      {%- else -%}
-        <div class="product-page__low-stock" id="product-low-stock" hidden></div>
-      {%- endif -%}
+      <div class="product__info">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
 
-      <!-- Product form -->
-      {%- form 'product', product, id: product_form_id, class: 'product-form', novalidate: 'novalidate', id: 'product-form' -%}
+            {%- when 'vendor' -%}
+              {%- if product.vendor != blank -%}
+                <p class="product__vendor" {{ block.shopify_attributes }}>{{ product.vendor }}</p>
+              {%- endif -%}
 
-        {%- render 'variant-picker', product: product -%}
+            {%- when 'title' -%}
+              <h1 class="product__title" {{ block.shopify_attributes }}>{{ product.title }}</h1>
 
-        <!-- Quantity -->
-        {%- if section.settings.show_quantity -%}
-          <div class="product-page__qty" id="product-qty">
-            <label class="product-page__qty-label" for="product-qty-input">{{ 'product.quantity' | t | default: 'Quantity' }}</label>
-            <div class="qty-control">
-              <button class="qty-control__btn" type="button" data-qty-minus aria-label="{{ 'product.decrease_qty' | t | default: 'Decrease quantity' }}">
-                {%- render 'icon', name: 'minus', size: 14 -%}
-              </button>
-              <input
-                type="number"
-                id="product-qty-input"
-                name="quantity"
-                class="qty-control__input"
-                value="1"
-                min="1"
-                {% if current_variant.inventory_management == 'shopify' and current_variant.inventory_policy == 'deny' %}
-                  max="{{ current_variant.inventory_quantity }}"
+            {%- when 'rating' -%}
+              <div class="product__rating" {{ block.shopify_attributes }}>
+                {% render 'rating-stars', product: product, size: 'md' %}
+              </div>
+
+            {%- when 'price' -%}
+              <div class="product__price" data-product-price {{ block.shopify_attributes }}>
+                {% render 'price', product: product, variant: current_variant %}
+              </div>
+
+            {%- when 'payment_badges' -%}
+              <div class="product__payment-badges" {{ block.shopify_attributes }}>
+                {% render 'payment-method-indicator', product: product %}
+                {% render 'payment-badges', context: 'pdp', product: product %}
+              </div>
+
+            {%- when 'pincode' -%}
+              <div class="product__pincode" {{ block.shopify_attributes }}>
+                {% render 'pincode-check', context: 'pdp' %}
+              </div>
+
+            {%- when 'urgency' -%}
+              <div class="product__urgency" {{ block.shopify_attributes }}>
+                {% render 'low-stock-badge', product: product %}
+                {% if block.settings.show_countdown %}
+                  {% render 'countdown-inline', heading: block.settings.countdown_label, ends_at: block.settings.countdown_ends_at %}
                 {% endif %}
-                data-quantity
-                aria-label="{{ 'product.quantity' | t | default: 'Quantity' }}">
-              <button class="qty-control__btn" type="button" data-qty-plus aria-label="{{ 'product.increase_qty' | t | default: 'Increase quantity' }}">
-                {%- render 'icon', name: 'plus', size: 14 -%}
-              </button>
-            </div>
-          </div>
-        {%- else -%}
-          <input type="hidden" name="quantity" value="1" data-quantity>
-        {%- endif -%}
+              </div>
 
-        <!-- ATC button -->
-        {%- if current_variant.available == false -%}
-          <div class="product-page__unavailable" id="product-unavailable">
-            <span>{{ 'product.sold_out' | t }}</span>
-          </div>
-        {%- else -%}
-          <div id="product-unavailable" hidden></div>
-        {%- endif -%}
+            {%- when 'variant_picker' -%}
+              <div {{ block.shopify_attributes }}>
+                {% render 'variant-picker', product: product %}
+              </div>
 
-        <div class="product-page__atc">
-          <button
-            type="submit"
-            id="atc-btn"
-            class="btn btn--primary btn--full btn--xl"
-            {% if current_variant.available == false %}disabled{% endif %}
-            data-label-available="{{ 'product.add_to_cart' | t | default: 'Add to cart' }}"
-            data-label-sold-out="{{ 'product.sold_out' | t | default: 'Sold out' }}"
-            data-label-adding="{{ 'product.adding' | t | default: 'Adding...' }}"
-            data-label-added="{{ 'product.added' | t | default: 'Added!' }}"
-            data-label-unavailable="{{ 'product.unavailable' | t | default: 'Unavailable' }}">
-            {%- if current_variant.available -%}
-              {{ 'product.add_to_cart' | t | default: 'Add to cart' }}
-            {%- else -%}
-              {{ 'product.sold_out' | t | default: 'Sold out' }}
-            {%- endif -%}
-          </button>
+            {%- when 'quantity' -%}
+              <div class="product__quantity" {{ block.shopify_attributes }}>
+                <label class="product__quantity-label" for="qty-{{ section.id }}">
+                  {{ 'product.quantity' | t | default: 'Quantity' }}
+                </label>
+                <div class="qty">
+                  <button type="button" class="qty__btn" data-qty-step="-1" aria-label="{{ 'product.decrease_quantity' | t | default: 'Decrease' }}">
+                    {% render 'icon', name: 'minus' %}
+                  </button>
+                  <input
+                    type="number"
+                    id="qty-{{ section.id }}"
+                    name="quantity"
+                    class="qty__input"
+                    value="1"
+                    min="1"
+                    inputmode="numeric"
+                    data-quantity-input>
+                  <button type="button" class="qty__btn" data-qty-step="1" aria-label="{{ 'product.increase_quantity' | t | default: 'Increase' }}">
+                    {% render 'icon', name: 'plus' %}
+                  </button>
+                </div>
+              </div>
 
-          {%- if section.settings.show_buy_now -%}
-            {{ form | payment_button }}
-          {%- endif -%}
-        </div>
+            {%- when 'buy_buttons' -%}
+              <div class="product__buy" {{ block.shopify_attributes }}>
+                {%- form 'product', product, id: product_form_id, novalidate: 'novalidate', data-product-form: '' -%}
+                  <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+                  {%- unless block.settings.hide_quantity -%}
+                    <input type="hidden" name="quantity" value="1" data-quantity-mirror>
+                  {%- endunless -%}
+                  <button
+                    type="submit"
+                    class="btn btn--primary btn--full product__atc"
+                    data-atc-button
+                    {% unless current_variant.available %}disabled{% endunless %}
+                    data-text-default="{{ 'product.add_to_cart' | t | default: 'Add to bag' }}"
+                    data-text-soldout="{{ 'product.sold_out' | t }}"
+                    data-text-unavailable="{{ 'product.unavailable' | t }}"
+                    data-text-adding="{{ 'product.adding' | t | default: 'Adding…' }}">
+                    <span data-atc-text>
+                      {%- if current_variant.available -%}
+                        {{ 'product.add_to_cart' | t | default: 'Add to bag' }}
+                      {%- else -%}
+                        {{ 'product.sold_out' | t }}
+                      {%- endif -%}
+                    </span>
+                  </button>
+                  {%- if block.settings.show_dynamic_checkout -%}
+                    {{ form | payment_button }}
+                  {%- endif -%}
+                {%- endform -%}
+              </div>
 
-      {%- endform -%}
+            {%- when 'accordion' -%}
+              <div class="product__accordion" {{ block.shopify_attributes }}>
+                {% render 'product-tabs', product: product, section: section %}
+              </div>
 
-      <!-- Checkout trust signals -->
-      {%- if section.settings.show_trust_badges -%}
-        <div class="product-page__trust">
-          {%- render 'trust-badges', style: 'row', size: 'sm' -%}
-        </div>
-      {%- endif -%}
+            {%- when 'share' -%}
+              <div class="product__share" {{ block.shopify_attributes }}>
+                <button type="button" class="btn btn--ghost btn--sm" data-share-button data-share-url="{{ shop.url }}{{ product.url }}" data-share-title="{{ product.title | escape }}">
+                  {% render 'icon', name: 'arrow-right' %}
+                  <span>{{ 'general.share' | t | default: 'Share' }}</span>
+                </button>
+              </div>
 
-      <!-- Delivery estimate -->
-      {%- if section.settings.delivery_estimate != blank -%}
-        <div class="product-page__delivery">
-          {%- render 'icon', name: 'truck', size: 16 -%}
-          <span>{{ section.settings.delivery_estimate }}</span>
-        </div>
-      {%- endif -%}
+            {%- when 'hsn' -%}
+              <div class="product__hsn" {{ block.shopify_attributes }}>
+                {% render 'hsn-code', product: product %}
+              </div>
 
-      <!-- Share button -->
-      {%- if section.settings.show_share -%}
-        <div class="product-page__share">
-          <button type="button" class="btn btn--ghost btn--sm" id="share-btn" aria-label="{{ 'general.share' | t | default: 'Share' }}">
-            {%- render 'icon', name: 'share', size: 16 -%}
-            {{ 'general.share' | t | default: 'Share' }}
-          </button>
-        </div>
-      {%- endif -%}
+            {%- when 'trust' -%}
+              <div class="product__trust" {{ block.shopify_attributes }}>
+                {% render 'trust-badges' %}
+              </div>
 
+            {%- when '@app' -%}
+              <div class="product__app-block" {{ block.shopify_attributes }}>
+                {% render block %}
+              </div>
+
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
     </div>
-
   </div>
 
-  <!-- ============================================================
-    TABS (below the grid)
-  ============================================================= -->
-  {%- if enable_tabs -%}
-    <div class="product-page__tabs-wrap">
-      {%- render 'product-tabs', section: section, product: product -%}
+  {%- comment -%} Hidden product JSON consumed by product-form.js {%- endcomment -%}
+  <script type="application/json" data-product-json>{{ product | json }}</script>
+
+  {%- if section.settings.enable_sticky_atc | default: settings.enable_sticky_atc -%}
+    <div class="sticky-atc" data-sticky-atc aria-hidden="true">
+      <div class="sticky-atc__info">
+        <span class="sticky-atc__title">{{ product.title | truncate: 40 }}</span>
+        <span class="sticky-atc__price" data-sticky-price data-money-cents="{{ current_variant.price }}">{{ current_variant.price | money }}</span>
+      </div>
+      <button
+        type="button"
+        class="btn btn--primary"
+        data-sticky-atc-button
+        {% unless current_variant.available %}disabled{% endunless %}>
+        {{ 'product.add_to_cart' | t | default: 'Add to bag' }}
+      </button>
     </div>
   {%- endif -%}
 
-</div>
-
-<!-- ================================================================
-  STICKY MOBILE ATC BAR
-================================================================= -->
-{%- if enable_sticky -%}
-  <div class="sticky-atc-bar" id="sticky-atc-bar" aria-hidden="true" aria-live="polite">
-    <div class="sticky-atc-bar__info">
-      <span class="sticky-atc-bar__title">{{ product.title | truncate: 40 }}</span>
-      <span class="sticky-atc-bar__price" id="sticky-atc-price">{{ current_variant.price | money }}</span>
-    </div>
-    <button
-      type="button"
-      id="atc-btn-mobile"
-      class="btn btn--primary sticky-atc-bar__btn"
-      {% if current_variant.available == false %}disabled{% endif %}
-      data-label-available="{{ 'product.add_to_cart' | t | default: 'Add to cart' }}"
-      data-label-sold-out="{{ 'product.sold_out' | t | default: 'Sold out' }}">
-      {%- if current_variant.available -%}
-        {{ 'product.add_to_cart' | t | default: 'Add to cart' }}
-      {%- else -%}
-        {{ 'product.sold_out' | t | default: 'Sold out' }}
-      {%- endif -%}
-    </button>
-  </div>
-{%- endif -%}
-
-<style>
-  /* Page grid */
-  .product-page { padding-block: var(--space-8); }
-
-  .product-page__grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-12);
-    align-items: start;
-    margin-bottom: var(--space-12);
-  }
-
-  @media (max-width: 768px) {
-    .product-page__grid { grid-template-columns: 1fr; gap: var(--space-6); }
-  }
-
-  /* Info column */
-  .product-page__vendor {
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-primary);
-    text-decoration: none;
-    display: block;
-    margin-bottom: var(--space-2);
-  }
-
-  .product-page__title {
-    font-size: clamp(1.5rem, 3vw, 2.25rem);
-    line-height: 1.2;
-    margin-bottom: var(--space-3);
-  }
-
-  .product-page__rating { margin-bottom: var(--space-3); }
-
-  .product-page__price {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
-    flex-wrap: wrap;
-  }
-
-  .product-page__price .price__current { font-size: var(--font-size-2xl); }
-
-  /* Low stock */
-  .product-page__low-stock {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-accent);
-    margin-bottom: var(--space-4);
-  }
-
-  /* Qty control */
-  .product-page__qty { margin-bottom: var(--space-4); }
-  .product-page__qty-label { display: block; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-2); }
-  .qty-control {
-    display: inline-flex;
-    align-items: center;
-    border: 1.5px solid var(--color-border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  .qty-control__btn {
-    width: 44px; height: 44px;
-    background: none; border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background-color var(--transition-fast);
-  }
-  .qty-control__btn:hover { background: var(--color-surface); }
-  .qty-control__input {
-    width: 56px; text-align: center;
-    border: none; border-inline: 1.5px solid var(--color-border);
-    outline: none; font-family: var(--font-body);
-    font-size: var(--font-size-md); font-weight: var(--font-weight-semibold);
-    padding: 0;
-    -moz-appearance: textfield;
-  }
-  .qty-control__input::-webkit-outer-spin-button,
-  .qty-control__input::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-  /* ATC */
-  .product-page__atc {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    margin-bottom: var(--space-5);
-  }
-
-  /* Trust */
-  .product-page__trust { margin-bottom: var(--space-5); }
-
-  /* Delivery */
-  .product-page__delivery {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-    margin-bottom: var(--space-4);
-  }
-
-  /* Share */
-  .product-page__share { margin-bottom: var(--space-4); }
-
-  /* Tabs wrap */
-  .product-page__tabs-wrap {
-    border-top: 1px solid var(--color-border);
-    padding-top: var(--space-4);
-  }
-
-  /* Sticky ATC bar */
-  .sticky-atc-bar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    z-index: var(--z-sticky);
-    background: var(--color-bg);
-    border-top: 1px solid var(--color-border);
-    padding: var(--space-3) var(--space-4);
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
-    transform: translateY(100%);
-    transition: transform var(--transition-base);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-
-  .sticky-atc-bar.is-visible {
-    transform: translateY(0);
-    aria-hidden: false;
-  }
-
-  .sticky-atc-bar__info { flex: 1; min-width: 0; }
-  .sticky-atc-bar__title { display: block; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .sticky-atc-bar__price { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
-  .sticky-atc-bar__btn { flex-shrink: 0; }
-
-  @media (min-width: 769px) {
-    .sticky-atc-bar { display: none; }
-  }
-</style>
+  {% render 'analytics-product', product: product %}
+</product-form>
 
 {% schema %}
 {
-  "name": "Product information",
+  "name": "t:sections.product.name",
   "tag": "section",
-  "class": "section-product",
+  "class": "section section--product",
   "settings": [
-    {
-      "type": "header",
-      "content": "Product Info"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_vendor",
-      "label": "Show vendor",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_rating",
-      "label": "Show star rating",
-      "info": "Requires a reviews app that populates product.metafields.reviews.rating",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_quantity",
-      "label": "Show quantity selector",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_buy_now",
-      "label": "Show dynamic checkout button (Buy Now)",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_trust_badges",
-      "label": "Show trust badges",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_share",
-      "label": "Show share button",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "delivery_estimate",
-      "label": "Delivery estimate text",
-      "default": "Estimated delivery: 3–5 business days"
-    },
     {
       "type": "checkbox",
       "id": "enable_sticky_atc",
-      "label": "Enable sticky Add to Cart (mobile)",
-      "default": true
-    },
-    {
-      "type": "header",
-      "content": "Product Tabs"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_tabs",
-      "label": "Enable product tabs",
+      "label": "Enable sticky Add to Bag (mobile)",
       "default": true
     }
   ],
   "blocks": [
+    { "type": "vendor",         "name": "Vendor", "limit": 1 },
+    { "type": "title",          "name": "Title",  "limit": 1 },
+    { "type": "rating",         "name": "Rating", "limit": 1 },
+    { "type": "price",          "name": "Price",  "limit": 1 },
     {
-      "type": "description",
-      "name": "Description",
+      "type": "payment_badges",
+      "name": "Payment badges",
+      "limit": 1
+    },
+    {
+      "type": "pincode",
+      "name": "Pincode / COD check",
+      "limit": 1
+    },
+    {
+      "type": "urgency",
+      "name": "Urgency",
       "limit": 1,
       "settings": [
-        { "type": "text", "id": "tab_label", "label": "Tab label", "default": "Description" }
+        { "type": "checkbox", "id": "show_countdown", "label": "Show countdown", "default": false },
+        { "type": "text", "id": "countdown_label", "label": "Countdown label", "default": "Sale ends in" },
+        { "type": "text", "id": "countdown_ends_at", "label": "Ends at (ISO 8601)" }
+      ]
+    },
+    { "type": "variant_picker", "name": "Variant picker", "limit": 1 },
+    {
+      "type": "quantity",
+      "name": "Quantity",
+      "limit": 1
+    },
+    {
+      "type": "buy_buttons",
+      "name": "Buy buttons",
+      "limit": 1,
+      "settings": [
+        { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Show dynamic checkout button", "default": true },
+        { "type": "checkbox", "id": "hide_quantity", "label": "Hide quantity input", "default": false }
       ]
     },
     {
-      "type": "custom_text",
-      "name": "Custom text",
+      "type": "accordion",
+      "name": "Description / shipping / returns accordion",
+      "limit": 1
+    },
+    {
+      "type": "share",
+      "name": "Share",
+      "limit": 1
+    },
+    {
+      "type": "hsn",
+      "name": "HSN code",
+      "limit": 1
+    },
+    {
+      "type": "trust",
+      "name": "Trust badges",
+      "limit": 1
+    },
+    {
+      "type": "description",
+      "name": "Description (accordion entry)",
+      "limit": 1,
       "settings": [
-        { "type": "text", "id": "tab_label", "label": "Tab label", "default": "Details" },
+        { "type": "text", "id": "tab_label", "label": "Label", "default": "Description" }
+      ]
+    },
+    {
+      "type": "shipping",
+      "name": "Shipping (accordion entry)",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "tab_label", "label": "Label", "default": "Shipping" },
         { "type": "richtext", "id": "content", "label": "Content" }
       ]
     },
     {
-      "type": "shipping_returns",
-      "name": "Shipping & Returns",
+      "type": "returns",
+      "name": "Returns (accordion entry)",
       "limit": 1,
       "settings": [
-        { "type": "text", "id": "tab_label", "label": "Tab label", "default": "Shipping & Returns" },
+        { "type": "text", "id": "tab_label", "label": "Label", "default": "Returns" },
         { "type": "richtext", "id": "content", "label": "Content" }
       ]
     },
     {
       "type": "size_guide",
-      "name": "Size guide",
-      "limit": 1,
+      "name": "Size guide (accordion entry)",
       "settings": [
-        { "type": "text", "id": "tab_label", "label": "Tab label", "default": "Size guide" },
-        { "type": "richtext", "id": "size_guide_content", "label": "Size guide content" }
+        { "type": "text", "id": "tab_label", "label": "Label", "default": "Size guide" },
+        { "type": "richtext", "id": "content", "label": "Content" }
+      ]
+    },
+    {
+      "type": "custom",
+      "name": "Custom accordion entry",
+      "settings": [
+        { "type": "text", "id": "tab_label", "label": "Label" },
+        { "type": "richtext", "id": "content", "label": "Content" }
       ]
     },
     {
       "type": "metafield",
-      "name": "Metafield tab",
+      "name": "Metafield accordion entry",
       "settings": [
-        { "type": "text", "id": "tab_label", "label": "Tab label", "default": "More info" },
-        { "type": "text", "id": "metafield_namespace", "label": "Metafield namespace", "default": "custom" },
-        { "type": "text", "id": "metafield_key", "label": "Metafield key", "default": "ingredients" }
+        { "type": "text", "id": "tab_label", "label": "Label" },
+        { "type": "text", "id": "namespace", "label": "Metafield namespace", "default": "custom" },
+        { "type": "text", "id": "key", "label": "Metafield key" }
       ]
+    },
+    {
+      "type": "@app"
     }
   ],
-  "max_blocks": 8,
-  "presets": [{
-    "name": "Product information",
-    "blocks": [
-      { "type": "description" },
-      { "type": "shipping_returns" }
-    ]
-  }]
+  "presets": [
+    {
+      "name": "Product information",
+      "blocks": [
+        { "type": "vendor" },
+        { "type": "title" },
+        { "type": "rating" },
+        { "type": "price" },
+        { "type": "payment_badges" },
+        { "type": "variant_picker" },
+        { "type": "quantity" },
+        { "type": "buy_buttons" },
+        { "type": "pincode" },
+        { "type": "urgency" },
+        { "type": "trust" },
+        { "type": "accordion" },
+        { "type": "description" },
+        { "type": "shipping" },
+        { "type": "returns" },
+        { "type": "share" },
+        { "type": "hsn" }
+      ]
+    }
+  ]
 }
 {% endschema %}

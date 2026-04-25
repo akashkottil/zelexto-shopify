@@ -1,0 +1,69 @@
+{%- comment -%}
+  recently-viewed.liquid
+
+  Container for the "Recently viewed" rail. Hydrated by recently-viewed.js
+  from localStorage on the client. Hidden until items render.
+
+  Accepts: limit (default 8), heading
+{%- endcomment -%}
+
+{%- liquid
+  if settings.enable_recently_viewed == false
+    assign skip = true
+  endif
+  assign cap = limit | default: 8
+  assign heading_text = heading | default: 'Recently viewed'
+-%}
+
+{%- unless skip -%}
+  <recently-viewed
+    class="recently-viewed"
+    data-module="recently-viewed.js"
+    data-limit="{{ cap }}"
+    {% if product %}data-current-handle="{{ product.handle }}"{% endif %}
+    hidden
+  >
+    <h2 class="recently-viewed__heading">{{ heading_text }}</h2>
+    <div class="recently-viewed__rail" data-rail role="list"></div>
+  </recently-viewed>
+
+  <style>
+    .recently-viewed { display: block; padding-block: var(--s-7); }
+    .recently-viewed[hidden] { display: none; }
+    .recently-viewed__heading {
+      font-size: var(--fs-21);
+      font-weight: var(--weight-semibold);
+      margin: 0 0 var(--s-4);
+    }
+    .recently-viewed__rail {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(160px, 1fr);
+      gap: var(--s-4);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: var(--s-3);
+    }
+    .recently-viewed__card { scroll-snap-align: start; }
+    .recently-viewed__media {
+      aspect-ratio: 1/1;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--c-elev);
+      margin-bottom: var(--s-2);
+    }
+    .recently-viewed__media img { width: 100%; height: 100%; object-fit: cover; }
+    .recently-viewed__title {
+      font-size: var(--fs-14);
+      line-height: var(--lh-snug);
+      color: var(--c-ink);
+      margin: 0 0 var(--s-1);
+    }
+    .recently-viewed__price { font-size: var(--fs-14); color: var(--c-ink-muted); }
+    @media (min-width: 768px) {
+      .recently-viewed__rail {
+        grid-auto-columns: minmax(200px, 1fr);
+      }
+    }
+  </style>
+{%- endunless -%}

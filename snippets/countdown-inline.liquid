@@ -1,0 +1,33 @@
+{%- comment -%}
+  countdown-inline.liquid
+
+  Compact countdown for PDP (e.g. near the ATC button).
+
+  Usage:
+    {% render 'countdown-inline',
+       end_iso: '2026-12-31T23:59:00+05:30',
+       label: 'Offer ends' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign end_value = end_iso | default: end
+  assign label_text = label | default: 'urgency.ends_in' | t
+-%}
+
+{%- if end_value != blank -%}
+  <countdown-timer
+    class="countdown countdown--inline"
+    data-module="countdown.js"
+    data-end="{{ end_value }}"
+    role="timer"
+    aria-live="polite"
+  >
+    {%- if label_text != blank -%}
+      <span class="countdown__label">{{ label_text }}</span>
+    {%- endif -%}
+    <span data-cd-days>--</span><span class="countdown__sep">{{ 'urgency.days' | t }}</span>
+    <span data-cd-hours>--</span><span class="countdown__sep">{{ 'urgency.hours' | t }}</span>
+    <span data-cd-minutes>--</span><span class="countdown__sep">{{ 'urgency.minutes' | t }}</span>
+    <span data-cd-seconds>--</span><span class="countdown__sep">{{ 'urgency.seconds' | t }}</span>
+  </countdown-timer>
+{%- endif -%}

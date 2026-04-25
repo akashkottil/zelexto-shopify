@@ -1,0 +1,105 @@
+{%- comment -%}
+  Currency / country selector using Shopify Markets `localization` form.
+
+  Renders a button with the active country (globe icon + ISO) that opens a
+  dropdown listing every published country.
+{%- endcomment -%}
+
+{%- if localization.available_countries.size > 1 -%}
+  <localization-form
+    class="loc-selector loc-selector--currency"
+    data-module="localization.js"
+    data-loc-type="country"
+  >
+    {%- form 'localization', class: 'loc-selector__form' -%}
+      <input type="hidden" name="_method" value="put">
+      <details class="loc-selector__details">
+        <summary class="loc-selector__summary" aria-label="{{ 'localization.country_label' | t }}">
+          {%- render 'icon', name: 'globe', class: 'icon icon--sm' -%}
+          <span class="loc-selector__current">
+            {{ localization.country.iso_code }} · {{ localization.country.currency.iso_code }}
+          </span>
+          {%- render 'icon', name: 'chevron-down', class: 'icon icon--sm loc-selector__chev' -%}
+        </summary>
+
+        <div class="loc-selector__panel" role="dialog" aria-label="{{ 'localization.country_label' | t }}">
+          <ul class="loc-selector__list" role="list">
+            {%- for country in localization.available_countries -%}
+              <li>
+                <button
+                  type="submit"
+                  name="country_code"
+                  value="{{ country.iso_code }}"
+                  class="loc-selector__option {% if country.iso_code == localization.country.iso_code %}is-active{% endif %}"
+                  aria-current="{% if country.iso_code == localization.country.iso_code %}true{% else %}false{% endif %}"
+                >
+                  <span class="loc-selector__option-name">{{ country.name }}</span>
+                  <span class="loc-selector__option-meta">
+                    {{ country.iso_code }} · {{ country.currency.iso_code }} {{ country.currency.symbol }}
+                  </span>
+                  {%- if country.iso_code == localization.country.iso_code -%}
+                    {%- render 'icon', name: 'check', class: 'icon icon--sm' -%}
+                  {%- endif -%}
+                </button>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </details>
+    {%- endform -%}
+  </localization-form>
+
+  <style>
+    .loc-selector { display: inline-block; position: relative; }
+    .loc-selector__form { margin: 0; }
+    .loc-selector__details { position: relative; }
+    .loc-selector__summary {
+      list-style: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s-2);
+      padding: var(--s-2) var(--s-3);
+      border: 1px solid var(--c-line);
+      border-radius: var(--radius-pill);
+      font-size: var(--fs-14);
+      color: var(--c-ink);
+      background: var(--c-bg);
+      min-height: 36px;
+    }
+    .loc-selector__summary::-webkit-details-marker { display: none; }
+    .loc-selector__summary:hover { background: var(--c-elev); }
+    .loc-selector__chev {
+      transition: transform var(--dur-fast) var(--ease-standard);
+    }
+    .loc-selector__details[open] .loc-selector__chev { transform: rotate(180deg); }
+    .loc-selector__panel {
+      position: absolute;
+      right: 0;
+      top: calc(100% + var(--s-2));
+      min-width: 240px;
+      max-height: 360px;
+      overflow-y: auto;
+      background: var(--c-bg);
+      border: 1px solid var(--c-line);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-2);
+      z-index: var(--z-sticky);
+    }
+    .loc-selector__list { list-style: none; margin: 0; padding: var(--s-1); }
+    .loc-selector__option {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+      padding: var(--s-3);
+      border-radius: var(--radius-sm);
+      text-align: start;
+      color: var(--c-ink);
+    }
+    .loc-selector__option:hover { background: var(--c-elev); }
+    .loc-selector__option.is-active { color: var(--c-accent); }
+    .loc-selector__option-name { flex: 1 1 auto; font-weight: var(--weight-medium); }
+    .loc-selector__option-meta { font-size: var(--fs-12); color: var(--c-ink-muted); }
+  </style>
+{%- endif -%}

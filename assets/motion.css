@@ -1,0 +1,158 @@
+/* Zelexto v2 — motion.css
+   Reusable transitions and keyframes for toasts, modals, drawers, skeletons.
+   `prefers-reduced-motion` is already globally enforced via base.css duration
+   token resets, but we still gate every animation here for explicitness. */
+
+/* ---------- keyframes ---------- */
+
+@keyframes z-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes z-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+@keyframes z-slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes z-slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes z-scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes z-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+@keyframes z-toast-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes z-toast-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(20px); }
+}
+
+/* ---------- utility classes ---------- */
+
+.fade-in {
+  animation: z-fade-in var(--dur-base) var(--ease-standard) both;
+}
+.fade-out {
+  animation: z-fade-out var(--dur-base) var(--ease-standard) both;
+}
+.slide-up-in {
+  animation: z-slide-up var(--dur-base) var(--ease-standard) both;
+}
+.slide-down-in {
+  animation: z-slide-down var(--dur-base) var(--ease-standard) both;
+}
+.scale-in {
+  animation: z-scale-in var(--dur-base) var(--ease-standard) both;
+}
+
+/* ---------- skeleton shimmer ---------- */
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--c-elev) 100%, transparent) 0%,
+    color-mix(in srgb, var(--c-line) 60%, var(--c-elev)) 50%,
+    color-mix(in srgb, var(--c-elev) 100%, transparent) 100%
+  );
+  background-size: 200% 100%;
+  animation: z-shimmer 1.6s var(--ease-standard) infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- toast/modal/drawer transitions ---------- */
+
+.toast-enter {
+  animation: z-toast-in var(--dur-base) var(--ease-standard) both;
+}
+.toast-leave {
+  animation: z-toast-out var(--dur-base) var(--ease-standard) both;
+}
+
+.modal-backdrop {
+  transition: opacity var(--dur-base) var(--ease-standard);
+}
+.modal-dialog {
+  transition:
+    transform var(--dur-base) var(--ease-standard),
+    opacity   var(--dur-base) var(--ease-standard);
+}
+
+.drawer-panel {
+  transition:
+    transform var(--dur-base) var(--ease-standard);
+}
+.drawer-backdrop {
+  transition: opacity var(--dur-base) var(--ease-standard);
+}
+
+/* ---------- icon spin ---------- */
+
+@keyframes z-spin { to { transform: rotate(360deg); } }
+.icon--spin { animation: z-spin 1s linear infinite; }
+
+/* ---------- consent banner (referenced by analytics.js) ---------- */
+
+.consent-banner {
+  position: fixed;
+  bottom: var(--s-4);
+  left: var(--s-4);
+  right: var(--s-4);
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--s-4) var(--s-5);
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-2);
+  z-index: var(--z-toast);
+  animation: z-slide-up var(--dur-base) var(--ease-standard) both;
+}
+.consent-banner.is-leaving {
+  animation: z-fade-out var(--dur-base) var(--ease-standard) both;
+}
+.consent-banner__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+}
+.consent-banner__copy strong {
+  display: block;
+  font-size: var(--fs-16);
+  margin-bottom: var(--s-1);
+}
+.consent-banner__copy p {
+  margin: 0;
+  font-size: var(--fs-14);
+  color: var(--c-ink-muted);
+  max-width: 56ch;
+}
+.consent-banner__actions {
+  display: flex;
+  gap: var(--s-2);
+}
+
+/* ---------- reduced motion gate (explicit for these classes) ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in, .fade-out, .slide-up-in, .slide-down-in, .scale-in,
+  .toast-enter, .toast-leave, .skeleton-shimmer,
+  .icon--spin, .consent-banner {
+    animation: none !important;
+  }
+  .modal-backdrop, .modal-dialog, .drawer-panel, .drawer-backdrop {
+    transition: none !important;
+  }
+}

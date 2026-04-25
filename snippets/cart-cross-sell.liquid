@@ -1,0 +1,88 @@
+{%- comment -%}
+  cart-cross-sell.liquid
+
+  Horizontal cross-sell carousel for the cart drawer. Hydrates via JS
+  (assets/cross-sell.js) on cart:drawer-opened / cart:updated, calling
+  /recommendations/products.json?intent=complementary.
+
+  Accepts: heading (optional), max (default 4)
+{%- endcomment -%}
+
+{%- liquid
+  if settings.enable_cart_cross_sell == false
+    assign skip = true
+  endif
+  assign limit = max | default: 4
+  assign heading_text = heading | default: 'cart.upsell_title' | t
+-%}
+
+{%- unless skip -%}
+  <cart-cross-sell
+    class="cross-sell"
+    data-module="cross-sell.js"
+    data-limit="{{ limit }}"
+    hidden
+  >
+    <h3 class="cross-sell__heading">{{ heading_text }}</h3>
+    <div class="cross-sell__rail" data-rail role="list">
+      <!-- module renders mini cards here -->
+    </div>
+  </cart-cross-sell>
+
+  <style>
+    .cross-sell { display: block; padding: var(--s-4) 0; border-top: 1px solid var(--c-line); }
+    .cross-sell[hidden] { display: none; }
+    .cross-sell__heading {
+      font-size: var(--fs-14);
+      font-weight: var(--weight-medium);
+      color: var(--c-ink-muted);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      margin: 0 0 var(--s-3);
+    }
+    .cross-sell__rail {
+      display: flex;
+      gap: var(--s-3);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: var(--s-2);
+      scrollbar-width: thin;
+    }
+    .cross-sell__card {
+      flex: 0 0 140px;
+      display: flex; flex-direction: column;
+      gap: var(--s-2);
+      scroll-snap-align: start;
+    }
+    .cross-sell__media {
+      aspect-ratio: 1/1;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--c-elev);
+    }
+    .cross-sell__media img { width: 100%; height: 100%; object-fit: cover; }
+    .cross-sell__title {
+      font-size: var(--fs-14);
+      line-height: var(--lh-snug);
+      color: var(--c-ink);
+      margin: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .cross-sell__price { font-size: var(--fs-14); color: var(--c-ink); }
+    .cross-sell__add {
+      width: 100%;
+      min-height: 36px;
+      padding-inline: var(--s-3);
+      font-size: var(--fs-14);
+      border-radius: var(--radius-pill);
+      background: var(--c-elev);
+      color: var(--c-ink);
+      transition: background-color var(--dur-fast) var(--ease-standard);
+    }
+    .cross-sell__add:hover { background: color-mix(in srgb, var(--c-elev) 90%, black); }
+    .cross-sell__add[disabled] { opacity: 0.5; cursor: not-allowed; }
+  </style>
+{%- endunless -%}

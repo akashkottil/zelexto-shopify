@@ -1,0 +1,158 @@
+{%- comment -%}
+  exit-intent-modal.liquid
+
+  Email-capture modal that triggers on:
+    - mouseleave from top of viewport (desktop only)
+    - scroll past data-scroll-pct
+    - data-time-seconds elapsed on page
+
+  Cooldown via cookie. Submits to Klaviyo (if klaviyoKey set) with Shopify
+  customer-create fallback. Emits analytics:sign_up.
+{%- endcomment -%}
+
+{%- liquid
+  if settings.enable_exit_intent == false
+    assign skip = true
+  endif
+  assign scroll_pct = settings.exit_intent_scroll_pct | default: 50
+  assign time_seconds = settings.exit_intent_time_seconds | default: 30
+  assign cooldown_days = settings.exit_intent_cooldown_days | default: 7
+  assign offer = section.settings.offer | default: '10%'
+-%}
+
+{%- unless skip -%}
+  <exit-intent
+    class="exit-modal"
+    data-module="exit-intent.js"
+    data-module-eager
+    data-scroll-pct="{{ scroll_pct }}"
+    data-time-seconds="{{ time_seconds }}"
+    data-cooldown-days="{{ cooldown_days }}"
+    hidden
+  >
+    <div class="exit-modal__backdrop" data-close></div>
+    <div class="exit-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="exit-modal-title">
+      <button type="button" class="exit-modal__close" data-close aria-label="{{ 'general.close' | t }}">
+        {%- render 'icon', name: 'close', class: 'icon' -%}
+      </button>
+
+      {%- if section.settings.image != blank -%}
+        <div class="exit-modal__media">
+          {% render 'responsive-image',
+             image: section.settings.image,
+             alt: section.settings.heading,
+             sizes: '(min-width:768px) 480px, 100vw',
+             aspect_ratio: '4/3' %}
+        </div>
+      {%- endif -%}
+
+      <div class="exit-modal__body">
+        <h2 id="exit-modal-title" class="exit-modal__title">
+          {{ section.settings.heading | default: 'exit_intent.title' | t: offer: offer }}
+        </h2>
+        <p class="exit-modal__sub">
+          {{ section.settings.subheading | default: 'exit_intent.subtitle' | t }}
+        </p>
+
+        <form class="exit-modal__form" data-form novalidate>
+          <label class="field field--inline">
+            <span class="sr-only">{{ 'exit_intent.placeholder' | t }}</span>
+            <input
+              type="email"
+              required
+              autocomplete="email"
+              name="email"
+              class="field__input"
+              placeholder="{{ 'exit_intent.placeholder' | t }}"
+              data-email
+            >
+          </label>
+          <button type="submit" class="btn btn--primary" data-submit>
+            {{ 'exit_intent.submit' | t }}
+          </button>
+        </form>
+
+        <p class="exit-modal__msg" data-msg aria-live="polite"></p>
+
+        <button type="button" class="exit-modal__decline" data-close>
+          {{ 'exit_intent.decline' | t }}
+        </button>
+      </div>
+    </div>
+  </exit-intent>
+
+  <style>
+    .exit-modal { position: fixed; inset: 0; z-index: var(--z-modal); }
+    .exit-modal[hidden] { display: none; }
+    .exit-modal__backdrop {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.4);
+      opacity: 0;
+      transition: opacity var(--dur-base) var(--ease-standard);
+    }
+    .exit-modal.is-open .exit-modal__backdrop { opacity: 1; }
+    .exit-modal__dialog {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, calc(-50% + 12px));
+      opacity: 0;
+      width: min(92vw, 480px);
+      max-height: 90vh;
+      overflow: auto;
+      background: var(--c-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-2);
+      transition: transform var(--dur-base) var(--ease-standard),
+                  opacity var(--dur-base) var(--ease-standard);
+    }
+    .exit-modal.is-open .exit-modal__dialog {
+      transform: translate(-50%, -50%);
+      opacity: 1;
+    }
+    .exit-modal__close {
+      position: absolute; top: var(--s-3); right: var(--s-3);
+      width: 36px; height: 36px;
+      display: grid; place-items: center;
+      border-radius: 50%;
+      color: var(--c-ink);
+      background: var(--c-bg);
+      z-index: 1;
+    }
+    .exit-modal__media { background: var(--c-elev); }
+    .exit-modal__body { padding: var(--s-6); display: grid; gap: var(--s-3); }
+    .exit-modal__title { margin: 0; font-size: var(--fs-28); }
+    .exit-modal__sub { margin: 0; color: var(--c-ink-muted); font-size: var(--fs-14); }
+    .exit-modal__form {
+      display: grid; gap: var(--s-2);
+      grid-template-columns: 1fr auto;
+    }
+    .exit-modal__form .btn { white-space: nowrap; }
+    .exit-modal__msg { margin: 0; min-height: 1em; font-size: var(--fs-14); }
+    .exit-modal__msg.is-error { color: var(--c-danger); }
+    .exit-modal__msg.is-success { color: var(--c-success); }
+    .exit-modal__decline {
+      justify-self: center;
+      font-size: var(--fs-14);
+      color: var(--c-ink-muted);
+      text-decoration: underline;
+    }
+    @media (max-width: 480px) {
+      .exit-modal__form { grid-template-columns: 1fr; }
+    }
+  </style>
+{%- endunless -%}
+
+{% schema %}
+{
+  "name": "Exit-intent modal",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image (optional)" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "offer", "label": "Offer (used in default heading)", "default": "10%" }
+  ],
+  "presets": [
+    { "name": "Exit-intent modal" }
+  ]
+}
+{% endschema %}

@@ -1,317 +1,108 @@
-{% comment %}
-  ZELEXTO THEME — snippets/product-gallery.liquid
-  Product media gallery: Images, Videos, 3D/AR models.
-  Desktop: main view + thumbnail strip below.
-  Mobile: touch swipe carousel.
-  Zoom: CSS zoom on click, no library.
-{% endcomment %}
+{%- comment -%}
+  Zelexto v2 — product-gallery.liquid
+  <media-gallery> Custom Element. Slides + thumbnails + zoom on click.
+  Uses scroll-snap on mobile for native swipe; arrows on desktop.
+
+  Accepts:
+    product — required
+{%- endcomment -%}
 
 {%- liquid
-  assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media
+  assign featured = product.selected_or_first_available_variant.featured_media | default: product.featured_media
   assign media_list = product.media
 -%}
 
-<div class="product-gallery" id="product-gallery" data-product-gallery>
+<media-gallery
+  class="media-gallery"
+  data-module="product-media.js"
+  data-product-id="{{ product.id }}"
+  aria-label="{{ 'product.gallery' | t | default: 'Product gallery' }}">
 
-  <!-- Main media viewer -->
-  <div class="product-gallery__viewer" aria-label="{{ 'product.gallery_label' | t: product: product.title | default: product.title }}">
-    <div class="product-gallery__slides" id="gallery-slides" data-gallery-slides>
-
+  <div class="media-gallery__viewer" data-gallery-viewer>
+    <div class="media-gallery__rail" data-gallery-rail role="list">
       {%- for media in media_list -%}
         <div
-          class="product-gallery__slide{% if media.id == featured_media.id %} is-active{% endif %}"
-          id="slide-{{ media.id }}"
-          data-slide="{{ forloop.index0 }}"
-          aria-hidden="{{ media.id != featured_media.id }}">
+          class="media-gallery__slide{% if media.id == featured.id %} is-active{% endif %}"
+          role="listitem"
+          data-slide-id="{{ media.id }}"
+          data-slide-index="{{ forloop.index0 }}"
+          aria-hidden="{% if media.id == featured.id %}false{% else %}true{% endif %}">
 
           {%- case media.media_type -%}
-
             {%- when 'image' -%}
-              <div
-                class="product-gallery__image-wrap"
-                data-zoom-container
-                role="button"
-                tabindex="0"
+              <button
+                type="button"
+                class="media-gallery__zoom-trigger"
+                data-zoom-trigger
                 aria-label="{{ 'product.zoom' | t | default: 'Zoom image' }}">
-                <img
-                  src="{{ media | image_url: width: 900 }}"
-                  srcset="{{ media | image_url: width: 600 }} 600w,
-                          {{ media | image_url: width: 900 }} 900w,
-                          {{ media | image_url: width: 1200 }} 1200w"
-                  sizes="(max-width: 768px) 100vw, 55vw"
-                  alt="{{ media.alt | escape | default: product.title }}"
-                  width="900"
-                  height="{{ 900 | divided_by: media.preview_image.aspect_ratio | round }}"
-                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-                  decoding="{% if forloop.first %}sync{% else %}async{% endif %}"
-                  class="product-gallery__img"
-                  data-zoom-image="{{ media | image_url: width: 1600 }}"
-                  fetchpriority="{% if forloop.first %}high{% else %}auto{% endif %}">
-              </div>
+                {% render 'responsive-image',
+                   image: media,
+                   alt: media.alt | default: product.title,
+                   sizes: '(min-width:1024px) 55vw, 100vw',
+                   loading: forloop.first,
+                   fetchpriority: forloop.first | default: 'auto',
+                   class: 'media-gallery__img',
+                   aspect_ratio: '1/1' %}
+              </button>
 
             {%- when 'video' -%}
-              <div class="product-gallery__video-wrap">
-                {{ media | video_tag:
-                  class: 'product-gallery__video',
-                  autoplay: false,
-                  loop: false,
-                  muted: false,
-                  controls: true,
-                  playsinline: true }}
-              </div>
-
-            {%- when 'model' -%}
-              <div class="product-gallery__model-wrap">
-                {{ media | model_viewer_tag:
-                  class: 'product-gallery__model',
-                  reveal: 'interaction',
-                  data-shopify-feature: '1.0',
-                  ar: true,
-                  ar_modes: 'webxr scene-viewer quick-look',
-                  camera_controls: true,
-                  ar_button: true }}
+              <div class="media-gallery__video-wrap aspect" style="aspect-ratio: 1/1;">
+                {{ media | video_tag: class: 'media-gallery__video', controls: true, image_size: '1200x', loop: false, muted: false, playsinline: true }}
               </div>
 
             {%- when 'external_video' -%}
-              <div class="product-gallery__video-wrap product-gallery__video-wrap--embed">
-                {{ media | external_video_tag: class: 'product-gallery__video-embed' }}
+              <div class="media-gallery__video-wrap aspect" style="aspect-ratio: 16/9;">
+                {{ media | external_video_tag: class: 'media-gallery__video', loading: 'lazy' }}
               </div>
 
+            {%- when 'model' -%}
+              <div class="media-gallery__model-wrap aspect" style="aspect-ratio: 1/1;">
+                {{ media | model_viewer_tag: image_size: '1200x', reveal: 'interaction', toggleable: true, ar: true }}
+              </div>
           {%- endcase -%}
-
         </div>
       {%- endfor -%}
-
     </div>
 
-    <!-- Prev / Next arrows (desktop only) -->
     {%- if media_list.size > 1 -%}
-      <button class="product-gallery__arrow product-gallery__arrow--prev" type="button" aria-label="{{ 'general.previous' | t | default: 'Previous' }}" data-gallery-prev>
-        {%- render 'icon', name: 'chevron-left', size: 20 -%}
+      <button type="button" class="media-gallery__arrow media-gallery__arrow--prev" data-gallery-prev aria-label="{{ 'general.previous' | t | default: 'Previous' }}">
+        {% render 'icon', name: 'arrow-left' %}
       </button>
-      <button class="product-gallery__arrow product-gallery__arrow--next" type="button" aria-label="{{ 'general.next' | t | default: 'Next' }}" data-gallery-next>
-        {%- render 'icon', name: 'chevron-right', size: 20 -%}
+      <button type="button" class="media-gallery__arrow media-gallery__arrow--next" data-gallery-next aria-label="{{ 'general.next' | t | default: 'Next' }}">
+        {% render 'icon', name: 'arrow-right' %}
       </button>
-    {%- endif -%}
-
-    <!-- Slide counter (mobile) -->
-    {%- if media_list.size > 1 -%}
-      <div class="product-gallery__counter" aria-live="polite" aria-atomic="true" id="gallery-counter">
-        <span id="gallery-current">1</span>/<span>{{ media_list.size }}</span>
+      <div class="media-gallery__counter" aria-live="polite">
+        <span data-gallery-current>1</span>/<span>{{ media_list.size }}</span>
       </div>
     {%- endif -%}
-
   </div>
 
-  <!-- Thumbnail strip -->
   {%- if media_list.size > 1 -%}
-    <div class="product-gallery__thumbs" id="gallery-thumbs" role="list" aria-label="{{ 'product.thumbnails' | t | default: 'Media thumbnails' }}">
+    <ul class="media-gallery__thumbs" role="list" data-gallery-thumbs>
       {%- for media in media_list -%}
-        <button
-          class="product-gallery__thumb{% if media.id == featured_media.id %} is-active{% endif %}"
-          type="button"
-          data-thumb="{{ forloop.index0 }}"
-          aria-label="{{ media.alt | escape | default: product.title }}"
-          aria-pressed="{{ media.id == featured_media.id }}"
-          role="listitem">
-
-          {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
-            <span class="product-gallery__thumb-video-icon" aria-hidden="true">▶</span>
-          {%- elsif media.media_type == 'model' -%}
-            <span class="product-gallery__thumb-model-icon" aria-hidden="true">3D</span>
-          {%- endif -%}
-
-          <img
-            src="{{ media.preview_image | image_url: width: 120 }}"
-            alt="{{ media.alt | escape | default: product.title }}"
-            width="80" height="80"
-            loading="lazy"
-            decoding="async">
-
-        </button>
+        <li>
+          <button
+            type="button"
+            class="media-gallery__thumb{% if media.id == featured.id %} is-active{% endif %}"
+            data-thumb-index="{{ forloop.index0 }}"
+            data-thumb-id="{{ media.id }}"
+            aria-label="{{ media.alt | default: product.title }} — {{ forloop.index }}"
+            aria-pressed="{% if media.id == featured.id %}true{% else %}false{% endif %}">
+            <img
+              src="{{ media.preview_image | image_url: width: 160 }}"
+              srcset="{{ media.preview_image | image_url: width: 80 }} 80w, {{ media.preview_image | image_url: width: 160 }} 160w"
+              sizes="80px"
+              width="80" height="80"
+              alt="{{ media.alt | default: product.title }}"
+              loading="lazy" decoding="async">
+            {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
+              <span class="media-gallery__thumb-icon" aria-hidden="true">▶</span>
+            {%- elsif media.media_type == 'model' -%}
+              <span class="media-gallery__thumb-icon" aria-hidden="true">3D</span>
+            {%- endif -%}
+          </button>
+        </li>
       {%- endfor -%}
-    </div>
+    </ul>
   {%- endif -%}
-
-</div>
-
-<style>
-  .product-gallery {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    position: relative;
-  }
-
-  /* Main viewer */
-  .product-gallery__viewer {
-    position: relative;
-    background: var(--color-surface);
-    border-radius: var(--radius-card);
-    overflow: hidden;
-    aspect-ratio: 1;
-  }
-
-  .product-gallery__slides {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-
-  .product-gallery__slide {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.35s ease;
-  }
-
-  .product-gallery__slide.is-active {
-    opacity: 1;
-    pointer-events: auto;
-    position: relative;
-  }
-
-  .product-gallery__image-wrap {
-    width: 100%;
-    height: 100%;
-    cursor: zoom-in;
-    overflow: hidden;
-  }
-
-  .product-gallery__image-wrap.is-zoomed {
-    cursor: zoom-out;
-  }
-
-  .product-gallery__image-wrap.is-zoomed .product-gallery__img {
-    transform: scale(2);
-  }
-
-  .product-gallery__img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.4s ease;
-    transform-origin: var(--zoom-x, 50%) var(--zoom-y, 50%);
-    will-change: transform;
-  }
-
-  .product-gallery__video-wrap,
-  .product-gallery__model-wrap {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .product-gallery__video,
-  .product-gallery__model {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-
-  .product-gallery__video-wrap--embed {
-    aspect-ratio: 16/9;
-  }
-
-  .product-gallery__video-embed {
-    width: 100%;
-    height: 100%;
-  }
-
-  /* Arrows */
-  .product-gallery__arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 2;
-    width: 40px; height: 40px;
-    background: rgba(255,255,255,0.9);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--shadow);
-    transition: background-color var(--transition-fast), transform var(--transition-fast);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-  }
-
-  .product-gallery__arrow--prev { left: var(--space-3); }
-  .product-gallery__arrow--next { right: var(--space-3); }
-  .product-gallery__arrow:hover { background: #fff; transform: translateY(-50%) scale(1.05); }
-
-  /* Counter (mobile only) */
-  .product-gallery__counter {
-    position: absolute;
-    bottom: var(--space-3);
-    right: var(--space-3);
-    background: rgba(0,0,0,0.5);
-    color: #fff;
-    font-size: var(--font-size-xs);
-    padding: 2px 8px;
-    border-radius: var(--radius-full);
-    display: none;
-  }
-
-  @media (max-width: 768px) {
-    .product-gallery__counter { display: block; }
-    .product-gallery__arrow { display: none; }
-  }
-
-  /* Thumbnails */
-  .product-gallery__thumbs {
-    display: flex;
-    gap: var(--space-2);
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding-bottom: var(--space-1);
-  }
-
-  .product-gallery__thumbs::-webkit-scrollbar { display: none; }
-
-  .product-gallery__thumb {
-    flex-shrink: 0;
-    width: 72px; height: 72px;
-    border-radius: var(--radius);
-    overflow: hidden;
-    border: 2px solid transparent;
-    background: var(--color-surface);
-    cursor: pointer;
-    position: relative;
-    padding: 0;
-    transition: border-color var(--transition-fast), transform var(--transition-fast);
-  }
-
-  .product-gallery__thumb.is-active {
-    border-color: var(--color-primary);
-    transform: scale(1.05);
-  }
-
-  .product-gallery__thumb:hover { border-color: var(--color-primary); }
-
-  .product-gallery__thumb:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-  }
-
-  .product-gallery__thumb img { width: 100%; height: 100%; object-fit: cover; }
-
-  .product-gallery__thumb-video-icon,
-  .product-gallery__thumb-model-icon {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 10px;
-    color: #fff;
-    background: rgba(0,0,0,0.5);
-    padding: 2px 4px;
-    border-radius: 3px;
-  }
-</style>
+</media-gallery>

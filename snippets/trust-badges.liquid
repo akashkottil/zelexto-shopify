@@ -1,62 +1,76 @@
-{% comment %}
-  ZELEXTO THEME — snippets/trust-badges.liquid
-  Configurable trust badges row. Used on product pages, CTA sections, cart.
-  Accepts: style ("row" | "column"), size ("sm" | "md")
-{% endcomment %}
+{%- comment -%}
+  trust-badges.liquid
+
+  Row of trust signals (free shipping, returns, secure checkout, support).
+  Uses the v2 token system and locale strings under `trust.*`.
+
+  Accepts:
+    style ('row' | 'column'), size ('sm' | 'md'),
+    items (comma-separated subset: shipping,returns,secure,support)
+{%- endcomment -%}
 
 {%- liquid
   assign badge_style = style | default: 'row'
   assign badge_size  = size  | default: 'md'
+  assign list = items | default: 'shipping,returns,secure,support'
+  assign tokens = list | split: ','
 -%}
 
-<div class="trust-badges trust-badges--{{ badge_style }} trust-badges--{{ badge_size }}" aria-label="Trust signals">
-  <div class="trust-badge">
-    {%- render 'icon', name: 'shield', size: 20 -%}
-    <span>{{ 'trust.secure_checkout' | t }}</span>
-  </div>
-  <div class="trust-badge">
-    {%- render 'icon', name: 'truck', size: 20 -%}
-    <span>{{ 'trust.free_shipping' | t }}</span>
-  </div>
-  <div class="trust-badge">
-    {%- render 'icon', name: 'refresh', size: 20 -%}
-    <span>{{ 'trust.free_returns' | t }}</span>
-  </div>
-  <div class="trust-badge">
-    {%- render 'icon', name: 'check', size: 20 -%}
-    <span>{{ 'trust.authentic' | t }}</span>
-  </div>
-</div>
+<ul class="trust-badges trust-badges--{{ badge_style }} trust-badges--{{ badge_size }}"
+    role="list"
+    aria-label="{{ 'trust.secure_checkout' | t }}">
+  {%- for raw in tokens -%}
+    {%- assign tok = raw | strip -%}
+    {%- case tok -%}
+      {%- when 'shipping' -%}
+        <li class="trust-badge">
+          {%- render 'icon', name: 'truck', class: 'trust-badge__icon' -%}
+          <span class="trust-badge__label">{{ 'trust.free_shipping' | t }}</span>
+        </li>
+      {%- when 'returns' -%}
+        <li class="trust-badge">
+          {%- render 'icon', name: 'refresh', class: 'trust-badge__icon' -%}
+          <span class="trust-badge__label">{{ 'trust.free_returns' | t }}</span>
+        </li>
+      {%- when 'secure' -%}
+        <li class="trust-badge">
+          {%- render 'icon', name: 'shield', class: 'trust-badge__icon' -%}
+          <span class="trust-badge__label">{{ 'trust.secure_checkout' | t }}</span>
+        </li>
+      {%- when 'support' -%}
+        <li class="trust-badge">
+          {%- render 'icon', name: 'mail', class: 'trust-badge__icon' -%}
+          <span class="trust-badge__label">{{ 'trust.support' | t }}</span>
+        </li>
+    {%- endcase -%}
+  {%- endfor -%}
+</ul>
 
 <style>
   .trust-badges {
     display: flex;
-    gap: var(--space-4);
+    gap: var(--s-5);
     flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
-
-  .trust-badges--row { flex-direction: row; justify-content: center; }
+  .trust-badges--row    { flex-direction: row; }
   .trust-badges--column { flex-direction: column; }
-
   .trust-badge {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: var(--space-2);
-    color: var(--color-text-secondary);
+    gap: var(--s-2);
+    color: var(--c-ink-muted);
   }
-
-  .trust-badge svg { flex-shrink: 0; }
-
-  .trust-badge span {
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    white-space: nowrap;
+  .trust-badge__icon { width: 20px; height: 20px; flex-shrink: 0; }
+  .trust-badge__label {
+    font-size: var(--fs-14);
+    color: var(--c-ink);
   }
-
-  .trust-badges--sm .trust-badge span { font-size: var(--font-size-xs); }
-
+  .trust-badges--sm .trust-badge__label { font-size: var(--fs-12); }
   @media (max-width: 480px) {
-    .trust-badges--row { gap: var(--space-3); }
-    .trust-badges--row .trust-badge span { display: none; }
+    .trust-badges--row { gap: var(--s-3); }
+    .trust-badges--row .trust-badge__label { font-size: var(--fs-12); }
   }
 </style>

@@ -1,0 +1,166 @@
+{
+  "general": {
+    "title": "ज़ेलेक्सटो",
+    "search": "खोजें",
+    "close": "बंद करें",
+    "open": "खोलें",
+    "loading": "लोड हो रहा है…",
+    "error": "कुछ गड़बड़ हो गई। कृपया फिर से प्रयास करें।",
+    "skip_to_content": "सामग्री पर जाएँ",
+    "back_to_top": "ऊपर जाएँ",
+    "read_more": "और पढ़ें",
+    "view_all": "सभी देखें",
+    "learn_more": "और जानें",
+    "required": "अनिवार्य",
+    "submit": "भेजें",
+    "cancel": "रद्द करें",
+    "confirm": "पुष्टि करें"
+  },
+  "header": {
+    "cart_count": { "one": "{{ count }} वस्तु", "other": "{{ count }} वस्तुएँ" },
+    "cart_label": "बैग",
+    "account_label": "खाता",
+    "menu_label": "मेनू",
+    "search_placeholder": "उत्पाद, कलेक्शन खोजें…",
+    "language_selector": "भाषा",
+    "currency_selector": "मुद्रा"
+  },
+  "search": {
+    "title": "खोज",
+    "placeholder": "उत्पाद, कलेक्शन, लेख खोजें…",
+    "no_results": "“{{ terms }}” के लिए कोई परिणाम नहीं",
+    "results_for": "“{{ terms }}” के परिणाम",
+    "products": "उत्पाद",
+    "pages": "पेज",
+    "articles": "लेख",
+    "collections": "कलेक्शन",
+    "all_results": "सभी परिणाम देखें",
+    "loading": "खोज हो रही है…",
+    "clear": "खोज साफ़ करें"
+  },
+  "product": {
+    "add_to_cart": "बैग में जोड़ें",
+    "buy_now": "अभी खरीदें",
+    "sold_out": "बिक चुका है",
+    "unavailable": "अनुपलब्ध",
+    "on_sale": "सेल",
+    "sale_badge": "{{ savings }} बचाएँ",
+    "new_badge": "नया",
+    "low_stock": "केवल {{ count }} बचे हैं",
+    "in_stock": "स्टॉक में",
+    "out_of_stock": "स्टॉक में नहीं",
+    "quantity": "मात्रा",
+    "increase_quantity": "मात्रा बढ़ाएँ",
+    "decrease_quantity": "मात्रा घटाएँ",
+    "description": "विवरण",
+    "shipping": "शिपिंग",
+    "returns": "वापसी",
+    "size_guide": "साइज़ गाइड",
+    "share": "शेयर करें",
+    "sku": "SKU",
+    "sticky_atc": "बैग में जोड़ें — {{ price }}"
+  },
+  "cart": {
+    "title": "आपका बैग",
+    "empty": "आपका बैग खाली है",
+    "empty_cta": "खरीदारी जारी रखें",
+    "items_count": { "one": "{{ count }} वस्तु", "other": "{{ count }} वस्तुएँ" },
+    "subtotal": "उप-योग",
+    "taxes_note": "टैक्स और शिपिंग चेकआउट पर जोड़े जाएँगे",
+    "checkout": "चेकआउट",
+    "remove": "हटाएँ",
+    "free_shipping": "आपको मुफ़्त डिलीवरी मिलेगी",
+    "free_shipping_progress": "मुफ़्त डिलीवरी के लिए {{ amount }} और जोड़ें",
+    "continue_shopping": "खरीदारी जारी रखें",
+    "upsell_title": "इनके साथ अच्छा लगेगा"
+  },
+  "payments": {
+    "secure_checkout": "Razorpay द्वारा सुरक्षित चेकआउट",
+    "emi_from": "{{ amount }}/महीना से EMI",
+    "method_full": "पूरा भुगतान",
+    "method_full_desc": "अभी {{ amount }} दें, मुफ़्त डिलीवरी पाएँ।",
+    "method_partial": "आंशिक भुगतान",
+    "method_partial_desc": "अभी {{ advance }} दें, बाकी ({{ balance }}) डिलीवरी पर।",
+    "method_cod": "कैश ऑन डिलीवरी",
+    "method_cod_desc": "ऑर्डर मिलने पर {{ amount }} का भुगतान करें।",
+    "select_method": "भुगतान का तरीक़ा चुनें"
+  },
+  "cod": {
+    "check_pincode": "डिलीवरी और COD जाँचें",
+    "pincode_placeholder": "अपना पिनकोड दर्ज करें",
+    "pincode_check": "जाँचें",
+    "pincode_invalid": "कृपया 6-अंकों का सही पिनकोड दर्ज करें।",
+    "checking": "जाँचा जा रहा है…",
+    "available": "COD उपलब्ध — {{ eta }} में डिलीवरी।",
+    "prepaid_only": "केवल प्रीपेड — {{ eta }} में डिलीवरी।",
+    "unserviceable": "क्षमा करें, हम अभी इस पिनकोड पर डिलीवरी नहीं करते।",
+    "fee": "COD शुल्क {{ amount }}",
+    "fee_waived": "{{ threshold }} से ऊपर COD शुल्क माफ़"
+  },
+  "partial_pay": {
+    "title": "आंशिक भुगतान",
+    "summary": "अभी {{ advance }} दें · डिलीवरी पर {{ balance }} दें",
+    "advance_label": "अभी दें",
+    "balance_label": "डिलीवरी पर दें",
+    "min_order_warning": "{{ amount }} से ऊपर के ऑर्डर पर आंशिक भुगतान उपलब्ध है।",
+    "explainer": "छोटी सी अग्रिम राशि देकर अपना ऑर्डर सुरक्षित करें। बाकी राशि डिलीवरी के समय ली जाएगी।"
+  },
+  "urgency": {
+    "low_stock": "स्टॉक में केवल {{ count }} बचे हैं",
+    "selling_fast": "तेज़ी से बिक रहा है",
+    "trending": "ट्रेंडिंग",
+    "ends_in": "सेल ख़त्म होगी",
+    "days": "दिन", "hours": "घं", "minutes": "मि", "seconds": "से",
+    "recently_sold": "{{ city }} से {{ name }} ने {{ product }} ख़रीदा",
+    "recently_sold_just_now": "अभी",
+    "recently_sold_minutes_ago": "{{ count }} मिनट पहले"
+  },
+  "bundle": {
+    "title": "ज़्यादा ख़रीदें, ज़्यादा बचाएँ",
+    "qty": "{{ qty }} ख़रीदें",
+    "save": "{{ percent }} बचाएँ",
+    "added": "बंडल बैग में जोड़ा गया"
+  },
+  "social_proof": {
+    "rating_summary": "{{ count }} समीक्षाओं में से {{ rating }}",
+    "verified_buyer": "सत्यापित ग्राहक"
+  },
+  "exit_intent": {
+    "title": "रुकिए — पहले ऑर्डर पर {{ offer }} छूट पाएँ",
+    "subtitle": "साइन अप करें, हम आपके इनबॉक्स में कोड भेजेंगे।",
+    "placeholder": "आपका ईमेल पता",
+    "submit": "मेरा कोड पाएँ",
+    "decline": "धन्यवाद, नहीं",
+    "success": "कोड भेज दिया गया — अपना इनबॉक्स देखें।",
+    "error": "कृपया एक वैध ईमेल दर्ज करें।"
+  },
+  "trust": {
+    "secure_checkout": "सुरक्षित चेकआउट",
+    "free_returns": "मुफ़्त वापसी",
+    "free_shipping": "मुफ़्त शिपिंग",
+    "money_back": "30 दिन की धन-वापसी",
+    "authentic": "100% असली",
+    "support": "24/7 सहायता"
+  },
+  "analytics": {
+    "consent_title": "हम कुकीज़ का उपयोग करते हैं",
+    "consent_body": "हम सामग्री वैयक्तिकृत करने और ट्रैफ़िक का विश्लेषण करने के लिए कुकीज़ का उपयोग करते हैं।",
+    "consent_accept": "स्वीकारें",
+    "consent_reject": "अस्वीकारें",
+    "consent_settings": "सेटिंग्स"
+  },
+  "compliance": {
+    "gstin_label": "GSTIN (व्यवसाय इनवॉइस के लिए)",
+    "gstin_placeholder": "15-अंकों का GSTIN दर्ज करें",
+    "gstin_invalid": "कृपया सही GSTIN दर्ज करें।",
+    "hsn_code": "HSN: {{ code }}",
+    "tax_inclusive": "सभी कर शामिल"
+  },
+  "newsletter": {
+    "title": "जुड़े रहें",
+    "placeholder": "आपका ईमेल पता",
+    "submit": "सब्सक्राइब",
+    "success": "सब्सक्राइब करने के लिए धन्यवाद।",
+    "error": "कृपया वैध ईमेल पता दर्ज करें।"
+  }
+}

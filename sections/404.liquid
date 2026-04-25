@@ -1,95 +1,60 @@
-{% comment %}
-  ZELEXTO THEME — sections/404.liquid
-  Custom 404 page with search box and suggested links.
-{% endcomment %}
+{%- comment -%}
+  Zelexto v2 — sections/404.liquid
+  Apple-style 404. Big numeral, helpful copy, link home + popular collections.
+{%- endcomment -%}
 
-<section class="error-page section">
-  <div class="container">
+<section class="error">
+  <div class="container error__container">
+    <p class="error__code" aria-hidden="true">404</p>
+    <h1 class="error__title">{{ '404.title' | t | default: 'Page not found' }}</h1>
+    <p class="error__sub">{{ '404.description' | t | default: 'The page you were looking for doesn’t exist. It may have moved.' }}</p>
 
-    <div class="error-page__inner">
-      <div class="error-page__code" aria-hidden="true">404</div>
-      <h1 class="error-page__title">{{ '404.title' | t | default: 'Page not found' }}</h1>
-      <p class="error-page__text">{{ '404.subtitle' | t | default: "The page you're looking for doesn't exist or has been moved." }}</p>
-
-      <!-- Search -->
-      <form action="{{ routes.search_url }}" method="get" class="error-page__search">
-        <input type="hidden" name="type" value="product">
-        <div class="search-page__input-wrap" style="max-width: 440px; margin-inline: auto;">
-          {%- render 'icon', name: 'search', size: 18 -%}
-          <input
-            type="search"
-            name="q"
-            class="search-page__input"
-            placeholder="{{ 'search.placeholder' | t | default: 'Search our store...' }}"
-            aria-label="{{ 'search.placeholder' | t | default: 'Search our store' }}">
-        </div>
-        <button type="submit" class="btn btn--primary">{{ 'search.submit' | t | default: 'Search' }}</button>
-      </form>
-
-      <!-- Helpful links -->
-      <div class="error-page__links">
-        <a href="{{ routes.root_url }}" class="btn btn--ghost">{{ '404.home_link' | t | default: 'Back to homepage' }}</a>
-        <a href="{{ routes.all_products_collection_url }}" class="btn btn--ghost">{{ '404.shop_link' | t | default: 'Shop all products' }}</a>
-        {%- if blogs.news.articles_count > 0 -%}
-          <a href="{{ blogs.news.url }}" class="btn btn--ghost">{{ '404.blog_link' | t | default: 'Visit our blog' }}</a>
-        {%- endif -%}
-      </div>
+    <div class="error__cta">
+      <a href="{{ routes.root_url }}" class="btn btn--primary">{{ '404.cta' | t | default: 'Go back home' }}</a>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn--ghost">{{ 'general.browse_all' | t | default: 'Shop all products' }}</a>
     </div>
 
+    {%- if section.blocks.size > 0 -%}
+      <div class="error__popular">
+        <h2 class="error__popular-title">{{ '404.popular' | t | default: 'Popular collections' }}</h2>
+        <ul class="error__popular-list" role="list">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'collection' and block.settings.collection -%}
+              {%- assign c = collections[block.settings.collection] -%}
+              <li {{ block.shopify_attributes }}>
+                <a href="{{ c.url }}" class="error__popular-link">
+                  {%- if c.image -%}
+                    <span class="error__popular-media aspect" style="aspect-ratio: 1/1;">
+                      {% render 'responsive-image', image: c.image, alt: c.title, sizes: '120px', loading: 'lazy', aspect_ratio: '1/1' %}
+                    </span>
+                  {%- endif -%}
+                  <span>{{ c.title }}</span>
+                </a>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
   </div>
 </section>
 
-<style>
-  .error-page { padding-block: var(--space-16); }
-
-  .error-page__inner {
-    max-width: 540px;
-    margin-inline: auto;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-6);
-  }
-
-  .error-page__code {
-    font-size: clamp(6rem, 20vw, 10rem);
-    font-weight: var(--font-weight-bold);
-    line-height: 1;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark, var(--color-primary)));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    opacity: 0.15;
-    letter-spacing: -0.05em;
-    pointer-events: none;
-    position: absolute;
-    top: 0; left: 50%; transform: translateX(-50%);
-    z-index: 0;
-  }
-
-  .error-page__inner { position: relative; isolation: isolate; }
-
-  .error-page__title { font-size: clamp(1.75rem, 4vw, 2.5rem); }
-
-  .error-page__text { color: var(--color-text-secondary); font-size: var(--font-size-lg); }
-
-  .error-page__search {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-3);
-    width: 100%;
-  }
-
-  .error-page__search .search-page__input-wrap {
-    width: 100%; max-width: 440px;
-  }
-
-  .error-page__links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-3);
-  }
-</style>
+{% schema %}
+{
+  "name": "404 page",
+  "tag": "section",
+  "class": "section section--404",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Popular collection",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [{ "name": "404 page" }]
+}
+{% endschema %}

@@ -1,0 +1,50 @@
+{
+  "type": "footer",
+  "name": "Footer",
+  "sections": {
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "eyebrow": "Join our list",
+        "heading": "Be first to know.",
+        "body": "Subscribe for early access to new launches, members-only offers and the occasional well-written email.",
+        "placeholder": "Email address",
+        "submit_label": "Subscribe",
+        "background": "elev"
+      }
+    },
+    "footer": {
+      "type": "footer",
+      "settings": {
+        "tagline": "Designed in India. Built for the world.",
+        "show_payment_icons": true,
+        "show_legal_footer": true
+      },
+      "blocks": {
+        "shop": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Shop",
+            "menu": "footer"
+          }
+        },
+        "support": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Support",
+            "menu": "footer"
+          }
+        },
+        "company": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Company",
+            "menu": "footer"
+          }
+        }
+      },
+      "block_order": ["shop", "support", "company"]
+    }
+  },
+  "order": ["newsletter", "footer"]
+}

@@ -1,0 +1,157 @@
+{%- comment -%}
+  GSTIN (B2B invoice) field for cart.
+
+  Toggle row reveals GSTIN + Business name. Validates client-side (regex), then
+  writes to cart attributes via theme.cart.update on blur. Gated by
+  `settings.enable_gst_field`.
+{%- endcomment -%}
+
+{%- if settings.enable_gst_field -%}
+  {%- liquid
+    assign current_gstin = cart.attributes.gstin | default: ''
+    assign current_business = cart.attributes.business_name | default: ''
+    assign is_open = false
+    if current_gstin != ''
+      assign is_open = true
+    endif
+  -%}
+
+  <gst-invoice-field
+    class="gst-field"
+    data-module="gst-invoice-field.js"
+  >
+    <details class="gst-field__details" {% if is_open %}open{% endif %}>
+      <summary class="gst-field__summary">
+        <input
+          type="checkbox"
+          class="gst-field__toggle"
+          data-gst-toggle
+          {% if is_open %}checked{% endif %}
+          aria-label="Add GST invoice"
+        >
+        <span class="gst-field__summary-label">{{ 'compliance.gstin_label' | t }}</span>
+      </summary>
+
+      <div class="gst-field__body">
+        <label class="field">
+          <span class="field__label">{{ 'compliance.gstin_label' | t }}</span>
+          <input
+            type="text"
+            class="field__input"
+            data-gst-input
+            name="gstin"
+            value="{{ current_gstin | escape }}"
+            placeholder="{{ 'compliance.gstin_placeholder' | t }}"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="characters"
+            maxlength="15"
+            pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}[A-Z]{1}[0-9A-Z]{1}$"
+            aria-describedby="gst-error"
+          >
+          <span class="field__error" id="gst-error" data-gst-error hidden>
+            {{ 'compliance.gstin_invalid' | t }}
+          </span>
+        </label>
+
+        <label class="field">
+          <span class="field__label">{{ 'compliance.business_name' | t }}</span>
+          <input
+            type="text"
+            class="field__input"
+            data-business-input
+            name="business_name"
+            value="{{ current_business | escape }}"
+            autocomplete="organization"
+            maxlength="120"
+          >
+        </label>
+      </div>
+    </details>
+
+    <script>
+      (function () {
+        const root = document.currentScript.parentElement;
+        const toggle = root.querySelector('[data-gst-toggle]');
+        const details = root.querySelector('.gst-field__details');
+        const gstInput = root.querySelector('[data-gst-input]');
+        const bizInput = root.querySelector('[data-business-input]');
+        const errorEl = root.querySelector('[data-gst-error]');
+        const re = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}[A-Z]{1}[0-9A-Z]{1}$/;
+
+        if (toggle) {
+          toggle.addEventListener('change', (e) => {
+            details.open = toggle.checked;
+            if (!toggle.checked) {
+              gstInput.value = '';
+              bizInput.value = '';
+              persist();
+            }
+            e.stopPropagation();
+          });
+          // prevent <summary> default toggle-on-click hijacking the checkbox
+          toggle.addEventListener('click', (e) => e.stopPropagation());
+        }
+
+        function setInvalid(invalid) {
+          gstInput.setAttribute('aria-invalid', invalid ? 'true' : 'false');
+          errorEl.hidden = !invalid;
+        }
+
+        function validate() {
+          const v = (gstInput.value || '').trim().toUpperCase();
+          if (!v) { setInvalid(false); return true; }
+          const ok = re.test(v);
+          setInvalid(!ok);
+          return ok;
+        }
+
+        async function persist() {
+          if (!window.theme || !window.theme.cart || !window.theme.cart.update) return;
+          const gstin = (gstInput.value || '').trim().toUpperCase();
+          const business_name = (bizInput.value || '').trim();
+          try {
+            await window.theme.cart.update({ attributes: { gstin, business_name } });
+          } catch (err) { console.error('[gst-field] cart update failed', err); }
+        }
+
+        gstInput.addEventListener('blur', () => { if (validate()) persist(); });
+        gstInput.addEventListener('input', () => { gstInput.value = gstInput.value.toUpperCase(); });
+        bizInput.addEventListener('blur', () => { if (validate()) persist(); });
+      })();
+    </script>
+  </gst-invoice-field>
+
+  <style>
+    .gst-field { display: block; margin-block: var(--s-4); }
+    .gst-field__details {
+      border: 1px solid var(--c-line);
+      border-radius: var(--radius-md);
+      background: var(--c-bg);
+    }
+    .gst-field__summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+      padding: var(--s-3) var(--s-4);
+    }
+    .gst-field__summary::-webkit-details-marker { display: none; }
+    .gst-field__toggle {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--c-accent);
+    }
+    .gst-field__summary-label {
+      font-weight: var(--weight-medium);
+      color: var(--c-ink);
+    }
+    .gst-field__body {
+      padding: 0 var(--s-4) var(--s-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-3);
+    }
+  </style>
+{%- endif -%}

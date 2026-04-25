@@ -1,59 +1,67 @@
-{% comment %}
-  ZELEXTO THEME — snippets/rating-stars.liquid
-  Displays star rating. Accepts: rating (number 0-5), count (integer)
-{% endcomment %}
+{%- comment -%}
+  Zelexto v2 — rating-stars.liquid
+  Reads product.metafields.reviews.rating + .rating_count by default;
+  caller can override with `rating` / `count` params. Falls back gracefully
+  when no metafield is set (renders nothing).
+
+  Accepts:
+    product   — optional, used to read metafields
+    rating    — optional float 0-5
+    count     — optional integer
+    show_count — default true
+    size      — default 'sm' ('sm' | 'md')
+{%- endcomment -%}
 
 {%- liquid
-  assign rating_val = rating | default: 0 | times: 1.0
-  assign full_stars = rating_val | floor
-  assign partial = rating_val | minus: full_stars
-  assign empty_stars = 5 | minus: full_stars
-  if partial > 0
-    assign empty_stars = empty_stars | minus: 1
+  assign rating_value = rating
+  assign rating_count = count
+
+  if rating_value == nil and product
+    if product.metafields.reviews.rating.value
+      assign rating_data = product.metafields.reviews.rating.value
+      if rating_data.rating
+        assign rating_value = rating_data.rating | times: 1.0
+      else
+        assign rating_value = rating_data | times: 1.0
+      endif
+    endif
+    if product.metafields.reviews.rating_count.value
+      assign rating_count = product.metafields.reviews.rating_count.value
+    endif
   endif
+
+  assign show_count_attr = show_count
+  if show_count_attr == nil
+    assign show_count_attr = true
+  endif
+  assign size_class = size | default: 'sm'
 -%}
 
-<div class="rating-stars" aria-label="{{ rating_val }} out of 5 stars" role="img">
-  <span class="rating-stars__icons" aria-hidden="true">
-    {%- for i in (1..full_stars) -%}
-      {%- render 'icon', name: 'star-filled', size: 14 -%}
-    {%- endfor -%}
-    {%- if partial > 0 -%}
-      <span class="rating-stars__partial" style="--partial-fill: {{ partial | times: 100 | round }}%;">
-        {%- render 'icon', name: 'star-filled', size: 14 -%}
-      </span>
-    {%- endif -%}
-    {%- if empty_stars > 0 -%}
-      {%- for i in (1..empty_stars) -%}
-        {%- render 'icon', name: 'star', size: 14 -%}
-      {%- endfor -%}
-    {%- endif -%}
-  </span>
-  {%- if count -%}
-    <span class="rating-stars__count">({{ count }})</span>
-  {%- endif -%}
-</div>
+{%- if rating_value and rating_value > 0 -%}
+  {%- assign full = rating_value | floor -%}
+  {%- assign frac = rating_value | minus: full -%}
+  {%- assign empty = 5 | minus: full -%}
+  {%- if frac > 0 -%}{%- assign empty = empty | minus: 1 -%}{%- endif -%}
 
-<style>
-  .rating-stars {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    color: #f59e0b;
-  }
-  .rating-stars__icons {
-    display: flex;
-    gap: 1px;
-  }
-  .rating-stars__partial {
-    position: relative;
-    display: inline-flex;
-    overflow: hidden;
-    width: calc(var(--partial-fill));
-  }
-  .rating-stars__count {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-    margin-left: 2px;
-  }
-</style>
+  <div class="rating rating--{{ size_class }}" role="img" aria-label="{{ rating_value }} {{ 'general.out_of' | t | default: 'out of' }} 5">
+    <span class="rating__stars" aria-hidden="true">
+      {%- for i in (1..full) -%}
+        {%- render 'icon', name: 'star', class: 'rating__star rating__star--full' -%}
+      {%- endfor -%}
+      {%- if frac > 0 -%}
+        <span class="rating__star rating__star--partial" style="--fill:{{ frac | times: 100 | round }}%;">
+          {%- render 'icon', name: 'star-empty', class: 'rating__star-bg' -%}
+          <span class="rating__star-fg">{%- render 'icon', name: 'star' -%}</span>
+        </span>
+      {%- endif -%}
+      {%- if empty > 0 -%}
+        {%- for i in (1..empty) -%}
+          {%- render 'icon', name: 'star-empty', class: 'rating__star rating__star--empty' -%}
+        {%- endfor -%}
+      {%- endif -%}
+    </span>
+    {%- if show_count_attr and rating_count -%}
+      <span class="rating__count">({{ rating_count }})</span>
+    {%- endif -%}
+  </div>
+{%- endif -%}

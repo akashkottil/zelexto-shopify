@@ -1,0 +1,89 @@
+{%- comment -%}
+  Partial payment split summary.
+
+  Computes from `cart.total_price * settings.partial_advance_percent / 100`.
+  Re-rendered when the partial radio is selected; values are also updated
+  client-side by `payment-selector.js` on `cart:updated`.
+{%- endcomment -%}
+
+{%- liquid
+  assign cart_total = cart.total_price | default: 0
+  assign advance_pct = settings.partial_advance_percent | default: 20
+  assign min_partial = settings.partial_pay_min_order | default: 0
+  assign min_partial_cents = min_partial | times: 100
+
+  assign advance_cents = cart_total | times: advance_pct | divided_by: 100
+  assign balance_cents = cart_total | minus: advance_cents
+
+  assign advance_money = advance_cents | money
+  assign balance_money = balance_cents | money
+  assign min_partial_money = min_partial_cents | money
+
+  assign eligible = true
+  if cart_total < min_partial_cents
+    assign eligible = false
+  endif
+-%}
+
+<div class="partial-summary" data-partial-pay-summary data-advance-percent="{{ advance_pct }}">
+  {%- if eligible -%}
+    <div class="partial-summary__row">
+      <span class="partial-summary__label">{{ 'partial_pay.advance_label' | t }}</span>
+      <span class="partial-summary__value" data-money-cents="{{ advance_cents }}" data-partial-advance-amount>
+        {{ advance_money }}
+      </span>
+    </div>
+    <div class="partial-summary__row">
+      <span class="partial-summary__label">{{ 'partial_pay.balance_label' | t }}</span>
+      <span class="partial-summary__value partial-summary__value--muted" data-money-cents="{{ balance_cents }}" data-partial-balance-amount>
+        {{ balance_money }}
+      </span>
+    </div>
+    <p class="partial-summary__note">
+      {{ 'partial_pay.summary' | t: advance: advance_money, balance: balance_money }}
+    </p>
+  {%- else -%}
+    <p class="partial-summary__warning">
+      {{ 'partial_pay.min_order_warning' | t: amount: min_partial_money }}
+    </p>
+  {%- endif -%}
+</div>
+
+<style>
+  .partial-summary {
+    margin-top: var(--s-3);
+    padding: var(--s-4);
+    background: var(--c-elev);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+  }
+  .partial-summary__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-3);
+  }
+  .partial-summary__label {
+    font-size: var(--fs-14);
+    color: var(--c-ink-muted);
+  }
+  .partial-summary__value {
+    font-family: var(--font-display);
+    font-weight: var(--weight-semibold);
+    color: var(--c-ink);
+  }
+  .partial-summary__value--muted { color: var(--c-ink-muted); }
+  .partial-summary__note {
+    margin: 0;
+    font-size: var(--fs-12);
+    color: var(--c-ink-muted);
+    max-width: none;
+  }
+  .partial-summary__warning {
+    margin: 0;
+    font-size: var(--fs-14);
+    color: var(--c-warning);
+  }
+</style>

@@ -1,0 +1,45 @@
+{%- comment -%}
+  bundle-card.liquid
+
+  Single tier card inside <bundle-builder>. Renders a radio-style selector for
+  one volume/quantity tier.
+
+  Accepts: index (int), qty, percent, label, base_price (cents)
+{%- endcomment -%}
+
+{%- liquid
+  assign tier_qty = qty | default: 1
+  assign tier_percent = percent | default: 0
+  assign label_text = label | default: ''
+  assign base = base_price | default: 0
+  assign total = base | times: tier_qty
+  assign discount = total | times: tier_percent | divided_by: 100
+  assign final_price = total | minus: discount
+-%}
+
+<label class="bundle-card" data-bundle-tier data-qty="{{ tier_qty }}" data-percent="{{ tier_percent }}">
+  <input
+    type="radio"
+    name="bundle-tier"
+    value="{{ tier_qty }}"
+    {% if index == 0 %}checked{% endif %}
+    class="bundle-card__radio sr-only"
+  >
+  <span class="bundle-card__inner">
+    <span class="bundle-card__qty">{{ 'bundle.qty' | t: qty: tier_qty }}</span>
+    {%- if label_text != blank -%}
+      <span class="bundle-card__label">{{ label_text }}</span>
+    {%- endif -%}
+    {%- if tier_percent > 0 -%}
+      <span class="bundle-card__save">{{ 'bundle.save' | t: percent: tier_percent | append: '%' }}</span>
+    {%- endif -%}
+    {%- if base > 0 -%}
+      <span class="bundle-card__price">
+        <span class="bundle-card__final" data-final-price>{{ final_price | money }}</span>
+        {%- if tier_percent > 0 -%}
+          <s class="bundle-card__strike">{{ total | money }}</s>
+        {%- endif -%}
+      </span>
+    {%- endif -%}
+  </span>
+</label>

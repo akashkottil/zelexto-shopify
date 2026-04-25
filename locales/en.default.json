@@ -1,218 +1,293 @@
 {
-    "general": {
-        "title": "Zelexto",
-        "search": "Search",
-        "close": "Close",
-        "open": "Open",
-        "loading": "Loading...",
-        "error": "Something went wrong. Please try again.",
-        "skip_to_content": "Skip to content",
-        "back_to_top": "Back to top",
-        "read_more": "Read more",
-        "view_all": "View all",
-        "learn_more": "Learn more",
-        "required": "Required"
-    },
-    "header": {
-        "cart_count": {
-            "one": "{{ count }} item",
-            "other": "{{ count }} items"
-        },
-        "cart_label": "Cart",
-        "account_label": "Account",
-        "menu_label": "Menu",
-        "search_placeholder": "Search products, collections...",
-        "language_selector": "Select language",
-        "currency_selector": "Select currency"
-    },
-    "navigation": {
-        "open_menu": "Open menu",
-        "close_menu": "Close menu",
-        "back": "Back",
-        "mega_menu_close": "Close navigation"
-    },
-    "search": {
-        "title": "Search",
-        "placeholder": "Search for products, collections, articles...",
-        "no_results": "No results for \u201c{{ terms }}\u201d",
-        "results_for": "Results for \u201c{{ terms }}\u201d",
-        "products": "Products",
-        "pages": "Pages",
-        "articles": "Articles",
-        "collections": "Collections",
-        "all_results": "View all results",
-        "loading": "Searching...",
-        "clear": "Clear search"
-    },
-    "product": {
-        "add_to_cart": "Add to cart",
-        "buy_now": "Buy it now",
-        "sold_out": "Sold out",
-        "unavailable": "Unavailable",
-        "on_sale": "Sale",
-        "sale_badge": "Save {{ savings }}",
-        "new_badge": "New",
-        "low_stock": "Only {{ count }} left!",
-        "in_stock": "In stock",
-        "out_of_stock": "Out of stock",
-        "quantity": "Quantity",
-        "quantity_label": "Quantity for {{ product }}",
-        "increase_quantity": "Increase quantity",
-        "decrease_quantity": "Decrease quantity",
-        "choose_options": "Choose options",
-        "view_full_details": "View full details",
-        "description": "Description",
-        "shipping": "Shipping",
-        "returns": "Returns",
-        "size_guide": "Size guide",
-        "share": "Share",
-        "sku": "SKU",
-        "vendor": "by {{ vendor }}",
-        "gallery_prev": "Previous image",
-        "gallery_next": "Next image",
-        "gallery_image_count": "{{ index }} / {{ count }}",
-        "zoom": "Zoom image",
-        "media_model": "View in 3D",
-        "media_ar": "View in your space",
-        "video_play": "Play video",
-        "sticky_atc": "Add to cart — {{ price }}"
-    },
-    "variants": {
-        "color": "Color",
-        "size": "Size",
-        "style": "Style",
-        "material": "Material",
-        "unavailable_with_option": "{{ title }} is unavailable with {{ option }}"
-    },
-    "cart": {
-        "title": "Your cart",
-        "empty": "Your cart is empty",
-        "empty_cta": "Continue shopping",
-        "items_count": {
-            "one": "{{ count }} item",
-            "other": "{{ count }} items"
-        },
-        "subtotal": "Subtotal",
-        "taxes_note": "Taxes and shipping calculated at checkout",
-        "checkout": "Checkout",
-        "view_cart": "View cart",
-        "update": "Update",
-        "remove": "Remove",
-        "remove_item": "Remove {{ title }}",
-        "save_for_later": "Save for later",
-        "note": "Add a note",
-        "note_placeholder": "Notes about your order (optional)",
-        "shipping_estimate": "Estimate shipping",
-        "free_shipping": "🎉 You qualify for free shipping!",
-        "free_shipping_progress": "Add {{ amount }} more for free shipping",
-        "continue_shopping": "Continue shopping",
-        "upsell_title": "You might also like"
-    },
-    "filters": {
-        "title": "Filter",
-        "filter_by": "Filter by",
-        "sort_by": "Sort by",
-        "clear_all": "Clear all",
-        "apply": "Apply filters",
-        "active_count": "{{ count }} active",
-        "price_range": "Price range",
-        "min_price": "Min price",
-        "max_price": "Max price",
-        "availability": "Availability",
-        "in_stock": "In stock",
-        "no_results": "No products match the selected filters.",
-        "sort": {
-            "featured": "Featured",
-            "price_asc": "Price: Low to high",
-            "price_desc": "Price: High to low",
-            "title_asc": "A\u2013Z",
-            "title_desc": "Z\u2013A",
-            "best_selling": "Best selling",
-            "newest": "Newest first"
-        }
-    },
-    "collection": {
-        "product_count": {
-            "one": "{{ count }} product",
-            "other": "{{ count }} products"
-        },
-        "load_more": "Load more products",
-        "showing": "Showing {{ start }}\u2013{{ end }} of {{ total }} products"
-    },
-    "blog": {
-        "read_more": "Read article",
-        "posted_by": "Posted by {{ author }}",
-        "posted_on": "{{ date }}",
-        "category": "Category",
-        "tags": "Tags",
-        "share": "Share this article",
-        "back_to_blog": "Back to blog",
-        "comment_count": {
-            "one": "{{ count }} comment",
-            "other": "{{ count }} comments"
-        }
-    },
-    "account": {
-        "login": "Log in",
-        "logout": "Log out",
-        "register": "Create account",
-        "email": "Email",
-        "password": "Password",
-        "forgot_password": "Forgot your password?",
-        "order_history": "Order history",
-        "addresses": "Addresses",
-        "account_details": "Account details",
-        "order_number": "Order #{{ number }}",
-        "order_date": "Placed on {{ date }}",
-        "order_status": "Status",
-        "no_orders": "You haven\u2019t placed any orders yet.",
-        "shop_now": "Start shopping"
-    },
-    "trust": {
-        "secure_checkout": "Secure checkout",
-        "free_returns": "Free returns",
-        "free_shipping": "Free shipping",
-        "money_back": "30-day money back",
-        "authentic": "100% authentic",
-        "support": "24/7 support"
-    },
-    "newsletter": {
-        "title": "Stay in the loop",
-        "placeholder": "Your email address",
-        "submit": "Subscribe",
-        "success": "Thanks for subscribing!",
-        "error": "Please enter a valid email address."
-    },
-    "pagination": {
-        "previous": "Previous",
-        "next": "Next",
-        "page_of": "Page {{ current }} of {{ total }}"
-    },
-    "contact": {
-        "name": "Name",
-        "email": "Email",
-        "phone": "Phone",
-        "message": "Message",
-        "submit": "Send message",
-        "success": "Your message has been sent. We\u2019ll be in touch shortly.",
-        "error": "There was an error sending your message. Please try again."
-    },
-    "404": {
-        "title": "Page not found",
-        "description": "The page you were looking for doesn\u2019t exist.",
-        "cta": "Go back home"
-    },
-    "accessibility": {
-        "skip_to_content": "Skip to content",
-        "open_in_new_tab": "Opens in a new window",
-        "sale_badge": "Sale",
-        "sold_out": "Sold out"
-    },
-    "animations": {
-        "none": "None",
-        "fade_in": "Fade in",
-        "slide_up": "Slide up",
-        "slide_left": "Slide from left",
-        "scale_in": "Scale in"
+  "general": {
+    "title": "Zelexto",
+    "search": "Search",
+    "close": "Close",
+    "open": "Open",
+    "loading": "Loading…",
+    "error": "Something went wrong. Please try again.",
+    "skip_to_content": "Skip to content",
+    "back_to_top": "Back to top",
+    "read_more": "Read more",
+    "view_all": "View all",
+    "learn_more": "Learn more",
+    "required": "Required",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "header": {
+    "cart_count": { "one": "{{ count }} item", "other": "{{ count }} items" },
+    "cart_label": "Cart",
+    "account_label": "Account",
+    "menu_label": "Menu",
+    "search_placeholder": "Search products, collections…",
+    "language_selector": "Language",
+    "currency_selector": "Currency"
+  },
+  "navigation": {
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "back": "Back",
+    "mega_menu_close": "Close navigation"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search for products, collections, articles…",
+    "no_results": "No results for “{{ terms }}”",
+    "results_for": "Results for “{{ terms }}”",
+    "products": "Products",
+    "pages": "Pages",
+    "articles": "Articles",
+    "collections": "Collections",
+    "all_results": "View all results",
+    "loading": "Searching…",
+    "clear": "Clear search"
+  },
+  "product": {
+    "add_to_cart": "Add to cart",
+    "buy_now": "Buy now",
+    "sold_out": "Sold out",
+    "unavailable": "Unavailable",
+    "on_sale": "Sale",
+    "sale_badge": "Save {{ savings }}",
+    "new_badge": "New",
+    "low_stock": "Only {{ count }} left",
+    "in_stock": "In stock",
+    "out_of_stock": "Out of stock",
+    "quantity": "Quantity",
+    "quantity_label": "Quantity for {{ product }}",
+    "increase_quantity": "Increase quantity",
+    "decrease_quantity": "Decrease quantity",
+    "choose_options": "Choose options",
+    "view_full_details": "View full details",
+    "description": "Description",
+    "shipping": "Shipping",
+    "returns": "Returns",
+    "size_guide": "Size guide",
+    "share": "Share",
+    "sku": "SKU",
+    "vendor": "by {{ vendor }}",
+    "gallery_prev": "Previous image",
+    "gallery_next": "Next image",
+    "gallery_image_count": "{{ index }} / {{ count }}",
+    "zoom": "Zoom image",
+    "media_model": "View in 3D",
+    "media_ar": "View in your space",
+    "video_play": "Play video",
+    "sticky_atc": "Add to cart — {{ price }}"
+  },
+  "variants": {
+    "color": "Color",
+    "size": "Size",
+    "style": "Style",
+    "material": "Material",
+    "unavailable_with_option": "{{ title }} is unavailable with {{ option }}"
+  },
+  "cart": {
+    "title": "Your bag",
+    "empty": "Your bag is empty",
+    "empty_cta": "Continue shopping",
+    "items_count": { "one": "{{ count }} item", "other": "{{ count }} items" },
+    "subtotal": "Subtotal",
+    "taxes_note": "Taxes and shipping calculated at checkout",
+    "checkout": "Checkout",
+    "view_cart": "View bag",
+    "update": "Update",
+    "remove": "Remove",
+    "remove_item": "Remove {{ title }}",
+    "save_for_later": "Save for later",
+    "note": "Add a note",
+    "note_placeholder": "Notes about your order (optional)",
+    "shipping_estimate": "Estimate shipping",
+    "free_shipping": "You qualify for free shipping",
+    "free_shipping_progress": "Add {{ amount }} more for free shipping",
+    "continue_shopping": "Continue shopping",
+    "upsell_title": "Pairs well with"
+  },
+  "filters": {
+    "title": "Filter",
+    "filter_by": "Filter by",
+    "sort_by": "Sort by",
+    "clear_all": "Clear all",
+    "apply": "Apply filters",
+    "active_count": "{{ count }} active",
+    "price_range": "Price range",
+    "min_price": "Min",
+    "max_price": "Max",
+    "availability": "Availability",
+    "in_stock": "In stock",
+    "no_results": "No products match the selected filters.",
+    "sort": {
+      "featured": "Featured",
+      "price_asc": "Price: low to high",
+      "price_desc": "Price: high to low",
+      "title_asc": "A–Z",
+      "title_desc": "Z–A",
+      "best_selling": "Best selling",
+      "newest": "Newest"
     }
+  },
+  "collection": {
+    "product_count": { "one": "{{ count }} product", "other": "{{ count }} products" },
+    "load_more": "Load more",
+    "showing": "Showing {{ start }}–{{ end }} of {{ total }}"
+  },
+  "blog": {
+    "read_more": "Read article",
+    "posted_by": "By {{ author }}",
+    "posted_on": "{{ date }}",
+    "category": "Category",
+    "tags": "Tags",
+    "share": "Share this article",
+    "back_to_blog": "Back to blog",
+    "comment_count": { "one": "{{ count }} comment", "other": "{{ count }} comments" }
+  },
+  "account": {
+    "login": "Sign in",
+    "logout": "Sign out",
+    "register": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "forgot_password": "Forgot your password?",
+    "order_history": "Orders",
+    "addresses": "Addresses",
+    "account_details": "Account details",
+    "order_number": "Order #{{ number }}",
+    "order_date": "Placed on {{ date }}",
+    "order_status": "Status",
+    "no_orders": "You haven’t placed any orders yet.",
+    "shop_now": "Start shopping"
+  },
+  "trust": {
+    "secure_checkout": "Secure checkout",
+    "free_returns": "Free returns",
+    "free_shipping": "Free shipping",
+    "money_back": "30-day money back",
+    "authentic": "100% authentic",
+    "support": "24/7 support"
+  },
+  "newsletter": {
+    "title": "Stay in the loop",
+    "placeholder": "Your email address",
+    "submit": "Subscribe",
+    "success": "Thanks for subscribing.",
+    "error": "Please enter a valid email address."
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page_of": "Page {{ current }} of {{ total }}"
+  },
+  "contact": {
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "message": "Message",
+    "submit": "Send message",
+    "success": "Your message has been sent. We’ll be in touch shortly.",
+    "error": "There was an error sending your message. Please try again."
+  },
+  "404": {
+    "title": "Page not found",
+    "description": "The page you were looking for doesn’t exist.",
+    "cta": "Go back home"
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to content",
+    "open_in_new_tab": "Opens in a new window",
+    "sale_badge": "Sale",
+    "sold_out": "Sold out"
+  },
+  "payments": {
+    "accepted_methods": "Accepted payment methods",
+    "secure_checkout": "Secure checkout by Razorpay",
+    "emi_from": "EMI from {{ amount }}/month",
+    "upi": "UPI",
+    "cards": "Cards",
+    "netbanking": "Netbanking",
+    "wallets": "Wallets",
+    "rupay": "RuPay",
+    "emi": "EMI",
+    "method_full": "Pay full",
+    "method_full_desc": "Pay {{ amount }} now and get free delivery.",
+    "method_partial": "Pay partial",
+    "method_partial_desc": "Pay {{ advance }} now, the rest ({{ balance }}) on delivery.",
+    "method_cod": "Cash on delivery",
+    "method_cod_desc": "Pay {{ amount }} when you receive the order.",
+    "method_changed": "Payment method updated.",
+    "select_method": "Choose how you’d like to pay"
+  },
+  "cod": {
+    "check_pincode": "Check delivery & COD",
+    "pincode_placeholder": "Enter your pincode",
+    "pincode_check": "Check",
+    "pincode_invalid": "Enter a valid 6-digit pincode.",
+    "checking": "Checking…",
+    "available": "COD available — delivery in {{ eta }}.",
+    "prepaid_only": "Prepaid only — delivery in {{ eta }}.",
+    "unserviceable": "Sorry, we don’t deliver to this pincode yet.",
+    "fee": "COD fee {{ amount }}",
+    "fee_waived": "COD fee waived above {{ threshold }}",
+    "policy_link": "View COD policy"
+  },
+  "partial_pay": {
+    "title": "Partial payment",
+    "summary": "Pay {{ advance }} now · Pay {{ balance }} on delivery",
+    "advance_label": "Pay now",
+    "balance_label": "Pay on delivery",
+    "min_order_warning": "Partial payment available on orders above {{ amount }}.",
+    "explainer": "Reserve your order with a small advance. The rest is collected when your order is delivered."
+  },
+  "urgency": {
+    "low_stock": "Only {{ count }} left in stock",
+    "selling_fast": "Selling fast",
+    "trending": "Trending",
+    "ends_in": "Sale ends in",
+    "days": "d", "hours": "h", "minutes": "m", "seconds": "s",
+    "recently_sold": "{{ name }} from {{ city }} bought {{ product }}",
+    "recently_sold_just_now": "just now",
+    "recently_sold_minutes_ago": "{{ count }} minutes ago"
+  },
+  "bundle": {
+    "title": "Save more, buy more",
+    "qty": "Buy {{ qty }}",
+    "save": "Save {{ percent }}",
+    "added": "Bundle added to bag"
+  },
+  "social_proof": {
+    "rating_summary": "{{ rating }} from {{ count }} reviews",
+    "verified_buyer": "Verified buyer"
+  },
+  "exit_intent": {
+    "title": "Wait — here’s {{ offer }} off your first order",
+    "subtitle": "Sign up and we’ll send the code to your inbox.",
+    "placeholder": "Your email address",
+    "submit": "Get my code",
+    "decline": "No thanks",
+    "success": "Code sent — check your inbox.",
+    "error": "Please enter a valid email address."
+  },
+  "compliance": {
+    "gstin_label": "GSTIN (for business invoice)",
+    "gstin_placeholder": "Enter 15-character GSTIN",
+    "gstin_invalid": "Please enter a valid GSTIN.",
+    "business_name": "Business name",
+    "hsn_code": "HSN: {{ code }}",
+    "tax_inclusive": "Inclusive of all taxes"
+  },
+  "localization": {
+    "country_label": "Country / region",
+    "language_label": "Language",
+    "suggested_country": "It looks like you’re in {{ country }}. Switch to {{ market }}?",
+    "suggested_switch": "Switch",
+    "suggested_dismiss": "Stay here"
+  },
+  "analytics": {
+    "consent_title": "We use cookies",
+    "consent_body": "We use cookies to personalise content and analyse traffic. Read our Privacy Policy.",
+    "consent_accept": "Accept",
+    "consent_reject": "Reject",
+    "consent_settings": "Settings"
+  }
 }

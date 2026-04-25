@@ -1,66 +1,100 @@
-{% comment %}
-  ZELEXTO THEME — sections/customers-login.liquid
-  Customer login page with optional social proof.
-{% endcomment %}
+{%- comment -%}
+  Zelexto v2 — sections/customers-login.liquid
+  Sign-in form + recover password sub-form.
+{%- endcomment -%}
 
-<div class="auth-page section">
-  <div class="auth-page__container">
+<div class="auth container">
+  <div class="auth__card">
+    <header class="auth__header">
+      <h1 class="auth__title">{{ 'account.login' | t | default: 'Sign in' }}</h1>
+      <p class="auth__sub">{{ 'account.login_sub' | t | default: 'Welcome back.' }}</p>
+    </header>
 
-    <div class="auth-card">
-      <div class="auth-card__header">
-        {%- render 'icon', name: 'user', size: 32 -%}
-        <h1 class="auth-card__title">{{ 'customer.login.title' | t | default: 'Sign in' }}</h1>
-        <p class="auth-card__sub">{{ 'customer.login.subtitle' | t | default: 'Welcome back!' }}</p>
-      </div>
-
-      {%- form 'customer_login', class: 'auth-form' -%}
-
+    <div id="login-form" data-auth-pane>
+      {%- form 'customer_login', class: 'auth__form' -%}
         {%- if form.errors -%}
-          <div class="auth-form__errors" role="alert">
-            {{ form.errors | default_errors }}
-          </div>
+          <div class="auth__errors" role="alert">{{ form.errors | default_errors }}</div>
         {%- endif -%}
 
-        <div class="form-field">
-          <label class="form-label" for="CustomerEmail">{{ 'customer.login.email' | t | default: 'Email' }}</label>
+        <label class="field">
+          <span class="field__label">{{ 'account.email' | t | default: 'Email' }}</span>
           <input
             type="email"
+            class="field__input"
             name="customer[email]"
             id="CustomerEmail"
-            class="form-input"
             autocomplete="email"
-            autocorrect="off"
             autocapitalize="off"
             required>
-        </div>
+        </label>
 
-        <div class="form-field">
-          <label class="form-label" for="CustomerPassword">
-            {{ 'customer.login.password' | t | default: 'Password' }}
-            <a href="{{ routes.account_recover_url }}" class="form-label__link">{{ 'customer.login.forgot_password' | t | default: 'Forgot?' }}</a>
-          </label>
+        <label class="field">
+          <span class="field__label">{{ 'account.password' | t | default: 'Password' }}</span>
           <input
             type="password"
+            class="field__input"
             name="customer[password]"
             id="CustomerPassword"
-            class="form-input"
             autocomplete="current-password"
             required>
-        </div>
+        </label>
 
-        <button type="submit" class="btn btn--primary btn--full btn--lg">
-          {{ 'customer.login.submit' | t | default: 'Sign in' }}
-        </button>
+        <button type="submit" class="btn btn--primary btn--full">{{ 'account.login' | t | default: 'Sign in' }}</button>
 
-        <p style="text-align:center; font-size:var(--font-size-sm); color:var(--color-text-secondary);">
-          {{ 'customer.login.no_account' | t | default: "Don't have an account?" }}
-          <a href="{{ routes.account_register_url }}" class="auth-link">{{ 'customer.register.title' | t | default: 'Create one' }}</a>
+        <p class="auth__links">
+          <a href="#recover-form" data-auth-toggle="recover">{{ 'account.forgot_password' | t | default: 'Forgot password?' }}</a>
+          <span>·</span>
+          <a href="{{ routes.account_register_url }}">{{ 'account.register' | t | default: 'Create account' }}</a>
         </p>
-
       {%- endform -%}
     </div>
 
+    <div id="recover-form" data-auth-pane hidden>
+      {%- form 'recover_customer_password', class: 'auth__form' -%}
+        {%- if form.posted_successfully? -%}
+          <p class="auth__success">{{ 'account.recover_sent' | t | default: 'We\'ve sent a recovery email.' }}</p>
+        {%- endif -%}
+        {%- if form.errors -%}
+          <div class="auth__errors" role="alert">{{ form.errors | default_errors }}</div>
+        {%- endif -%}
+        <h2 class="auth__title-sm">{{ 'account.recover_title' | t | default: 'Reset password' }}</h2>
+        <label class="field">
+          <span class="field__label">{{ 'account.email' | t | default: 'Email' }}</span>
+          <input type="email" class="field__input" name="email" id="RecoverEmail" autocomplete="email" required>
+        </label>
+        <button type="submit" class="btn btn--primary btn--full">{{ 'account.send_reset' | t | default: 'Send reset link' }}</button>
+        <p class="auth__links">
+          <a href="#login-form" data-auth-toggle="login">{{ 'account.back_to_login' | t | default: 'Back to sign in' }}</a>
+        </p>
+      {%- endform -%}
+    </div>
   </div>
 </div>
 
-{%- render 'customer-auth-styles' -%}
+<script>
+  (function () {
+    var panes = document.querySelectorAll('[data-auth-pane]');
+    var toggles = document.querySelectorAll('[data-auth-toggle]');
+    function show(id) {
+      panes.forEach(function (p) { p.hidden = (p.id !== id); });
+    }
+    if (window.location.hash === '#recover-form') show('recover-form');
+    toggles.forEach(function (t) {
+      t.addEventListener('click', function (e) {
+        e.preventDefault();
+        var target = t.getAttribute('data-auth-toggle') === 'recover' ? 'recover-form' : 'login-form';
+        show(target);
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Customer login",
+  "tag": "section",
+  "class": "section section--auth",
+  "settings": [],
+  "presets": [{ "name": "Customer login" }]
+}
+{% endschema %}

@@ -1,0 +1,26 @@
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "settings": {
+        "show_bar": true,
+        "text": "Free shipping on orders over ₹999. Cash on delivery available pan-India.",
+        "url": ""
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "logo_width": 120,
+        "nav_menu": "main-menu",
+        "header_sticky": true,
+        "header_transparent": false,
+        "show_currency_selector": true,
+        "show_locale_selector": true
+      }
+    }
+  },
+  "order": ["announcement-bar", "header"]
+}

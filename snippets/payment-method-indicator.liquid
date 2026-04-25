@@ -1,0 +1,70 @@
+{%- comment -%}
+  Inline payment-method copy line.
+
+  Usage on PDP:
+    {% render 'payment-method-indicator', product: product %}
+
+  Reads `current_variant.price` when rendered on PDP, otherwise the product's
+  cheapest variant price. When `settings.show_emi_calculator` is enabled and the
+  price meets `settings.emi_min_amount`, an EMI line is rendered.
+{%- endcomment -%}
+
+{%- liquid
+  assign methods = settings.payment_methods_enabled
+  assign emi_enabled = settings.show_emi_calculator
+  assign emi_min = settings.emi_min_amount | default: 3000
+
+  assign price_cents = 0
+  if product
+    if product.selected_or_first_available_variant
+      assign price_cents = product.selected_or_first_available_variant.price
+    else
+      assign price_cents = product.price_min
+    endif
+  endif
+  assign price_inr = price_cents | divided_by: 100
+
+  assign show_emi = false
+  if emi_enabled and price_inr >= emi_min
+    assign show_emi = true
+  endif
+
+  assign emi_min_cents = emi_min | times: 100
+  assign emi_min_money = emi_min_cents | money_without_trailing_zeros
+-%}
+
+<div class="payment-indicator" data-payment-indicator>
+  {%- if methods != blank and methods.size > 0 -%}
+    <p class="payment-indicator__line">
+      {%- render 'icon', name: 'shield', class: 'icon icon--sm' -%}
+      <span>Pay with {%- if methods contains 'upi' %} UPI,{% endif %} Cards{% if methods contains 'wallets' %}, Wallets{% endif %}{% if methods contains 'emi' %}, EMI{% endif %}</span>
+    </p>
+  {%- endif -%}
+
+  {%- if show_emi -%}
+    <p class="payment-indicator__emi">
+      {{ 'payments.emi_from' | t: amount: emi_min_money }}
+    </p>
+  {%- endif -%}
+</div>
+
+<style>
+  .payment-indicator {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-1);
+    margin-block: var(--s-3);
+    color: var(--c-ink-muted);
+  }
+  .payment-indicator__line,
+  .payment-indicator__emi {
+    margin: 0;
+    font-size: var(--fs-14);
+    color: var(--c-ink-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  .payment-indicator__line .icon { width: 14px; height: 14px; }
+  .payment-indicator__emi { padding-inline-start: calc(14px + var(--s-2)); }
+</style>

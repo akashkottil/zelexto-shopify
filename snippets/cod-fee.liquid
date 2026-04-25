@@ -1,0 +1,48 @@
+{%- comment -%}
+  COD handling-fee row.
+
+  Reads `settings.cod_fee_amount` (INR) and `settings.cod_free_above`. Shows the
+  fee, plus a waiver line for orders above the threshold.
+{%- endcomment -%}
+
+{%- liquid
+  assign fee = settings.cod_fee_amount | default: 0
+  assign waive_above = settings.cod_free_above | default: 0
+  assign fee_cents = fee | times: 100
+  assign waive_cents = waive_above | times: 100
+  assign fee_money = fee_cents | money_without_trailing_zeros
+  assign waive_money = waive_cents | money_without_trailing_zeros
+-%}
+
+{%- if fee > 0 -%}
+  <p class="cod-fee" data-cod-fee>
+    <span class="cod-fee__label">
+      {%- render 'icon', name: 'truck', class: 'icon icon--sm' -%}
+      <span>
+        {{ 'cod.fee' | t: amount: fee_money }}
+      </span>
+    </span>
+    {%- if waive_above > 0 -%}
+      <span class="cod-fee__waiver" data-cod-waiver data-money-cents="{{ waive_cents }}">
+        {{ 'cod.fee_waived' | t: threshold: waive_money }}
+      </span>
+    {%- endif -%}
+  </p>
+
+  <style>
+    .cod-fee {
+      margin: var(--s-2) 0 0;
+      font-size: var(--fs-12);
+      color: var(--c-ink-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-2) var(--s-4);
+    }
+    .cod-fee__label {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s-1);
+    }
+    .cod-fee .icon { width: 14px; height: 14px; }
+  </style>
+{%- endif -%}

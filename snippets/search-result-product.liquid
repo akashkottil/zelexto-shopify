@@ -1,22 +1,30 @@
-{% comment %}
-  ZELEXTO — snippets/search-result-product.liquid
-  Single product search result item.
-  Accepts: result (product from Predictive Search API)
-{% endcomment %}
-<a href="{{ result.url }}" class="search-result search-result--product">
-  <div class="search-result__image">
-    {%- if result.featured_image -%}
-      <img
-        src="{{ result.featured_image | image_url: width: 80 }}"
-        alt="{{ result.featured_image.alt | escape | default: result.title }}"
-        width="80" height="80"
-        loading="lazy"
-        decoding="async">
+{%- comment -%}
+  Zelexto v2 — search-result-product.liquid
+  Inline result row used by predictive search and the search modal.
+
+  Accepts:
+    result — product object (from /search/suggest.json or search.results)
+{%- endcomment -%}
+
+<a href="{{ result.url }}" class="search-result" role="option">
+  <div class="search-result__media aspect" style="aspect-ratio: 1/1;">
+    {%- if result.featured_image or result.image -%}
+      {%- assign img = result.featured_image | default: result.image -%}
+      {% render 'responsive-image',
+         image: img,
+         alt: result.title,
+         sizes: '64px',
+         loading: 'lazy',
+         aspect_ratio: '1/1' %}
     {%- endif -%}
   </div>
-  <div class="search-result__info">
-    <p class="search-result__vendor">{{ result.vendor }}</p>
-    <p class="search-result__title">{{ result.title }}</p>
-    <p class="search-result__price">{{ result.price | money }}</p>
+  <div class="search-result__body">
+    {%- if result.vendor != blank -%}
+      <span class="search-result__vendor">{{ result.vendor }}</span>
+    {%- endif -%}
+    <span class="search-result__title">{{ result.title }}</span>
+    {%- if result.price -%}
+      <span class="search-result__price" data-money-cents="{{ result.price }}">{{ result.price | money }}</span>
+    {%- endif -%}
   </div>
 </a>

@@ -1,13 +1,13 @@
-{% comment %}
-  ZELEXTO THEME — snippets/structured-data.liquid
-  Outputs JSON-LD structured data for:
-  - Product (on product pages)
-  - Article (on article pages)
-  - BreadcrumbList (on all pages except home)
-  - WebSite + SearchAction (on all pages)
-{% endcomment %}
+{%- comment -%}
+  Zelexto v2 — structured-data.liquid
+  Emits JSON-LD blocks per template:
+    - WebSite + SearchAction (always)
+    - Organization (always)
+    - Product + AggregateRating + AggregateOffer (product)
+    - Article (article)
+    - BreadcrumbList (collection / product / article / page)
+{%- endcomment -%}
 
-<!-- WebSite with SearchAction (all pages) -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -16,51 +16,76 @@
   "url": {{ shop.url | append: routes.root_url | json }},
   "potentialAction": {
     "@type": "SearchAction",
-    "target": {
-      "@type": "EntryPoint",
-      "urlTemplate": "{{ shop.url }}{{ routes.search_url }}?q={search_term_string}"
-    },
+    "target": "{{ shop.url }}{{ routes.search_url }}?q={search_term_string}",
     "query-input": "required name=search_term_string"
   }
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": {{ shop.name | json }},
+  "url": {{ shop.url | json }}
+  {%- if settings.logo -%}
+  ,"logo": {{ settings.logo | image_url: width: 600 | prepend: 'https:' | json }}
+  {%- endif -%}
+  {%- if settings.business_address != blank -%}
+  ,"address": {
+    "@type": "PostalAddress",
+    "streetAddress": {{ settings.business_address | json }}
+  }
+  {%- endif -%}
+  {%- if settings.cin_number != blank -%}
+  ,"identifier": [
+    { "@type": "PropertyValue", "propertyID": "CIN", "value": {{ settings.cin_number | json }} }
+    {%- if settings.gstin != blank -%}
+      ,{ "@type": "PropertyValue", "propertyID": "GSTIN", "value": {{ settings.gstin | json }} }
+    {%- endif -%}
+  ]
+  {%- endif -%}
+}
+</script>
 
-{%- if template.name == 'product' -%}
-<!-- Product Schema -->
+{%- case template.name -%}
+{%- when 'product' -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Product",
   "name": {{ product.title | json }},
   "url": {{ shop.url | append: product.url | json }},
-  "description": {{ product.description | strip_html | json }},
-  "brand": {
-    "@type": "Brand",
-    "name": {{ product.vendor | json }}
-  },
-  "sku": {{ product.selected_or_first_available_variant.sku | json }},
+  "description": {{ product.description | strip_html | truncate: 300 | json }},
   {%- if product.featured_image -%}
   "image": [
     {{ product.featured_image | image_url: width: 1200 | prepend: 'https:' | json }}
-    {%- for image in product.images limit: 5 offset: 1 -%}
+    {%- for image in product.images limit: 4 offset: 1 -%}
       , {{ image | image_url: width: 1200 | prepend: 'https:' | json }}
     {%- endfor -%}
   ],
   {%- endif -%}
+  {%- if product.vendor != blank -%}
+  "brand": { "@type": "Brand", "name": {{ product.vendor | json }} },
+  {%- endif -%}
+  "sku": {{ product.selected_or_first_available_variant.sku | json }},
+  {%- if product.selected_or_first_available_variant.barcode != blank -%}
+  "gtin": {{ product.selected_or_first_available_variant.barcode | json }},
+  {%- endif -%}
   "offers": {
     "@type": "AggregateOffer",
     "priceCurrency": {{ cart.currency.iso_code | json }},
-    "lowPrice": {{ product.price_min | money_without_currency | remove: ',' | strip }},
-    "highPrice": {{ product.price_max | money_without_currency | remove: ',' | strip }},
+    "lowPrice": "{{ product.price_min | money_without_currency | replace: ',', '' | strip }}",
+    "highPrice": "{{ product.price_max | money_without_currency | replace: ',', '' | strip }}",
     "offerCount": {{ product.variants.size }},
+    "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
+    "url": {{ shop.url | append: product.url | json }},
     "offers": [
       {%- for variant in product.variants -%}
       {
         "@type": "Offer",
-        "name": {{ variant.title | json }},
         "sku": {{ variant.sku | json }},
-        "price": {{ variant.price | money_without_currency | remove: ',' | strip }},
+        "price": "{{ variant.price | money_without_currency | replace: ',', '' | strip }}",
         "priceCurrency": {{ cart.currency.iso_code | json }},
         "availability": "https://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
         "url": {{ shop.url | append: product.url | append: '?variant=' | append: variant.id | json }}
@@ -68,50 +93,48 @@
       {%- endfor -%}
     ]
   }
-  {%- if product.metafields.reviews.rating -%}
+  {%- if product.metafields.reviews.rating.value -%}
   ,"aggregateRating": {
     "@type": "AggregateRating",
-    "ratingValue": {{ product.metafields.reviews.rating.value | json }},
-    "reviewCount": {{ product.metafields.reviews.rating_count.value | json }}
+    {%- assign r = product.metafields.reviews.rating.value -%}
+    "ratingValue": "{% if r.rating %}{{ r.rating }}{% else %}{{ r }}{% endif %}",
+    "reviewCount": "{{ product.metafields.reviews.rating_count.value | default: 0 }}",
+    "bestRating": "5",
+    "worstRating": "1"
   }
   {%- endif -%}
 }
 </script>
 
-{%- elsif template.name == 'article' -%}
-<!-- Article Schema -->
+{%- when 'article' -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Article",
   "headline": {{ article.title | json }},
   "url": {{ shop.url | append: article.url | json }},
-  "description": {{ article.excerpt_or_content | strip_html | truncate: 160 | json }},
-  "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
-  "dateModified": {{ article.updated_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
-  "author": {
-    "@type": "Person",
-    "name": {{ article.author | json }}
-  },
+  "description": {{ article.excerpt_or_content | strip_html | truncate: 200 | json }},
+  "datePublished": "{{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' }}",
+  "dateModified": "{{ article.updated_at | date: '%Y-%m-%dT%H:%M:%SZ' }}",
+  "author": { "@type": "Person", "name": {{ article.author | json }} },
   "publisher": {
     "@type": "Organization",
-    "name": {{ shop.name | json }},
-    "url": {{ shop.url | json }}
+    "name": {{ shop.name | json }}
+    {%- if settings.logo -%}
+    ,"logo": {
+      "@type": "ImageObject",
+      "url": {{ settings.logo | image_url: width: 600 | prepend: 'https:' | json }}
+    }
+    {%- endif -%}
   }
   {%- if article.image -%}
-  ,"image": {
-    "@type": "ImageObject",
-    "url": {{ article.image | image_url: width: 1200 | prepend: 'https:' | json }},
-    "width": 1200
-  }
+  ,"image": {{ article.image | image_url: width: 1200 | prepend: 'https:' | json }}
   {%- endif -%}
 }
 </script>
+{%- endcase -%}
 
-{%- endif -%}
-
-<!-- BreadcrumbList (all non-home pages) -->
-{%- unless template.name == 'index' -%}
+{%- unless template.name == 'index' or template.name == '404' -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -120,44 +143,26 @@
     {
       "@type": "ListItem",
       "position": 1,
-      "name": {{ 'general.view_all' | t | json }},
-      "item": {{ shop.url | json }}
+      "name": {{ 'general.home' | t | default: 'Home' | json }},
+      "item": {{ shop.url | append: routes.root_url | json }}
     }
     {%- case template.name -%}
-    {%- when 'product' -%}
-    ,{
-      "@type": "ListItem",
-      "position": 2,
-      "name": {{ product.title | json }},
-      "item": {{ shop.url | append: product.url | json }}
-    }
     {%- when 'collection' -%}
-    ,{
-      "@type": "ListItem",
-      "position": 2,
-      "name": {{ collection.title | json }},
-      "item": {{ shop.url | append: collection.url | json }}
-    }
+    ,{ "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ shop.url | append: collection.url | json }} }
+    {%- when 'product' -%}
+      {%- if collection -%}
+        ,{ "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ shop.url | append: collection.url | json }} }
+        ,{ "@type": "ListItem", "position": 3, "name": {{ product.title | json }}, "item": {{ shop.url | append: product.url | json }} }
+      {%- else -%}
+        ,{ "@type": "ListItem", "position": 2, "name": {{ product.title | json }}, "item": {{ shop.url | append: product.url | json }} }
+      {%- endif -%}
+    {%- when 'blog' -%}
+      ,{ "@type": "ListItem", "position": 2, "name": {{ blog.title | json }}, "item": {{ shop.url | append: blog.url | json }} }
     {%- when 'article' -%}
-    ,{
-      "@type": "ListItem",
-      "position": 2,
-      "name": {{ blog.title | json }},
-      "item": {{ shop.url | append: blog.url | json }}
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": {{ article.title | json }},
-      "item": {{ shop.url | append: article.url | json }}
-    }
+      ,{ "@type": "ListItem", "position": 2, "name": {{ blog.title | json }}, "item": {{ shop.url | append: blog.url | json }} }
+      ,{ "@type": "ListItem", "position": 3, "name": {{ article.title | json }}, "item": {{ shop.url | append: article.url | json }} }
     {%- when 'page' -%}
-    ,{
-      "@type": "ListItem",
-      "position": 2,
-      "name": {{ page.title | json }},
-      "item": {{ shop.url | append: page.url | json }}
-    }
+      ,{ "@type": "ListItem", "position": 2, "name": {{ page.title | json }}, "item": {{ shop.url | append: page.url | json }} }
     {%- endcase -%}
   ]
 }

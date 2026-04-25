@@ -1,82 +1,69 @@
-{% comment %}
-  ZELEXTO THEME — sections/main-page.liquid
-  Generic page template. Renders page.content from the rich text editor.
-  Supports optional hero image header.
-{% endcomment %}
+{%- comment -%}
+  Zelexto v2 — sections/main-page.liquid
+  Generic page. Apple-style narrow measure for body content. Optional
+  hero image block + rich-text override of the page.content.
+{%- endcomment -%}
 
-<article class="page-article" id="page-{{ page.id }}">
+<article class="page">
+  <div class="container page__container">
+    {%- if section.blocks.size > 0 -%}
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'image' -%}
+            {%- if block.settings.image -%}
+              <figure class="page__image" {{ block.shopify_attributes }}>
+                {% render 'responsive-image',
+                   image: block.settings.image,
+                   alt: block.settings.image.alt | default: page.title,
+                   sizes: '(min-width:1024px) 760px, 100vw',
+                   loading: 'lazy' %}
+                {%- if block.settings.caption != blank -%}
+                  <figcaption>{{ block.settings.caption }}</figcaption>
+                {%- endif -%}
+              </figure>
+            {%- endif -%}
 
-  {%- if section.settings.show_hero and section.settings.hero_image -%}
-    <div class="page-hero">
-      <img
-        src="{{ section.settings.hero_image | image_url: width: 1600 }}"
-        srcset="{{ section.settings.hero_image | image_url: width: 1100 }} 1100w,
-                {{ section.settings.hero_image | image_url: width: 1600 }} 1600w"
-        sizes="100vw"
-        alt="{{ section.settings.hero_image.alt | escape | default: page.title }}"
-        width="1600"
-        height="{{ 1600 | divided_by: section.settings.hero_image.aspect_ratio | round }}"
-        loading="lazy"
-        decoding="async"
-        class="page-hero__image">
-      <div class="page-hero__overlay"></div>
-      <div class="container page-hero__content">
-        <h1 class="page-hero__title">{{ page.title }}</h1>
-      </div>
-    </div>
-  {%- endif -%}
+          {%- when 'rich_text' -%}
+            <div class="page__rich-text rte" {{ block.shopify_attributes }}>
+              {{ block.settings.content }}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    {%- endif -%}
 
-  <div class="container">
-    {%- render 'breadcrumb' -%}
+    <header class="page__header">
+      {% render 'breadcrumb' %}
+      <h1 class="page__title">{{ page.title }}</h1>
+    </header>
 
-    {%- unless section.settings.show_hero and section.settings.hero_image -%}
-      <h1 class="page-title">{{ page.title }}</h1>
-    {%- endunless -%}
-
-    <div class="page-content rte">
+    <div class="page__content rte">
       {{ page.content }}
     </div>
   </div>
-
 </article>
-
-<style>
-  .page-hero {
-    position: relative;
-    min-height: 300px;
-    display: flex; align-items: flex-end;
-    overflow: hidden;
-    margin-bottom: var(--space-8);
-  }
-  .page-hero__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .page-hero__overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
-  .page-hero__content { position: relative; z-index: 1; padding-block: var(--space-8); }
-  .page-hero__title { font-size: clamp(2rem, 5vw, 3.5rem); color: #fff; margin: 0; }
-
-  .page-title { font-size: clamp(2rem, 4vw, 3rem); padding-top: var(--space-6); margin-bottom: var(--space-6); }
-
-  .page-content.rte {
-    max-width: 780px;
-    line-height: var(--line-height-relaxed);
-    font-size: var(--font-size-lg);
-    padding-block: var(--space-6);
-  }
-  .page-content.rte h2 { font-size: var(--font-size-2xl); margin: var(--space-8) 0 var(--space-4); }
-  .page-content.rte h3 { font-size: var(--font-size-xl); margin: var(--space-6) 0 var(--space-3); }
-  .page-content.rte p { margin-bottom: var(--space-4); }
-  .page-content.rte ul, .page-content.rte ol { padding-left: var(--space-6); margin-bottom: var(--space-4); }
-  .page-content.rte li { margin-bottom: var(--space-2); }
-  .page-content.rte img { max-width: 100%; border-radius: var(--radius-card); }
-  .page-content.rte blockquote { border-left: 3px solid var(--color-primary); padding-left: var(--space-5); margin: var(--space-6) 0; font-size: var(--font-size-xl); font-style: italic; color: var(--color-text-secondary); }
-</style>
 
 {% schema %}
 {
-  "name": "Page",
-  "settings": [
-    { "type": "header", "content": "Hero" },
-    { "type": "checkbox", "id": "show_hero", "label": "Show hero image", "default": false },
-    { "type": "image_picker", "id": "hero_image", "label": "Hero image" }
+  "name": "t:sections.page.name",
+  "tag": "section",
+  "class": "section section--page",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "caption", "label": "Caption" }
+      ]
+    },
+    {
+      "type": "rich_text",
+      "name": "Rich text",
+      "settings": [
+        { "type": "richtext", "id": "content", "label": "Content" }
+      ]
+    }
   ],
   "presets": [{ "name": "Page" }]
 }

@@ -1,0 +1,114 @@
+{%- comment -%}
+  countdown-timer.liquid
+
+  Full-bleed urgency banner with a live countdown to a configured end time.
+  Wraps a <countdown-timer> Custom Element which auto-loads countdown.js.
+{%- endcomment -%}
+
+{%- liquid
+  assign label    = section.settings.label
+  assign end_iso  = section.settings.end_iso
+  assign align    = section.settings.align | default: 'center'
+  assign bg       = section.settings.bg_color
+  assign fg       = section.settings.fg_color
+  assign expired  = section.settings.expired_message
+-%}
+
+<section
+  class="countdown-section section--bleed"
+  data-section-id="{{ section.id }}"
+  style="
+    {% if bg != blank %}--c-bg-local: {{ bg }};{% endif %}
+    {% if fg != blank %}--c-ink-local: {{ fg }};{% endif %}
+  "
+>
+  <div class="countdown-section__inner countdown-section__inner--{{ align }}">
+    {%- if label != blank -%}
+      <p class="countdown-section__label">{{ label }}</p>
+    {%- endif -%}
+
+    {%- if end_iso != blank -%}
+      <countdown-timer
+        class="countdown countdown--lg"
+        data-module="countdown.js"
+        data-module-eager
+        data-end="{{ end_iso }}"
+        data-expired="{{ expired | escape }}"
+        role="timer"
+        aria-live="polite"
+      >
+        <span data-cd-days>--</span><span class="countdown__sep">{{ 'urgency.days' | t }}</span>
+        <span data-cd-hours>--</span><span class="countdown__sep">{{ 'urgency.hours' | t }}</span>
+        <span data-cd-minutes>--</span><span class="countdown__sep">{{ 'urgency.minutes' | t }}</span>
+        <span data-cd-seconds>--</span><span class="countdown__sep">{{ 'urgency.seconds' | t }}</span>
+      </countdown-timer>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  .countdown-section {
+    background: var(--c-bg-local, var(--c-ink));
+    color: var(--c-ink-local, var(--c-bg));
+    padding-block: var(--s-5);
+    padding-inline: var(--gutter);
+  }
+  .countdown-section__inner {
+    max-width: var(--container);
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--s-4);
+    flex-wrap: wrap;
+  }
+  .countdown-section__inner--center { justify-content: center; text-align: center; }
+  .countdown-section__inner--start  { justify-content: flex-start; }
+  .countdown-section__inner--end    { justify-content: flex-end; }
+  .countdown-section__label {
+    font-size: var(--fs-14);
+    margin: 0;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .countdown {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--s-1);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--weight-semibold);
+  }
+  .countdown--lg { font-size: var(--fs-21); }
+  .countdown__sep {
+    font-size: var(--fs-12);
+    opacity: 0.7;
+    margin-right: var(--s-2);
+  }
+  .countdown[hidden] { display: none; }
+</style>
+
+{% schema %}
+{
+  "name": "Countdown banner",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label", "default": "Sale ends in" },
+    { "type": "text", "id": "end_iso", "label": "End time (ISO 8601)", "info": "e.g. 2026-12-31T23:59:00+05:30" },
+    { "type": "text", "id": "expired_message", "label": "Expired message", "default": "Sale has ended" },
+    {
+      "type": "select", "id": "align", "label": "Alignment",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    { "type": "color", "id": "bg_color", "label": "Background" },
+    { "type": "color", "id": "fg_color", "label": "Text color" }
+  ],
+  "presets": [
+    { "name": "Countdown banner" }
+  ]
+}
+{% endschema %}

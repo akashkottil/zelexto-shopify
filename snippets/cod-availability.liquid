@@ -1,0 +1,55 @@
+{%- comment -%}
+  COD availability indicator.
+
+  Three states (managed by JS via the `pincode:checked` event):
+    - serviceable      → COD available + ETA
+    - prepaid_only     → Prepaid only + ETA
+    - unserviceable    → Sorry, no delivery here
+
+  The element listens via `pincode.js` and toggles `data-state`.
+{%- endcomment -%}
+
+<cod-availability
+  class="cod-availability"
+  data-state="idle"
+  hidden
+>
+  <div class="cod-availability__msg" data-cod-state="serviceable" hidden>
+    {%- render 'icon', name: 'truck', class: 'icon' -%}
+    <span data-cod-text>{{ 'cod.available' | t: eta: '1-2 days' }}</span>
+  </div>
+  <div class="cod-availability__msg" data-cod-state="prepaid_only" hidden>
+    {%- render 'icon', name: 'shield', class: 'icon' -%}
+    <span data-cod-text>{{ 'cod.prepaid_only' | t: eta: '3-5 days' }}</span>
+  </div>
+  <div class="cod-availability__msg" data-cod-state="unserviceable" hidden>
+    {%- render 'icon', name: 'close', class: 'icon' -%}
+    <span data-cod-text>{{ 'cod.unserviceable' | t }}</span>
+  </div>
+</cod-availability>
+
+<style>
+  .cod-availability {
+    display: block;
+    margin-top: var(--s-2);
+    padding: var(--s-3) var(--s-4);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius-md);
+    background: var(--c-elev);
+    font-size: var(--fs-14);
+  }
+  .cod-availability[hidden] { display: none; }
+  .cod-availability__msg {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  .cod-availability__msg[hidden] { display: none; }
+  .cod-availability__msg .icon { flex-shrink: 0; width: 18px; height: 18px; }
+  .cod-availability[data-state="serviceable"] { border-color: color-mix(in srgb, var(--c-success) 35%, var(--c-line)); }
+  .cod-availability[data-state="serviceable"] .icon { color: var(--c-success); }
+  .cod-availability[data-state="prepaid_only"] { border-color: color-mix(in srgb, var(--c-warning) 35%, var(--c-line)); }
+  .cod-availability[data-state="prepaid_only"] .icon { color: var(--c-warning); }
+  .cod-availability[data-state="unserviceable"] { border-color: color-mix(in srgb, var(--c-danger) 35%, var(--c-line)); }
+  .cod-availability[data-state="unserviceable"] .icon { color: var(--c-danger); }
+</style>

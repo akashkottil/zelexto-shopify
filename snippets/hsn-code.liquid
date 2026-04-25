@@ -1,0 +1,24 @@
+{%- comment -%}
+  HSN code line for PDP / cart line items.
+
+  Reads `product.metafields.compliance.hsn_code` (preferred) or
+  `product.metafields.custom.hsn_code` as a fallback. Gated by
+  `settings.show_hsn_codes`.
+{%- endcomment -%}
+
+{%- if settings.show_hsn_codes and product -%}
+  {%- liquid
+    assign hsn = product.metafields.compliance.hsn_code | default: product.metafields.custom.hsn_code
+  -%}
+  {%- if hsn != blank -%}
+    <p class="hsn-code">{{ 'compliance.hsn_code' | t: code: hsn }}</p>
+    <style>
+      .hsn-code {
+        margin: var(--s-1) 0 0;
+        font-size: var(--fs-12);
+        color: var(--c-ink-muted);
+        letter-spacing: 0.04em;
+      }
+    </style>
+  {%- endif -%}
+{%- endif -%}

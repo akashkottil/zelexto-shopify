@@ -1,93 +1,89 @@
-{% comment %}
-  ZELEXTO THEME — sections/customers-account.liquid
-  Customer account dashboard: orders, profile.
-{% endcomment %}
+{%- comment -%}
+  Zelexto v2 — sections/customers-account.liquid
+  Customer dashboard: orders + addresses + account details.
+{%- endcomment -%}
 
-<div class="account-page section">
-  <div class="container">
-
-    <div class="account-page__header">
-      <h1>{{ 'customer.account.title' | t | default: 'My Account' }}</h1>
-      <a href="{{ routes.account_logout_url }}" class="btn btn--ghost btn--sm">{{ 'customer.log_out' | t | default: 'Log out' }}</a>
+<div class="account container">
+  <header class="account__header">
+    <div>
+      <p class="account__greeting">{{ 'account.welcome' | t: name: customer.first_name | default: customer.first_name | default: customer.email }}</p>
+      <h1 class="account__title">{{ 'account.title' | t | default: 'Account' }}</h1>
     </div>
+    <a href="{{ routes.account_logout_url }}" class="btn btn--ghost btn--sm">{{ 'account.logout' | t | default: 'Sign out' }}</a>
+  </header>
 
-    <!-- Orders -->
+  <section class="account__section">
+    <h2 class="account__section-title">{{ 'account.order_history' | t | default: 'Orders' }}</h2>
     {%- if customer.orders.size > 0 -%}
-      <h2 class="account-page__section-title">{{ 'customer.orders.title' | t | default: 'Order history' }}</h2>
       <div class="account-orders">
         {%- for order in customer.orders -%}
-          <a class="account-order-card" href="{{ order.customer_url }}">
-            <div class="account-order-card__row">
-              <strong>{{ 'customer.orders.order_number' | t | default: 'Order' }} {{ order.name }}</strong>
-              <span class="badge badge--{{ order.financial_status }}">{{ order.financial_status | capitalize }}</span>
+          <a href="{{ order.customer_url }}" class="account-order">
+            <div class="account-order__top">
+              <strong>{{ 'account.order_number' | t: number: order.name }}</strong>
+              <span class="pill">{{ order.financial_status_label }}</span>
             </div>
-            <div class="account-order-card__row account-order-card__meta">
-              <span>{{ order.created_at | date: '%B %d, %Y' }}</span>
-              <span>{{ order.total_price | money }}</span>
+            <div class="account-order__meta">
+              <time datetime="{{ order.created_at | date: '%Y-%m-%d' }}">{{ 'account.order_date' | t: date: order.created_at | date: '%b %d, %Y' }}</time>
+              <span data-money-cents="{{ order.total_price }}">{{ order.total_price | money }}</span>
             </div>
-            <div class="account-order-card__items">
-              {%- for line_item in order.line_items limit: 3 -%}
-                <span class="account-order-card__item">{{ line_item.title | truncate: 40 }}</span>
+            <ul class="account-order__lines" role="list">
+              {%- for li in order.line_items limit: 3 -%}
+                <li>{{ li.title | truncate: 48 }} × {{ li.quantity }}</li>
               {%- endfor -%}
               {%- if order.line_items.size > 3 -%}
-                <span> + {{ order.line_items.size | minus: 3 }} more</span>
+                <li>+ {{ order.line_items.size | minus: 3 }} more</li>
               {%- endif -%}
-            </div>
+            </ul>
           </a>
         {%- endfor -%}
       </div>
     {%- else -%}
-      <div class="account-page__empty">
-        {%- render 'icon', name: 'cart', size: 48 -%}
-        <p>{{ 'customer.orders.none' | t | default: "You haven't placed any orders yet." }}</p>
-        <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">{{ 'general.browse_all' | t | default: 'Start shopping' }}</a>
+      <div class="account__empty">
+        <p>{{ 'account.no_orders' | t | default: 'You haven\'t placed any orders yet.' }}</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">{{ 'account.shop_now' | t | default: 'Start shopping' }}</a>
       </div>
     {%- endif -%}
+  </section>
 
-    <!-- Address -->
-    <h2 class="account-page__section-title">{{ 'customer.addresses.title' | t | default: 'Saved addresses' }}</h2>
+  <section class="account__section">
+    <div class="account__section-head">
+      <h2 class="account__section-title">{{ 'account.addresses' | t | default: 'Addresses' }}</h2>
+      <a href="{{ routes.account_addresses_url }}" class="btn btn--ghost btn--sm">{{ 'account.manage' | t | default: 'Manage' }}</a>
+    </div>
     {%- if customer.addresses.size > 0 -%}
       <div class="account-addresses">
         {%- for address in customer.addresses -%}
-          <div class="account-address-card{% if address == customer.default_address %} is-default{% endif %}">
+          <article class="account-address{% if address == customer.default_address %} is-default{% endif %}">
             {%- if address == customer.default_address -%}
-              <span class="account-address-card__default">{{ 'customer.addresses.default' | t | default: 'Default' }}</span>
+              <span class="pill account-address__pill">{{ 'account.default' | t | default: 'Default' }}</span>
             {%- endif -%}
-            {{ address | format_address }}
-          </div>
+            <div class="account-address__body">{{ address | format_address }}</div>
+          </article>
         {%- endfor -%}
       </div>
     {%- else -%}
-      <p style="color:var(--color-text-secondary);">{{ 'customer.addresses.none' | t | default: 'No addresses saved.' }}</p>
+      <p class="account__muted">{{ 'account.no_addresses' | t | default: 'No saved addresses.' }}</p>
     {%- endif -%}
+  </section>
 
-  </div>
+  <section class="account__section">
+    <h2 class="account__section-title">{{ 'account.account_details' | t | default: 'Account details' }}</h2>
+    <dl class="account-details">
+      <div><dt>{{ 'account.name' | t | default: 'Name' }}</dt><dd>{{ customer.name | default: '—' }}</dd></div>
+      <div><dt>{{ 'account.email' | t | default: 'Email' }}</dt><dd>{{ customer.email }}</dd></div>
+      {%- if customer.phone != blank -%}
+        <div><dt>{{ 'account.phone' | t | default: 'Phone' }}</dt><dd>{{ customer.phone }}</dd></div>
+      {%- endif -%}
+    </dl>
+  </section>
 </div>
 
-<style>
-  .account-page { padding-block: var(--space-8); }
-  .account-page__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-8); flex-wrap: wrap; gap: var(--space-3); }
-  .account-page__section-title { font-size: var(--font-size-xl); margin-top: var(--space-8); margin-bottom: var(--space-4); }
-  .account-page__empty { text-align: center; padding: var(--space-10); display: flex; flex-direction: column; align-items: center; gap: var(--space-4); color: var(--color-text-secondary); }
-  .account-page__empty svg { opacity: 0.25; }
-
-  .account-orders { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-4); }
-
-  .account-order-card {
-    display: flex; flex-direction: column; gap: var(--space-2);
-    border: 1px solid var(--color-border); border-radius: var(--radius-card);
-    padding: var(--space-5); text-decoration: none; color: var(--color-text);
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-  }
-  .account-order-card:hover { border-color: var(--color-primary); box-shadow: var(--shadow); }
-  .account-order-card__row { display: flex; justify-content: space-between; align-items: center; font-size: var(--font-size-sm); }
-  .account-order-card__meta { color: var(--color-text-secondary); }
-  .account-order-card__items { font-size: var(--font-size-xs); color: var(--color-text-secondary); }
-  .account-order-card__item::after { content: ','; margin-right: 4px; }
-  .account-order-card__item:last-child::after { content: ''; }
-
-  .account-addresses { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-4); }
-  .account-address-card { border: 1px solid var(--color-border); border-radius: var(--radius-card); padding: var(--space-5); font-size: var(--font-size-sm); line-height: 1.7; position: relative; }
-  .account-address-card.is-default { border-color: var(--color-primary); }
-  .account-address-card__default { position: absolute; top: var(--space-3); right: var(--space-3); font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); color: var(--color-primary); background: rgba(var(--color-primary-rgb,26,26,26),0.08); padding: 2px 8px; border-radius: var(--radius-full); }
-</style>
+{% schema %}
+{
+  "name": "Customer account",
+  "tag": "section",
+  "class": "section section--account",
+  "settings": [],
+  "presets": [{ "name": "Customer account" }]
+}
+{% endschema %}
