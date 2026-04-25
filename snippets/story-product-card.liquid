@@ -33,8 +33,8 @@
       class="story-product-card__atc"
       data-product-id="{{ card_product.id }}"
       data-variant-id="{{ card_product.selected_or_first_available_variant.id }}"
-      aria-label="{{ 'products.product.add_to_cart' | t | default: 'Add to cart' }}: {{ card_product.title }}">
-      {{- 'products.product.add_to_cart' | t | default: 'Add to cart' -}}
+      aria-label="{{ 'product.add_to_cart' | t | default: 'Add to cart' }}: {{ card_product.title }}">
+      {{- 'product.add_to_cart' | t | default: 'Add to cart' -}}
     </button>
   </div>
   <div class="story-product-card__body">

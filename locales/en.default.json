@@ -14,7 +14,18 @@
     "required": "Required",
     "submit": "Submit",
     "cancel": "Cancel",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "home": "Home",
+    "from": "From",
+    "previous": "Previous",
+    "next": "Next",
+    "out_of": "out of",
+    "tagged": "Tagged",
+    "share": "Share",
+    "breadcrumb": "Breadcrumb",
+    "pagination": "Pagination",
+    "browse_all": "Shop all products",
+    "page_n": "Page {{ page }}"
   },
   "header": {
     "cart_count": { "one": "{{ count }} item", "other": "{{ count }} items" },
@@ -22,6 +33,7 @@
     "account_label": "Account",
     "menu_label": "Menu",
     "search_placeholder": "Search products, collections…",
+    "search_label": "Search",
     "language_selector": "Language",
     "currency_selector": "Currency"
   },
@@ -34,18 +46,24 @@
   "search": {
     "title": "Search",
     "placeholder": "Search for products, collections, articles…",
+    "prompt": "Enter a search term to begin.",
+    "hint": "Start typing to see suggestions.",
     "no_results": "No results for “{{ terms }}”",
     "results_for": "Results for “{{ terms }}”",
+    "results_count": { "one": "{{ count }} result", "other": "{{ count }} results" },
     "products": "Products",
     "pages": "Pages",
     "articles": "Articles",
     "collections": "Collections",
     "all_results": "View all results",
     "loading": "Searching…",
-    "clear": "Clear search"
+    "clear": "Clear search",
+    "submit": "Search",
+    "try_again": "Try different keywords or browse all products."
   },
   "product": {
     "add_to_cart": "Add to cart",
+    "adding": "Adding…",
     "buy_now": "Buy now",
     "sold_out": "Sold out",
     "unavailable": "Unavailable",
@@ -55,6 +73,13 @@
     "low_stock": "Only {{ count }} left",
     "in_stock": "In stock",
     "out_of_stock": "Out of stock",
+    "from": "From",
+    "compare_at_price": "Original price",
+    "gallery": "Product gallery",
+    "more_info": "More info",
+    "quick_view": "Quick view",
+    "shipping_default": "Free shipping on prepaid orders.",
+    "returns_default": "7-day easy returns.",
     "quantity": "Quantity",
     "quantity_label": "Quantity for {{ product }}",
     "increase_quantity": "Increase quantity",
@@ -87,10 +112,14 @@
   "cart": {
     "title": "Your bag",
     "empty": "Your bag is empty",
+    "empty_sub": "Items you add will appear here.",
     "empty_cta": "Continue shopping",
     "items_count": { "one": "{{ count }} item", "other": "{{ count }} items" },
     "subtotal": "Subtotal",
+    "summary": "Order summary",
+    "quantity": "Quantity",
     "taxes_note": "Taxes and shipping calculated at checkout",
+    "taxes_at_checkout": "Calculated at checkout",
     "checkout": "Checkout",
     "view_cart": "View bag",
     "update": "Update",
@@ -131,7 +160,11 @@
   "collection": {
     "product_count": { "one": "{{ count }} product", "other": "{{ count }} products" },
     "load_more": "Load more",
-    "showing": "Showing {{ start }}–{{ end }} of {{ total }}"
+    "showing": "Showing {{ start }}–{{ end }} of {{ total }}",
+    "empty": {
+      "title": "No products found",
+      "subtitle": "Try removing a filter or browse all products."
+    }
   },
   "blog": {
     "read_more": "Read article",
@@ -141,14 +174,34 @@
     "tags": "Tags",
     "share": "Share this article",
     "back_to_blog": "Back to blog",
+    "view_all": "View all posts",
+    "previous": "Previous post",
+    "next": "Next post",
+    "empty": "No posts yet.",
     "comment_count": { "one": "{{ count }} comment", "other": "{{ count }} comments" }
   },
   "account": {
+    "title": "Account",
+    "welcome": "Welcome, {{ name }}",
     "login": "Sign in",
     "logout": "Sign out",
     "register": "Create account",
     "email": "Email",
     "password": "Password",
+    "name": "Name",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "phone": "Phone",
+    "default": "Default",
+    "manage": "Manage",
+    "no_addresses": "No saved addresses.",
+    "have_account": "Already have an account?",
+    "back_to_login": "Back to sign in",
+    "login_sub": "Welcome back.",
+    "register_sub": "Faster checkout, order history, and saved addresses.",
+    "recover_title": "Reset password",
+    "recover_sent": "We’ve sent a recovery email.",
+    "send_reset": "Send reset link",
     "forgot_password": "Forgot your password?",
     "order_history": "Orders",
     "addresses": "Addresses",
@@ -170,6 +223,7 @@
   "newsletter": {
     "title": "Stay in the loop",
     "placeholder": "Your email address",
+    "email": "Email address",
     "submit": "Subscribe",
     "success": "Thanks for subscribing.",
     "error": "Please enter a valid email address."
