@@ -1,8 +1,126 @@
 {
   "sections": {
     "main": {
-      "type": "main-page",
-      "settings": {}
+      "type": "legal-page",
+      "settings": {
+        "theme": "light",
+        "eyebrow": "Legal",
+        "heading": "Terms and Conditions",
+        "last_updated": "January 1, 2026",
+        "intro": "<p>These terms set out the rules for using this site and ordering from us. By placing an order or creating an account you agree to them.</p>",
+        "show_toc": true,
+        "toc_label": "On this page",
+        "show_contact_cta": true,
+        "cta_heading": "Need clarification?",
+        "cta_body": "If anything in these terms is unclear, our team is happy to walk you through it.",
+        "cta_label": "Contact us",
+        "cta_url": "/pages/contact"
+      },
+      "blocks": {
+        "acceptance": {
+          "type": "section",
+          "settings": {
+            "heading": "Agreement to terms",
+            "body": "<p>By accessing or using this site you agree to be bound by these Terms and Conditions and our <a href=\"/pages/privacy\">Privacy Policy</a>. If you don't agree, please don't use the site.</p><p>We may update these terms from time to time. Continued use of the site after changes means you accept the updated terms.</p>"
+          }
+        },
+        "eligibility": {
+          "type": "section",
+          "settings": {
+            "heading": "Eligibility",
+            "body": "<p>You must be at least 18 years old (or the age of majority in your jurisdiction) to place an order. By ordering you confirm that you meet this requirement and that the information you provide is accurate.</p>"
+          }
+        },
+        "account": {
+          "type": "section",
+          "settings": {
+            "heading": "Your account",
+            "body": "<p>If you create an account you're responsible for keeping your password secure and for all activity under your account. Notify us immediately at <a href=\"mailto:support@example.com\">support@example.com</a> if you suspect unauthorised use.</p>"
+          }
+        },
+        "products": {
+          "type": "section",
+          "settings": {
+            "heading": "Products and pricing",
+            "body": "<p>We try to display products and prices accurately, but we reserve the right to correct errors at any time — even after an order has been placed. If we cancel an order due to a pricing or stock error, we'll refund any payment in full.</p><p>All prices are inclusive of GST unless stated otherwise. Shipping and any COD fees are shown at checkout.</p>"
+          }
+        },
+        "orders": {
+          "type": "section",
+          "settings": {
+            "heading": "Orders and payment",
+            "body": "<p>Placing an order is an offer to buy. We accept the offer when we ship the product. Until then we may decline or cancel an order — for example if the product is out of stock, payment fails, or we suspect fraud.</p><p>We accept payment via Razorpay (UPI, cards, RuPay, netbanking, wallets, EMI) and Cash on Delivery on eligible pincodes. Partial payment may be available on orders above ₹999.</p><h3>Cash on Delivery</h3><p>COD orders are subject to a small handling fee, shown at checkout. We may verify COD orders by phone or OTP. Repeated COD refusals may result in COD being disabled on your account.</p>"
+          }
+        },
+        "shipping": {
+          "type": "section",
+          "settings": {
+            "heading": "Shipping and delivery",
+            "body": "<p>We ship across India. Delivery times are estimates, not guarantees. Delays caused by couriers, weather, or events outside our control are not our responsibility, but we'll always help you track and resolve them.</p><p>Risk of loss passes to you on delivery to the address you provided. Please make sure someone is available to receive the order, or use a secure address.</p>"
+          }
+        },
+        "returns": {
+          "type": "section",
+          "settings": {
+            "heading": "Returns and refunds",
+            "body": "<p>Our return policy is described in detail on the <a href=\"/pages/returns\">Returns</a> page. Briefly: 30-day returns on unused items in original packaging, with refund to your original payment method within 7 business days of receipt.</p>"
+          }
+        },
+        "ip": {
+          "type": "section",
+          "settings": {
+            "heading": "Intellectual property",
+            "body": "<p>All content on this site — including logos, product photography, copy, and design — is owned by us or licensed to us. You may not copy, reproduce, or use it commercially without written permission.</p><p>If you submit feedback, suggestions, or content (such as reviews), you grant us a non-exclusive, royalty-free, worldwide licence to use it for our business purposes.</p>"
+          }
+        },
+        "user_conduct": {
+          "type": "section",
+          "settings": {
+            "heading": "Acceptable use",
+            "body": "<p>You agree not to:</p><ul><li>Use the site for any unlawful or fraudulent purpose.</li><li>Attempt to interfere with the site's operation, security, or other users.</li><li>Scrape, mirror, or crawl the site without our written consent.</li><li>Misuse our brand, including impersonating us or our staff.</li></ul><p>We may suspend or terminate access if we reasonably suspect a breach.</p>"
+          }
+        },
+        "warranties": {
+          "type": "section",
+          "settings": {
+            "heading": "Warranties and disclaimers",
+            "body": "<p>Products are sold with the warranties described on each product page. Beyond those, the site and content are provided “as is”. To the maximum extent permitted by law, we disclaim all other warranties, express or implied — including merchantability, fitness for a particular purpose, and non-infringement.</p>"
+          }
+        },
+        "liability": {
+          "type": "section",
+          "settings": {
+            "heading": "Limitation of liability",
+            "body": "<p>To the maximum extent permitted by law, our total liability for any claim arising from your use of the site or your purchase is limited to the amount you paid for the order. We're not liable for indirect, incidental, or consequential damages.</p><p>Nothing in these terms excludes liability that cannot lawfully be limited (for example, liability for death or personal injury caused by negligence).</p>"
+          }
+        },
+        "indemnity": {
+          "type": "section",
+          "settings": {
+            "heading": "Indemnity",
+            "body": "<p>You agree to indemnify and hold us harmless from any claim, loss, or expense arising from your breach of these terms or your unlawful use of the site.</p>"
+          }
+        },
+        "governing_law": {
+          "type": "section",
+          "settings": {
+            "heading": "Governing law and disputes",
+            "body": "<p>These terms are governed by the laws of India. Any dispute will be subject to the exclusive jurisdiction of the courts of [Your City], India.</p><p>Before bringing a formal dispute, please email us at <a href=\"mailto:legal@example.com\">legal@example.com</a> — most issues can be resolved quickly.</p>"
+          }
+        },
+        "contact": {
+          "type": "section",
+          "settings": {
+            "heading": "Contact",
+            "body": "<p>For any questions about these terms:</p><p><strong>Email</strong>: <a href=\"mailto:legal@example.com\">legal@example.com</a><br><strong>Post</strong>: Zelexto Legal, [Registered Address]<br><strong>GSTIN</strong>: [Your GSTIN]<br><strong>CIN</strong>: [Your CIN]</p>"
+          }
+        }
+      },
+      "block_order": [
+        "acceptance", "eligibility", "account", "products", "orders",
+        "shipping", "returns", "ip", "user_conduct", "warranties",
+        "liability", "indemnity", "governing_law", "contact"
+      ]
     }
   },
   "order": ["main"]

@@ -1,8 +1,90 @@
 {
   "sections": {
     "main": {
-      "type": "main-page",
-      "settings": {}
+      "type": "legal-page",
+      "settings": {
+        "theme": "light",
+        "eyebrow": "Returns",
+        "heading": "Return Policy",
+        "last_updated": "January 1, 2026",
+        "intro": "<p>We want you to love what you buy. If something isn't right, you have 30 days to return it for a refund or exchange — no questions asked.</p>",
+        "show_toc": true,
+        "toc_label": "On this page",
+        "show_contact_cta": true,
+        "cta_heading": "Need to start a return?",
+        "cta_body": "Email us with your order number and we'll send a pickup label.",
+        "cta_label": "Start a return",
+        "cta_url": "/pages/contact"
+      },
+      "blocks": {
+        "summary": {
+          "type": "section",
+          "settings": {
+            "heading": "The short version",
+            "body": "<ul><li><strong>30 days</strong> from delivery to start a return.</li><li>Items must be <strong>unused, unworn, and in original packaging</strong> with all tags attached.</li><li><strong>Free pickup</strong> across India — we arrange the courier.</li><li><strong>Refund within 7 business days</strong> of us receiving the item, to your original payment method.</li><li><strong>Exchanges</strong> are free for the same-priced item in a different size or colour.</li></ul>"
+          }
+        },
+        "eligibility": {
+          "type": "section",
+          "settings": {
+            "heading": "What you can return",
+            "body": "<p>Most products are returnable within 30 days, provided they are:</p><ul><li>Unused and unworn (with original tags attached).</li><li>In their original packaging — including dust bags, boxes, and accessories.</li><li>Free of stains, smells (perfume, smoke), or pet hair.</li></ul><h3>What you can't return</h3><ul><li>Items marked <strong>“Final sale”</strong> on the product page.</li><li>Personalised, monogrammed, or made-to-order items.</li><li>Innerwear, swimwear, and pierced jewellery (for hygiene reasons).</li><li>Gift cards.</li><li>Items damaged through wear, washing, or misuse.</li></ul>"
+          }
+        },
+        "how_to": {
+          "type": "section",
+          "settings": {
+            "heading": "How to return",
+            "body": "<ol><li><strong>Email us</strong> at <a href=\"mailto:returns@example.com\">returns@example.com</a> within 30 days of delivery, with your order number and the reason for return.</li><li><strong>We schedule a free pickup</strong> from your address (usually within 2–3 business days).</li><li><strong>Pack the item</strong> in its original packaging with all tags. Include the order slip if you have it.</li><li><strong>Hand it over</strong> to the courier when they arrive.</li><li><strong>Track the return</strong> — we email you when we receive it and again when the refund is processed.</li></ol>"
+          }
+        },
+        "refunds": {
+          "type": "section",
+          "settings": {
+            "heading": "Refunds",
+            "body": "<p>Once we receive and inspect your return, we issue a refund within <strong>7 business days</strong>. The amount is credited to your original payment method:</p><ul><li><strong>Razorpay (UPI, cards, netbanking, wallets, EMI)</strong> — 5–7 business days to reflect.</li><li><strong>Cash on Delivery</strong> — refunded as a bank transfer; we'll request your account details after pickup.</li><li><strong>Partial payment</strong> — the advance is refunded; the COD balance is simply not collected.</li></ul><p>The refund is for the item price. Original shipping is non-refundable unless the return is due to our error (wrong or defective item).</p><h3>Late refund?</h3><p>Most refunds reflect within a week. If it's been longer, please first check with your bank or wallet provider. If they confirm there's no pending credit, email us — we'll trace the transfer.</p>"
+          }
+        },
+        "exchanges": {
+          "type": "section",
+          "settings": {
+            "heading": "Exchanges",
+            "body": "<p>To exchange for a different size or colour of the same item, follow the standard return process and mention “exchange” in your email. We dispatch the new item once we've received the original.</p><p>If the new item is a different price, we'll either charge or refund the difference.</p>"
+          }
+        },
+        "damaged": {
+          "type": "section",
+          "settings": {
+            "heading": "Damaged, defective, or wrong items",
+            "body": "<p>If your order arrives damaged, defective, or different from what you ordered, please email us within <strong>48 hours</strong> of delivery — with photos of the item and packaging. We'll arrange a replacement or full refund (including any return shipping at our cost).</p>"
+          }
+        },
+        "international": {
+          "type": "section",
+          "settings": {
+            "heading": "International returns",
+            "body": "<p>For orders shipped outside India, please contact <a href=\"mailto:returns@example.com\">returns@example.com</a> within 30 days. International return shipping is at your cost unless the return is due to our error. Customs duties and taxes paid on the original shipment are not refundable.</p>"
+          }
+        },
+        "cancellation": {
+          "type": "section",
+          "settings": {
+            "heading": "Order cancellation",
+            "body": "<p>You can cancel an order at no cost any time before it ships. After it ships, the standard return policy above applies.</p><p>To cancel, email us at <a href=\"mailto:support@example.com\">support@example.com</a> with your order number — fastest if within 12 hours of placing the order.</p>"
+          }
+        },
+        "questions": {
+          "type": "section",
+          "settings": {
+            "heading": "Questions",
+            "body": "<p>Email us at <a href=\"mailto:returns@example.com\">returns@example.com</a> or use our <a href=\"/pages/contact\">contact form</a>. We reply within 24 hours on business days.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "summary", "eligibility", "how_to", "refunds", "exchanges",
+        "damaged", "international", "cancellation", "questions"
+      ]
     }
   },
   "order": ["main"]

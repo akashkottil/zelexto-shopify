@@ -1,8 +1,104 @@
 {
   "sections": {
     "main": {
-      "type": "main-page",
-      "settings": {}
+      "type": "legal-page",
+      "settings": {
+        "theme": "light",
+        "eyebrow": "Legal",
+        "heading": "Privacy Policy",
+        "last_updated": "January 1, 2026",
+        "intro": "<p>This policy explains what information we collect, how we use it, and the rights you have. We collect what we need to run the store — nothing more.</p>",
+        "show_toc": true,
+        "toc_label": "On this page",
+        "show_contact_cta": true,
+        "cta_heading": "Questions about your data?",
+        "cta_body": "Email our privacy team — we’ll respond within 5 business days.",
+        "cta_label": "Contact privacy team",
+        "cta_url": "/pages/contact"
+      },
+      "blocks": {
+        "intro": {
+          "type": "section",
+          "settings": {
+            "heading": "Introduction",
+            "body": "<p>This Privacy Policy describes how Zelexto (“we”, “us”, “our”) collects, uses, and shares your personal information when you visit, interact with, or make a purchase from this store.</p><p>By using the site you agree to the practices described below. If you don't agree, please don't use the site.</p>"
+          }
+        },
+        "info_we_collect": {
+          "type": "section",
+          "settings": {
+            "heading": "Information we collect",
+            "body": "<p>We collect information directly from you, automatically through your device, and from third parties:</p><h3>Information you provide</h3><ul><li><strong>Contact details</strong> — name, email, phone, billing/shipping address.</li><li><strong>Order details</strong> — items purchased, payment method, transaction ID.</li><li><strong>Account details</strong> — password (hashed), order history, saved addresses.</li><li><strong>Tax details (India)</strong> — GSTIN and business name, when you opt to receive a tax invoice.</li><li><strong>Communications</strong> — messages you send to support, newsletter sign-ups.</li></ul><h3>Information collected automatically</h3><ul><li><strong>Device & usage</strong> — IP address, browser, OS, pages viewed, referrer.</li><li><strong>Cookies & similar</strong> — see the “Cookies” section below.</li></ul><h3>Information from third parties</h3><ul><li>Payment processors (e.g. Razorpay) confirm transactions.</li><li>Logistics partners share delivery status.</li><li>Analytics platforms share aggregated audience data.</li></ul>"
+          }
+        },
+        "how_we_use": {
+          "type": "section",
+          "settings": {
+            "heading": "How we use your information",
+            "body": "<p>We use your information to:</p><ul><li>Process orders, payments, refunds, and deliveries.</li><li>Communicate about orders, including shipping updates.</li><li>Provide customer support.</li><li>Send marketing emails (only if you opted in — you can unsubscribe at any time).</li><li>Detect and prevent fraud, abuse, and illegal activity.</li><li>Comply with legal obligations (e.g. tax invoicing).</li><li>Improve the site and our products through analytics.</li></ul>"
+          }
+        },
+        "sharing": {
+          "type": "section",
+          "settings": {
+            "heading": "Sharing your information",
+            "body": "<p>We share information only with parties needed to operate the store:</p><ul><li><strong>Payment processors</strong> — Razorpay (and other gateways enabled at checkout) handle your payment securely. We don't store your card details.</li><li><strong>Logistics & shipping partners</strong> — for delivery and COD verification.</li><li><strong>Cloud / hosting providers</strong> — Shopify hosts the store; their privacy practices apply.</li><li><strong>Analytics & advertising partners</strong> — Google Analytics, Meta, Klaviyo, only with consent where required.</li><li><strong>Legal authorities</strong> — when required by law, court order, or to protect our rights.</li></ul><p>We don't sell your personal information.</p>"
+          }
+        },
+        "cookies": {
+          "type": "section",
+          "settings": {
+            "heading": "Cookies and tracking",
+            "body": "<p>We use cookies and similar technologies for:</p><ul><li><strong>Essential</strong> — cart, login, security. Always on.</li><li><strong>Analytics</strong> — understand site usage. Optional.</li><li><strong>Marketing</strong> — personalised ads and remarketing. Optional.</li></ul><p>You can manage preferences via the cookie banner the first time you visit, and through your browser settings.</p>"
+          }
+        },
+        "your_rights": {
+          "type": "section",
+          "settings": {
+            "heading": "Your rights",
+            "body": "<p>Depending on where you live, you may have the right to:</p><ul><li>Access the personal information we hold about you.</li><li>Correct inaccurate information.</li><li>Delete your information (subject to legal retention requirements).</li><li>Restrict or object to our processing.</li><li>Receive a portable copy of your data.</li><li>Withdraw consent for marketing or analytics.</li></ul><p>To exercise any of these, email <a href=\"mailto:privacy@example.com\">privacy@example.com</a>. We respond within 30 days.</p>"
+          }
+        },
+        "retention": {
+          "type": "section",
+          "settings": {
+            "heading": "Data retention",
+            "body": "<p>We keep your information only as long as needed for the purposes above. Order records are retained for 7 years (as required for tax/accounting in India). Marketing preferences are retained until you unsubscribe.</p>"
+          }
+        },
+        "security": {
+          "type": "section",
+          "settings": {
+            "heading": "Security",
+            "body": "<p>We use industry-standard safeguards: encryption in transit (TLS), restricted internal access, and secure third-party processors. No system is 100% secure; we recommend a unique strong password for your account.</p>"
+          }
+        },
+        "children": {
+          "type": "section",
+          "settings": {
+            "heading": "Children's privacy",
+            "body": "<p>Our site is not directed at children under 16. We don't knowingly collect personal information from children. If you believe we have, please contact us and we'll delete it.</p>"
+          }
+        },
+        "changes": {
+          "type": "section",
+          "settings": {
+            "heading": "Changes to this policy",
+            "body": "<p>We may update this policy occasionally. The “Last updated” date at the top of this page reflects the most recent revision. Material changes will be flagged on the site or by email.</p>"
+          }
+        },
+        "contact": {
+          "type": "section",
+          "settings": {
+            "heading": "Contact us",
+            "body": "<p>For privacy questions or to exercise your rights:</p><p><strong>Email</strong>: <a href=\"mailto:privacy@example.com\">privacy@example.com</a><br><strong>Post</strong>: Zelexto Privacy, [Registered Address]</p>"
+          }
+        }
+      },
+      "block_order": [
+        "intro", "info_we_collect", "how_we_use", "sharing", "cookies",
+        "your_rights", "retention", "security", "children", "changes", "contact"
+      ]
     }
   },
   "order": ["main"]

@@ -140,8 +140,9 @@
               </div>
 
             {%- when 'boolean' -%}
+              {%- assign true_values_list = f.true_values | split: ',' -%}
               <ul class="facet__list" role="list">
-                {%- for v in f.true_values | split: ',' -%}
+                {%- for v in true_values_list -%}
                   <li>
                     <label class="facet-option">
                       <input type="checkbox" class="sr-only" name="{{ f.param_name }}" value="{{ v }}" data-facet-input>

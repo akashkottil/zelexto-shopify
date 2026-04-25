@@ -1,0 +1,347 @@
+{%- comment -%}
+  Legal page — designed template for privacy, terms, returns, shipping, etc.
+
+  - Hero with eyebrow + title + last-updated date
+  - Sticky table of contents on desktop, anchor-linked to each section
+  - Repeatable content blocks (heading + body), each with a slug anchor
+  - "Need help?" contact card at the bottom
+{%- endcomment -%}
+
+{%- liquid
+  assign theme = section.settings.theme | default: 'light'
+-%}
+
+<article class="legal legal--{{ theme }}" data-section-id="{{ section.id }}">
+
+  <header class="legal__hero" data-stagger>
+    <div class="container legal__hero-inner">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="legal__eyebrow" data-reveal="up">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      <h1 class="legal__title" data-reveal="up">{{ section.settings.heading | default: page.title }}</h1>
+      {%- if section.settings.last_updated != blank -%}
+        <p class="legal__updated" data-reveal="up">{{ 'general.last_updated' | t | default: 'Last updated' }}: {{ section.settings.last_updated }}</p>
+      {%- endif -%}
+      {%- if section.settings.intro != blank -%}
+        <div class="legal__intro" data-reveal="up">{{ section.settings.intro }}</div>
+      {%- endif -%}
+    </div>
+  </header>
+
+  <div class="container legal__layout">
+
+    {%- comment -%} Table of contents {%- endcomment -%}
+    {%- if section.settings.show_toc and section.blocks.size > 0 -%}
+      <aside class="legal__toc" aria-label="Table of contents">
+        <p class="legal__toc-label">{{ section.settings.toc_label | default: 'On this page' }}</p>
+        <ol class="legal__toc-list" role="list">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'section' -%}
+              {%- assign anchor = block.settings.heading | handleize -%}
+              <li>
+                <a href="#{{ anchor }}" class="legal__toc-link">
+                  <span class="legal__toc-num">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+                  <span>{{ block.settings.heading }}</span>
+                </a>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ol>
+      </aside>
+    {%- endif -%}
+
+    {%- comment -%} Content {%- endcomment -%}
+    <div class="legal__body">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'section' -%}
+            {%- assign anchor = block.settings.heading | handleize -%}
+            <section class="legal__section" id="{{ anchor }}" data-reveal="up" {{ block.shopify_attributes }}>
+              <h2 class="legal__section-heading">
+                <span class="legal__section-num" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+                {{ block.settings.heading }}
+              </h2>
+              <div class="legal__section-body rte">
+                {{ block.settings.body }}
+              </div>
+            </section>
+
+          {%- when 'page_content' -%}
+            {%- if page.content != blank -%}
+              <section class="legal__section" data-reveal="up" {{ block.shopify_attributes }}>
+                <div class="legal__section-body rte">{{ page.content }}</div>
+              </section>
+            {%- endif -%}
+        {%- endcase -%}
+      {%- endfor -%}
+
+      {%- if section.settings.show_contact_cta -%}
+        <aside class="legal__cta" data-reveal="up">
+          <h3 class="legal__cta-heading">{{ section.settings.cta_heading | default: 'Questions about this policy?' }}</h3>
+          <p class="legal__cta-body">{{ section.settings.cta_body | default: 'Get in touch — our team usually replies within 24 hours.' }}</p>
+          <a href="{{ section.settings.cta_url | default: '/pages/contact' }}" class="btn btn--primary legal__cta-btn">
+            {{ section.settings.cta_label | default: 'Contact us' }}
+            {%- render 'icon', name: 'arrow-right', class: 'icon icon--sm' -%}
+          </a>
+        </aside>
+      {%- endif -%}
+    </div>
+  </div>
+</article>
+
+<style>
+  #shopify-section-{{ section.id }} { display: block; }
+
+  .legal {
+    background: var(--c-bg);
+    color: var(--c-ink);
+  }
+  .legal--soft { background: var(--c-surface); }
+  .legal--dark { background: var(--c-bg-inv); color: var(--c-ink-inv); }
+
+  .legal__hero {
+    padding-block: clamp(var(--s-9), 14vh, var(--s-10)) clamp(var(--s-7), 8vh, var(--s-9));
+    border-bottom: 1px solid var(--c-line);
+    text-align: center;
+  }
+  .legal--dark .legal__hero { border-color: var(--c-line-inv); }
+  .legal__hero-inner {
+    max-width: 760px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+  }
+  .legal__eyebrow {
+    margin: 0;
+    font-size: var(--fs-14);
+    font-weight: var(--weight-medium);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+  .legal--dark .legal__eyebrow { color: var(--c-ink-muted-inv); }
+  .legal__title {
+    margin: 0;
+    font-size: clamp(var(--fs-40), 5vw, var(--fs-80));
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.025em;
+    line-height: 1.04;
+  }
+  .legal__updated {
+    margin: 0;
+    font-size: var(--fs-14);
+    color: var(--c-ink-muted);
+  }
+  .legal--dark .legal__updated { color: var(--c-ink-muted-inv); }
+  .legal__intro {
+    margin-top: var(--s-3);
+    font-size: var(--fs-19);
+    line-height: 1.55;
+    color: var(--c-ink-muted);
+    max-width: 60ch;
+    margin-inline: auto;
+  }
+  .legal--dark .legal__intro { color: var(--c-ink-muted-inv); }
+
+  .legal__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--s-7);
+    padding-block: clamp(var(--s-8), 10vh, var(--s-9));
+  }
+  @media (min-width: 990px) {
+    .legal__layout {
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: var(--s-9);
+    }
+  }
+
+  .legal__toc {
+    position: relative;
+  }
+  @media (min-width: 990px) {
+    .legal__toc {
+      position: sticky;
+      top: 96px;
+      align-self: start;
+      max-height: calc(100vh - 120px);
+      overflow: auto;
+    }
+  }
+  .legal__toc-label {
+    margin: 0 0 var(--s-3);
+    font-size: var(--fs-12);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+  .legal--dark .legal__toc-label { color: var(--c-ink-muted-inv); }
+  .legal__toc-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: toc;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-1);
+  }
+  .legal__toc-link {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-3);
+    padding-block: var(--s-2);
+    font-size: var(--fs-14);
+    color: var(--c-ink-muted);
+    transition: color var(--dur-fast) var(--ease-soft);
+    border-bottom: 1px solid transparent;
+  }
+  .legal__toc-link:hover { color: var(--c-ink); }
+  .legal--dark .legal__toc-link:hover { color: var(--c-ink-inv); }
+  .legal__toc-num {
+    font-variant-numeric: tabular-nums;
+    color: var(--c-ink-muted);
+    flex-shrink: 0;
+  }
+
+  .legal__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-9);
+  }
+
+  .legal__section {
+    max-width: 70ch;
+    scroll-margin-top: 96px;
+  }
+  .legal__section-heading {
+    margin: 0 0 var(--s-5);
+    font-size: clamp(var(--fs-21), 2.5vw, var(--fs-28));
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.018em;
+    line-height: 1.2;
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-3);
+  }
+  .legal__section-num {
+    font-size: var(--fs-14);
+    font-weight: var(--weight-medium);
+    color: var(--c-ink-muted);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+  .legal--dark .legal__section-num { color: var(--c-ink-muted-inv); }
+
+  .legal__section-body {
+    color: var(--c-ink-muted);
+    font-size: var(--fs-16);
+    line-height: 1.65;
+  }
+  .legal--dark .legal__section-body { color: var(--c-ink-muted-inv); }
+  .legal__section-body p { margin: 0 0 var(--s-3); }
+  .legal__section-body p:last-child { margin-bottom: 0; }
+  .legal__section-body h3 {
+    margin: var(--s-5) 0 var(--s-2);
+    font-size: var(--fs-19);
+    color: var(--c-ink);
+    font-weight: var(--weight-semibold);
+  }
+  .legal--dark .legal__section-body h3 { color: var(--c-ink-inv); }
+  .legal__section-body ul,
+  .legal__section-body ol {
+    margin: var(--s-3) 0;
+    padding-left: var(--s-5);
+  }
+  .legal__section-body li { margin-bottom: var(--s-2); }
+  .legal__section-body a {
+    color: var(--c-ink);
+    border-bottom: 1px solid currentColor;
+    transition: opacity var(--dur-fast) var(--ease-soft);
+  }
+  .legal--dark .legal__section-body a { color: var(--c-ink-inv); }
+  .legal__section-body a:hover { opacity: 0.65; }
+  .legal__section-body strong { color: var(--c-ink); font-weight: var(--weight-semibold); }
+  .legal--dark .legal__section-body strong { color: var(--c-ink-inv); }
+
+  .legal__cta {
+    margin-top: var(--s-7);
+    padding: var(--s-7);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius-lg);
+    background: var(--c-surface);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+    align-items: flex-start;
+    max-width: 70ch;
+  }
+  .legal--soft .legal__cta { background: var(--c-bg); }
+  .legal--dark .legal__cta {
+    background: var(--c-elev-inv);
+    border-color: var(--c-line-inv);
+  }
+  .legal__cta-heading {
+    margin: 0;
+    font-size: var(--fs-21);
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.014em;
+  }
+  .legal__cta-body {
+    margin: 0;
+    color: var(--c-ink-muted);
+    line-height: 1.5;
+  }
+  .legal--dark .legal__cta-body { color: var(--c-ink-muted-inv); }
+  .legal__cta-btn { margin-top: var(--s-2); }
+  .legal--dark .btn--primary { background: #fff; color: #000; }
+  .legal--dark .btn--primary:hover { background: #e8e8ed; }
+</style>
+
+{% schema %}
+{
+  "name": "Legal page",
+  "settings": [
+    { "type": "select", "id": "theme", "label": "Theme",
+      "options": [
+        { "value": "light", "label": "Light" },
+        { "value": "soft",  "label": "Soft" },
+        { "value": "dark",  "label": "Dark" }
+      ], "default": "light" },
+    { "type": "header", "content": "Hero" },
+    { "type": "text",     "id": "eyebrow",      "label": "Eyebrow",       "default": "Legal" },
+    { "type": "text",     "id": "heading",      "label": "Title (overrides page title)" },
+    { "type": "text",     "id": "last_updated", "label": "Last updated",  "default": "January 1, 2026" },
+    { "type": "richtext", "id": "intro",        "label": "Intro paragraph" },
+    { "type": "header", "content": "Sidebar" },
+    { "type": "checkbox", "id": "show_toc",   "label": "Show table of contents", "default": true },
+    { "type": "text",     "id": "toc_label",  "label": "Sidebar label",          "default": "On this page" },
+    { "type": "header", "content": "Contact CTA" },
+    { "type": "checkbox", "id": "show_contact_cta", "label": "Show contact card",       "default": true },
+    { "type": "text",     "id": "cta_heading",      "label": "CTA heading",             "default": "Questions about this policy?" },
+    { "type": "text",     "id": "cta_body",         "label": "CTA body",                "default": "Get in touch — our team usually replies within 24 hours." },
+    { "type": "text",     "id": "cta_label",        "label": "CTA label",               "default": "Contact us" },
+    { "type": "url",      "id": "cta_url",          "label": "CTA URL" }
+  ],
+  "blocks": [
+    {
+      "type": "section",
+      "name": "Section",
+      "settings": [
+        { "type": "text",     "id": "heading", "label": "Heading", "default": "Section heading" },
+        { "type": "richtext", "id": "body",    "label": "Body",    "default": "<p>Section body.</p>" }
+      ]
+    },
+    {
+      "type": "page_content",
+      "name": "Page body (from admin)",
+      "limit": 1
+    }
+  ],
+  "presets": [
+    { "name": "Legal page" }
+  ]
+}
+{% endschema %}
