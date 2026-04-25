@@ -10,7 +10,10 @@
 {%- endcomment -%}
 
 {%- liquid
-  assign methods = settings.payment_methods_enabled
+  assign has_any_method = false
+  if settings.show_method_upi or settings.show_method_visa or settings.show_method_mastercard or settings.show_method_rupay or settings.show_method_amex or settings.show_method_netbanking or settings.show_method_wallets or settings.show_method_emi
+    assign has_any_method = true
+  endif
   assign emi_enabled = settings.show_emi_calculator
   assign emi_min = settings.emi_min_amount | default: 3000
 
@@ -34,10 +37,10 @@
 -%}
 
 <div class="payment-indicator" data-payment-indicator>
-  {%- if methods != blank and methods.size > 0 -%}
+  {%- if has_any_method -%}
     <p class="payment-indicator__line">
       {%- render 'icon', name: 'shield', class: 'icon icon--sm' -%}
-      <span>Pay with {%- if methods contains 'upi' %} UPI,{% endif %} Cards{% if methods contains 'wallets' %}, Wallets{% endif %}{% if methods contains 'emi' %}, EMI{% endif %}</span>
+      <span>Pay with{% if settings.show_method_upi %} UPI,{% endif %} Cards{% if settings.show_method_wallets %}, Wallets{% endif %}{% if settings.show_method_emi %}, EMI{% endif %}</span>
     </p>
   {%- endif -%}
 

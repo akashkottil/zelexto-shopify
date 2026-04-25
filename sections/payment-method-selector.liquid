@@ -1,140 +1,19 @@
 {%- comment -%}
-  Payment method selector — section so it's portable into cart + drawer.
+  Payment method selector — section wrapper.
 
-  Renders three radio cards:
-    - Full pay
-    - Partial pay (hidden when settings.partial_pay_provider == 'off')
-    - COD       (hidden when settings.cod_provider == 'off')
+  Delegates rendering to snippets/payment-method-selector.liquid so the same UI
+  can be rendered inside the cart drawer (via {% render %}) or placed onto a
+  template by a merchant via the theme editor.
 
-  Writes `cart.attributes.payment_intent` via /cart/update.js — the partial-pay
-  app's checkout extension is responsible for honoring it.
+  All shared CSS lives in this section so the markup can also be rendered
+  standalone via the snippet without losing styling on its first appearance.
 {%- endcomment -%}
 
-{%- liquid
-  assign ctx = section.settings.context | default: 'cart'
-  assign show_eligible_only = section.settings.show_when_eligible_only
-
-  assign partial_provider = settings.partial_pay_provider | default: 'off'
-  assign cod_provider = settings.cod_provider | default: 'off'
-
-  assign advance_pct = settings.partial_advance_percent | default: 20
-  assign min_partial = settings.partial_pay_min_order | default: 0
-  assign min_partial_cents = min_partial | times: 100
-
-  assign cart_total = cart.total_price | default: 0
-
-  assign show_partial = false
-  if partial_provider != 'off'
-    if show_eligible_only == false or cart_total >= min_partial_cents
-      assign show_partial = true
-    endif
-  endif
-
-  assign show_cod = false
-  if cod_provider != 'off'
-    assign show_cod = true
-  endif
-
-  assign advance_cents = cart_total | times: advance_pct | divided_by: 100
-  assign balance_cents = cart_total | minus: advance_cents
-
-  assign cart_total_money = cart_total | money
-  assign advance_money = advance_cents | money
-  assign balance_money = balance_cents | money
-
-  assign current_intent = cart.attributes.payment_intent | default: 'full'
+{%- render 'payment-method-selector',
+    context: section.settings.context,
+    show_when_eligible_only: section.settings.show_when_eligible_only,
+    id: section.id
 -%}
-
-<payment-selector
-  class="payment-selector payment-selector--{{ ctx }}"
-  data-module="payment-selector.js"
-  data-section-id="{{ section.id }}"
-  data-advance-percent="{{ advance_pct }}"
-  data-min-partial="{{ min_partial_cents }}"
-  data-min-cod="0"
-  data-context="{{ ctx }}"
->
-  <fieldset class="payment-selector__group">
-    <legend class="payment-selector__legend">{{ 'payments.select_method' | t }}</legend>
-
-    {%- comment -%} Full payment {%- endcomment -%}
-    <label class="payment-selector__card" data-method="full">
-      <input
-        type="radio"
-        name="payment_intent_{{ section.id }}"
-        value="full"
-        class="payment-selector__radio"
-        data-payment-intent="full"
-        {% if current_intent == 'full' %}checked{% endif %}
-      >
-      <span class="payment-selector__body">
-        <span class="payment-selector__title">{{ 'payments.method_full' | t }}</span>
-        <span class="payment-selector__desc">
-          {{ 'payments.method_full_desc' | t: amount: cart_total_money }}
-        </span>
-      </span>
-      <span class="payment-selector__amount" data-money-cents="{{ cart_total }}">
-        {{ cart_total_money }}
-      </span>
-    </label>
-
-    {%- comment -%} Partial payment {%- endcomment -%}
-    {%- if show_partial -%}
-      <label class="payment-selector__card" data-method="partial">
-        <input
-          type="radio"
-          name="payment_intent_{{ section.id }}"
-          value="partial"
-          class="payment-selector__radio"
-          data-payment-intent="partial"
-          {% if current_intent == 'partial' %}checked{% endif %}
-        >
-        <span class="payment-selector__body">
-          <span class="payment-selector__title">{{ 'payments.method_partial' | t }}</span>
-          <span class="payment-selector__desc">
-            {{ 'payments.method_partial_desc' | t: advance: advance_money, balance: balance_money }}
-          </span>
-        </span>
-        <span class="payment-selector__amount" data-money-cents="{{ advance_cents }}" data-partial-advance>
-          {{ advance_money }}
-        </span>
-      </label>
-    {%- endif -%}
-
-    {%- comment -%} COD {%- endcomment -%}
-    {%- if show_cod -%}
-      <label class="payment-selector__card" data-method="cod">
-        <input
-          type="radio"
-          name="payment_intent_{{ section.id }}"
-          value="cod"
-          class="payment-selector__radio"
-          data-payment-intent="cod"
-          {% if current_intent == 'cod' %}checked{% endif %}
-        >
-        <span class="payment-selector__body">
-          <span class="payment-selector__title">{{ 'payments.method_cod' | t }}</span>
-          <span class="payment-selector__desc">
-            {{ 'payments.method_cod_desc' | t: amount: cart_total_money }}
-          </span>
-        </span>
-        <span class="payment-selector__amount" data-money-cents="{{ cart_total }}">
-          {{ cart_total_money }}
-        </span>
-      </label>
-    {%- endif -%}
-  </fieldset>
-
-  {%- render 'payment-method-explainer' -%}
-
-  <div data-partial-summary {% unless current_intent == 'partial' %}hidden{% endunless %}>
-    {%- render 'partial-pay-summary' -%}
-  </div>
-
-  <p class="payment-selector__status" role="status" aria-live="polite" data-payment-status hidden>
-    {{ 'payments.method_changed' | t }}
-  </p>
-</payment-selector>
 
 <style>
   .payment-selector { display: block; }

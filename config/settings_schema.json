@@ -119,21 +119,14 @@
     "settings": [
       { "type": "header", "content": "Razorpay & methods" },
       { "type": "paragraph", "content": "Razorpay is enabled in Shopify Admin → Settings → Payments. These settings only control theme-side display." },
-      {
-        "type": "checkbox_group",
-        "id": "payment_methods_enabled",
-        "label": "Methods to badge",
-        "options": [
-          { "value": "upi", "label": "UPI" },
-          { "value": "visa", "label": "Visa" },
-          { "value": "mastercard", "label": "Mastercard" },
-          { "value": "rupay", "label": "RuPay" },
-          { "value": "amex", "label": "American Express" },
-          { "value": "netbanking", "label": "Netbanking" },
-          { "value": "wallets", "label": "Wallets (Paytm/PhonePe/GPay)" },
-          { "value": "emi", "label": "EMI" }
-        ]
-      },
+      { "type": "checkbox", "id": "show_method_upi",        "label": "Badge: UPI",        "default": true },
+      { "type": "checkbox", "id": "show_method_visa",       "label": "Badge: Visa",       "default": true },
+      { "type": "checkbox", "id": "show_method_mastercard", "label": "Badge: Mastercard", "default": true },
+      { "type": "checkbox", "id": "show_method_rupay",      "label": "Badge: RuPay",      "default": true },
+      { "type": "checkbox", "id": "show_method_amex",       "label": "Badge: American Express", "default": false },
+      { "type": "checkbox", "id": "show_method_netbanking", "label": "Badge: Netbanking", "default": true },
+      { "type": "checkbox", "id": "show_method_wallets",    "label": "Badge: Wallets (Paytm/PhonePe/GPay)", "default": true },
+      { "type": "checkbox", "id": "show_method_emi",        "label": "Badge: EMI",        "default": true },
       { "type": "checkbox", "id": "show_emi_calculator", "label": "Show EMI from / month line", "default": true },
       { "type": "number", "id": "emi_min_amount", "label": "EMI minimum amount (INR)", "default": 3000 },
       { "type": "checkbox", "id": "magic_checkout_enabled", "label": "Razorpay Magic Checkout installed", "info": "Toggle on if the Magic Checkout app embed is installed", "default": false },

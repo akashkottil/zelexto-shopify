@@ -5,14 +5,39 @@
     {% render 'payment-badges', context: 'pdp' %}
     {% render 'payment-badges', context: 'cart', product: product %}
 
-  Reads `settings.payment_methods_enabled` (a list). Renders a minimal,
+  Reads individual `settings.show_method_*` flags. Renders a minimal,
   monochrome badge row — wordmarks/icons in CSS-styled boxes (do not embed
   high-fidelity copyrighted logos).
 {%- endcomment -%}
 
 {%- liquid
   assign ctx = context | default: 'pdp'
-  assign methods = settings.payment_methods_enabled
+  assign methods = ''
+  if settings.show_method_upi
+    assign methods = methods | append: 'upi,'
+  endif
+  if settings.show_method_visa
+    assign methods = methods | append: 'visa,'
+  endif
+  if settings.show_method_mastercard
+    assign methods = methods | append: 'mastercard,'
+  endif
+  if settings.show_method_rupay
+    assign methods = methods | append: 'rupay,'
+  endif
+  if settings.show_method_amex
+    assign methods = methods | append: 'amex,'
+  endif
+  if settings.show_method_netbanking
+    assign methods = methods | append: 'netbanking,'
+  endif
+  if settings.show_method_wallets
+    assign methods = methods | append: 'wallets,'
+  endif
+  if settings.show_method_emi
+    assign methods = methods | append: 'emi,'
+  endif
+  assign methods = methods | split: ','
 -%}
 
 {%- if methods != blank and methods.size > 0 -%}
