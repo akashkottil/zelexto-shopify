@@ -1,9 +1,9 @@
 /**
  * social-proof.js — <social-proof-toast>
  *
- * Reads its feed from an inner <script type="application/json" data-feed>.
+ * Reads its feed from a `data-feed` attribute (escaped JSON) on the element.
  * Cycles entries with fade transitions; pauses on hover; cookie cooldown
- * after dismiss.
+ * after dismiss. Interval is in seconds (multiplied by 1000 internally).
  *
  * Locale strings expected on window.themeStrings (best effort) — falls back
  * to the message string already on the entry.
@@ -22,13 +22,14 @@
   class SocialProofToast extends HTMLElement {
     connectedCallback() {
       if (has(COOKIE)) return;
-      const feedEl = this.querySelector('script[data-feed]');
       let feed = [];
-      try { feed = JSON.parse(feedEl?.textContent || '[]'); } catch (e) {}
+      try { feed = JSON.parse(this.getAttribute('data-feed') || '[]'); } catch (e) {}
       this.feed = (feed || []).filter((e) => e && (e.name || e.product));
       if (!this.feed.length) return;
 
-      this.interval = parseInt(this.getAttribute('data-interval'), 10) || 6000;
+      // interval is in seconds; convert to ms (legacy ms values still work)
+      const raw = parseInt(this.getAttribute('data-interval'), 10) || 6;
+      this.interval = raw < 100 ? raw * 1000 : raw;
       this.maxItems = parseInt(this.getAttribute('data-max'), 10) || this.feed.length;
       this.shown = 0;
       this.idx = 0;

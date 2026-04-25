@@ -144,8 +144,12 @@
     {% section 'cart-drawer' %}
   {%- endif -%}
 
-  {% section 'exit-intent-modal' %}
-  {% section 'recently-sold-toast' %}
+  {%- if settings.enable_exit_intent -%}
+    {% section 'exit-intent-modal' %}
+  {%- endif -%}
+  {%- if settings.enable_recently_sold -%}
+    {% section 'recently-sold-toast' %}
+  {%- endif -%}
 
   {%- if settings.enable_back_to_top -%}
     {% section 'back-to-top' %}
