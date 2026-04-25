@@ -5,12 +5,12 @@
     "newsletter": {
       "type": "newsletter",
       "settings": {
-        "eyebrow": "Join our list",
+        "theme": "soft",
+        "eyebrow": "Stay close",
         "heading": "Be first to know.",
-        "body": "Subscribe for early access to new launches, members-only offers and the occasional well-written email.",
-        "placeholder": "Email address",
-        "submit_label": "Subscribe",
-        "background": "elev"
+        "body": "<p>Drops, restocks, and stories — straight to your inbox.</p>",
+        "button_label": "Subscribe",
+        "fineprint": "<p>By subscribing you agree to our privacy policy. Unsubscribe anytime.</p>"
       }
     },
     "footer": {

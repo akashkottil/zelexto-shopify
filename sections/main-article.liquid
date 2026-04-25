@@ -18,7 +18,8 @@
       <div class="article__meta">
         <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%B %d, %Y' }}</time>
         {%- if section.settings.show_author -%}
-          <span class="article__byline">{{ 'blog.posted_by' | t: author: article.author | default: article.author }}</span>
+          {%- assign author_name = article.author -%}
+          <span class="article__byline">{{ 'blog.posted_by' | t: author: author_name }}</span>
         {%- endif -%}
       </div>
     </header>

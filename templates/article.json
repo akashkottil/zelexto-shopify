@@ -3,9 +3,8 @@
     "main": {
       "type": "main-article",
       "settings": {
-        "show_date": true,
+        "show_featured_image": true,
         "show_author": true,
-        "show_tags": true,
         "show_share": true
       }
     }

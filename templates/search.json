@@ -4,7 +4,7 @@
       "type": "main-search",
       "settings": {
         "products_per_page": 24,
-        "enable_filtering": true
+        "enable_filters": true
       }
     }
   },

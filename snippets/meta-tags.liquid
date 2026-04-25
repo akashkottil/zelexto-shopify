@@ -6,7 +6,7 @@
 <title>
   {{ page_title }}
   {%- if current_tags %} &ndash; {{ 'general.tagged' | t | default: 'Tagged' }}: {{ current_tags | join: ', ' }}{%- endif -%}
-  {%- if current_page != 1 %} &ndash; {{ 'general.page_n' | t: page: current_page | default: 'Page ' | append: current_page }}{%- endif -%}
+  {%- if current_page != 1 %} &ndash; {%- assign page_n_default = 'Page ' | append: current_page -%}{{ 'general.page_n' | t: page: current_page | default: page_n_default }}{%- endif -%}
   {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{%- endunless -%}
 </title>
 

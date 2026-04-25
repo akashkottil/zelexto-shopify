@@ -7,53 +7,49 @@
     "intro": {
       "type": "rich-text",
       "settings": {
-        "bg": "bg",
-        "text_align": "center"
-      },
-      "blocks": {
-        "eyebrow": { "type": "eyebrow", "settings": { "text": "Our story" } },
-        "heading": { "type": "heading", "settings": { "text": "Designed in India. Built for the world." } },
-        "body":    { "type": "body",    "settings": { "text": "<p>We started Zelexto with a simple belief: that world-class products don’t need to come from somewhere else. We design and manufacture in India, work with people we know, and use materials we trust.</p>" } }
-      },
-      "block_order": ["eyebrow", "heading", "body"]
+        "theme": "light",
+        "text_align": "center",
+        "eyebrow": "Our story",
+        "heading": "Designed in India. Built for the world.",
+        "body": "<p>We started Zelexto with a simple belief: that world-class products don’t need to come from somewhere else. We design and manufacture in India, work with people we know, and use materials we trust.</p>"
+      }
     },
     "image-text": {
       "type": "image-with-text",
       "settings": {
+        "theme": "soft",
+        "image_side": "left",
         "eyebrow": "Craft",
         "heading": "Small batches, signed by hand.",
         "body": "<p>Every batch is made by a workshop we partner with directly. We meet them. We pay fairly. The work is signed.</p>",
-        "image_side": "left",
         "cta_label": "See our makers",
-        "cta_url": "#",
-        "cta_style": "ghost",
-        "bg": "surface"
+        "cta_url": "#"
       }
     },
     "feature-row": {
       "type": "feature-row",
       "settings": {
-        "eyebrow": "Values",
-        "heading": "What we stand for.",
-        "bg": "bg"
+        "theme": "light",
+        "section_eyebrow": "Values",
+        "section_heading": "What we stand for."
       },
       "blocks": {
         "r1": {
           "type": "row",
           "settings": {
+            "image_side": "auto",
             "eyebrow": "Materials",
             "heading": "Honest, traceable.",
-            "body": "<p>Every material we use can be traced back to its source. No greenwashing, no marketing gloss.</p>",
-            "image_side": "auto"
+            "body": "<p>Every material we use can be traced back to its source. No greenwashing, no marketing gloss.</p>"
           }
         },
         "r2": {
           "type": "row",
           "settings": {
+            "image_side": "auto",
             "eyebrow": "Pricing",
             "heading": "No middlemen mark-ups.",
-            "body": "<p>We sell direct, which means you pay for the product, not five layers of distribution.</p>",
-            "image_side": "auto"
+            "body": "<p>We sell direct, which means you pay for the product, not five layers of distribution.</p>"
           }
         }
       },
@@ -62,14 +58,14 @@
     "faq": {
       "type": "faq",
       "settings": {
+        "theme": "soft",
         "eyebrow": "FAQ",
-        "heading": "Common questions",
-        "bg": "surface"
+        "heading": "Common questions"
       },
       "blocks": {
-        "q1": { "type": "qa", "settings": { "question": "Where is Zelexto based?",         "answer": "<p>We're based in India, with workshops across the country.</p>" } },
-        "q2": { "type": "qa", "settings": { "question": "Do you ship internationally?",     "answer": "<p>Yes — we ship globally with regional warehousing in select markets.</p>" } },
-        "q3": { "type": "qa", "settings": { "question": "How can I contact you?",           "answer": "<p>Drop a note at <a href='/pages/contact'>contact</a> — we reply within 24h on weekdays.</p>" } }
+        "q1": { "type": "qa", "settings": { "question": "Where is Zelexto based?",       "answer": "<p>We're based in India, with workshops across the country.</p>" } },
+        "q2": { "type": "qa", "settings": { "question": "Do you ship internationally?", "answer": "<p>Yes — we ship globally with regional warehousing in select markets.</p>" } },
+        "q3": { "type": "qa", "settings": { "question": "How can I contact you?",       "answer": "<p>Drop a note at <a href='/pages/contact'>contact</a> — we reply within 24h on weekdays.</p>" } }
       },
       "block_order": ["q1", "q2", "q3"]
     }

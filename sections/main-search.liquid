@@ -40,8 +40,9 @@
     {%- if search.performed -%}
       {%- paginate search.results by per_page -%}
         {%- if search.results.size > 0 -%}
+          {%- assign results_count = search.results_count -%}
           <p class="search-results__summary" aria-live="polite">
-            {{ 'search.results_count' | t: count: search.results_count | default: search.results_count | append: ' results' }}
+            {{ 'search.results_count' | t: count: results_count | default: results_count | append: ' results' }}
           </p>
 
           <div class="search-results__layout">

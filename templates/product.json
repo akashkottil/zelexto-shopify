@@ -2,11 +2,7 @@
   "sections": {
     "main": {
       "type": "main-product",
-      "settings": {
-        "show_vendor": true,
-        "show_rating": true,
-        "enable_tabs": true
-      }
+      "settings": {}
     },
     "recommendations": {
       "type": "product-recommendations",
@@ -18,12 +14,11 @@
     "spotlight": {
       "type": "product-spotlight",
       "settings": {
+        "theme": "soft",
         "eyebrow": "Pairs well",
         "heading": "Make it a set.",
         "body": "<p>Hand-picked by our team to complete the look.</p>",
-        "cta_label": "Shop the spotlight",
-        "show_features": false,
-        "bg": "surface"
+        "cta_label": "Shop the spotlight"
       }
     }
   },

@@ -31,7 +31,8 @@
       <span class="bundle-card__label">{{ label_text }}</span>
     {%- endif -%}
     {%- if tier_percent > 0 -%}
-      <span class="bundle-card__save">{{ 'bundle.save' | t: percent: tier_percent | append: '%' }}</span>
+      {%- assign tier_percent_label = tier_percent | append: '%' -%}
+      <span class="bundle-card__save">{{ 'bundle.save' | t: percent: tier_percent_label }}</span>
     {%- endif -%}
     {%- if base > 0 -%}
       <span class="bundle-card__price">

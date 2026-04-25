@@ -6,7 +6,10 @@
 <div class="account container">
   <header class="account__header">
     <div>
-      <p class="account__greeting">{{ 'account.welcome' | t: name: customer.first_name | default: customer.first_name | default: customer.email }}</p>
+      {%- liquid
+        assign greeting_name = customer.first_name | default: customer.email
+      -%}
+      <p class="account__greeting">{{ 'account.welcome' | t: name: greeting_name }}</p>
       <h1 class="account__title">{{ 'account.title' | t | default: 'Account' }}</h1>
     </div>
     <a href="{{ routes.account_logout_url }}" class="btn btn--ghost btn--sm">{{ 'account.logout' | t | default: 'Sign out' }}</a>
@@ -23,7 +26,8 @@
               <span class="pill">{{ order.financial_status_label }}</span>
             </div>
             <div class="account-order__meta">
-              <time datetime="{{ order.created_at | date: '%Y-%m-%d' }}">{{ 'account.order_date' | t: date: order.created_at | date: '%b %d, %Y' }}</time>
+              {%- assign order_date = order.created_at | date: '%b %d, %Y' -%}
+              <time datetime="{{ order.created_at | date: '%Y-%m-%d' }}">{{ 'account.order_date' | t: date: order_date }}</time>
               <span data-money-cents="{{ order.total_price }}">{{ order.total_price | money }}</span>
             </div>
             <ul class="account-order__lines" role="list">

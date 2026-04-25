@@ -4,8 +4,7 @@
       "type": "main-collection",
       "settings": {
         "products_per_page": 24,
-        "enable_filtering": true,
-        "enable_sorting": true
+        "enable_filtering": true
       }
     }
   },

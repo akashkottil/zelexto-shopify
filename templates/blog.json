@@ -4,8 +4,6 @@
       "type": "main-blog",
       "settings": {
         "posts_per_page": 9,
-        "show_featured_image": true,
-        "show_date": true,
         "show_author": true
       }
     }
