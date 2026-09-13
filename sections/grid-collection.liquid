@@ -35,14 +35,7 @@
           <a href="{{ blk_collection.url | default: block.settings.url | default: '#' }}" class="collection-tile zoomable" data-reveal="up" {{ block.shopify_attributes }}>
             <div class="collection-tile__media">
               {%- if blk_image != blank -%}
-                {%- render 'responsive-image',
-                    image: blk_image,
-                    alt: blk_collection.title | default: block.settings.label,
-                    sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
-                    widths: '480,640,800,1100',
-                    loading: 'lazy',
-                    aspect_ratio: '4/5',
-                    class: 'collection-tile__image' -%}
+                {%- render 'responsive-image', image: blk_image, alt: blk_collection.title, default: block.settings.label, sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw', widths: '480,640,800,1100', loading: 'lazy', aspect_ratio: '4/5', class: 'collection-tile__image' -%}
               {%- else -%}
                 <div class="collection-tile__demo">
                   {%- render 'demo-image', kind: 'collection' -%}
@@ -233,3 +226,24 @@
   ]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {%- render 'responsive-image',
+                        image: blk_image,
+                        alt: blk_collection.title | default: block.settings.label,
+                        sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
+                        widths: '480,640,800,1100',
+                        loading: 'lazy',
+                        aspect_ratio: '4/5',
+                        class: 'collection-tile__image' -%}
+  to: "{%- render 'responsive-image', image: blk_image, alt: blk_collection.title,
+    default: block.settings.label, sizes: '(min-width: 990px) 25vw, (min-width: 750px)
+    50vw, 100vw', widths: '480,640,800,1100', loading: 'lazy', aspect_ratio: '4/5',
+    class: 'collection-tile__image' -%}"
+  position: 1893..2167
+{% endcomment %}

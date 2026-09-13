@@ -62,21 +62,9 @@
   <a class="product-card__media-link" href="{{ p.url | within: collection }}" aria-label="{{ p.title | escape }}">
     <div class="product-card__media aspect" style="aspect-ratio: {{ image_ratio }};">
       {%- if p.featured_image -%}
-        {% render 'responsive-image',
-           image: p.featured_image,
-           alt: p.featured_image.alt | default: p.title,
-           sizes: img_sizes,
-           loading: img_loading,
-           class: 'product-card__img product-card__img--primary',
-           aspect_ratio: image_ratio %}
+        {% render 'responsive-image', image: p.featured_image, alt: p.featured_image.alt, default: p.title, sizes: img_sizes, loading: img_loading, class: 'product-card__img product-card__img--primary', aspect_ratio: image_ratio %}
         {%- if hover_img -%}
-          {% render 'responsive-image',
-             image: hover_img,
-             alt: hover_img.alt | default: p.title,
-             sizes: img_sizes,
-             loading: 'lazy',
-             class: 'product-card__img product-card__img--hover',
-             aspect_ratio: image_ratio %}
+          {% render 'responsive-image', image: hover_img, alt: hover_img.alt, default: p.title, sizes: img_sizes, loading: 'lazy', class: 'product-card__img product-card__img--hover', aspect_ratio: image_ratio %}
         {%- endif -%}
       {%- else -%}
         <div class="product-card__placeholder">
@@ -126,3 +114,34 @@
     </div>
   </div>
 </article>
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'responsive-image',
+               image: p.featured_image,
+               alt: p.featured_image.alt | default: p.title,
+               sizes: img_sizes,
+               loading: img_loading,
+               class: 'product-card__img product-card__img--primary',
+               aspect_ratio: image_ratio %}
+  to: "{% render 'responsive-image', image: p.featured_image, alt: p.featured_image.alt,
+    default: p.title, sizes: img_sizes, loading: img_loading, class: 'product-card__img
+    product-card__img--primary', aspect_ratio: image_ratio %}"
+  position: 2311..2534
+- from: |-
+    {% render 'responsive-image',
+                 image: hover_img,
+                 alt: hover_img.alt | default: p.title,
+                 sizes: img_sizes,
+                 loading: 'lazy',
+                 class: 'product-card__img product-card__img--hover',
+                 aspect_ratio: image_ratio %}
+  to: "{% render 'responsive-image', image: hover_img, alt: hover_img.alt, default:
+    p.title, sizes: img_sizes, loading: 'lazy', class: 'product-card__img product-card__img--hover',
+    aspect_ratio: image_ratio %}"
+  position: 2574..2776
+{% endcomment %}

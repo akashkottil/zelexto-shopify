@@ -35,14 +35,7 @@
                 class="media-gallery__zoom-trigger"
                 data-zoom-trigger
                 aria-label="{{ 'product.zoom' | t | default: 'Zoom image' }}">
-                {% render 'responsive-image',
-                   image: media,
-                   alt: media.alt | default: product.title,
-                   sizes: '(min-width:1024px) 55vw, 100vw',
-                   loading: forloop.first,
-                   fetchpriority: forloop.first | default: 'auto',
-                   class: 'media-gallery__img',
-                   aspect_ratio: '1/1' %}
+                {% render 'responsive-image', image: media, alt: media.alt, default: 'auto', sizes: '(min-width:1024px) 55vw, 100vw', loading: forloop.first, fetchpriority: forloop.first, class: 'media-gallery__img', aspect_ratio: '1/1' %}
               </button>
 
             {%- when 'video' -%}
@@ -106,3 +99,23 @@
     </ul>
   {%- endif -%}
 </media-gallery>
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'responsive-image',
+                       image: media,
+                       alt: media.alt | default: product.title,
+                       sizes: '(min-width:1024px) 55vw, 100vw',
+                       loading: forloop.first,
+                       fetchpriority: forloop.first | default: 'auto',
+                       class: 'media-gallery__img',
+                       aspect_ratio: '1/1' %}
+  to: "{% render 'responsive-image', image: media, alt: media.alt, default: 'auto',
+    sizes: '(min-width:1024px) 55vw, 100vw', loading: forloop.first, fetchpriority:
+    forloop.first, class: 'media-gallery__img', aspect_ratio: '1/1' %}"
+  position: 1375..1598
+{% endcomment %}

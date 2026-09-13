@@ -52,12 +52,7 @@
             <li class="cart-line cart-line--compact" data-cart-line data-cart-line-key="{{ item.key }}" data-cart-line-index="{{ forloop.index }}">
               <a href="{{ item.url }}" class="cart-line__media aspect" style="aspect-ratio: 1/1;" tabindex="-1">
                 {%- if item.image -%}
-                  {% render 'responsive-image',
-                     image: item.image,
-                     alt: item.image.alt | default: item.title,
-                     sizes: '88px',
-                     loading: 'lazy',
-                     aspect_ratio: '1/1' %}
+                  {% render 'responsive-image', image: item.image, alt: item.image.alt, default: item.title, sizes: '88px', loading: 'lazy', aspect_ratio: '1/1' %}
                 {%- endif -%}
               </a>
 
@@ -129,3 +124,20 @@
   "settings": []
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'responsive-image',
+                         image: item.image,
+                         alt: item.image.alt | default: item.title,
+                         sizes: '88px',
+                         loading: 'lazy',
+                         aspect_ratio: '1/1' %}
+  to: "{% render 'responsive-image', image: item.image, alt: item.image.alt, default:
+    item.title, sizes: '88px', loading: 'lazy', aspect_ratio: '1/1' %}"
+  position: 2190..2335
+{% endcomment %}

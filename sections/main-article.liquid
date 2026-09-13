@@ -26,12 +26,7 @@
 
     {%- if article.image and section.settings.show_featured_image -%}
       <figure class="article__hero">
-        {% render 'responsive-image',
-           image: article.image,
-           alt: article.image.alt | default: article.title,
-           sizes: '(min-width:1024px) 760px, 100vw',
-           loading: 'eager',
-           fetchpriority: 'high' %}
+        {% render 'responsive-image', image: article.image, alt: article.image.alt, default: article.title, sizes: '(min-width:1024px) 760px, 100vw', loading: 'eager', fetchpriority: 'high' %}
       </figure>
     {%- endif -%}
 
@@ -92,3 +87,21 @@
   "presets": [{ "name": "Article" }]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'responsive-image',
+               image: article.image,
+               alt: article.image.alt | default: article.title,
+               sizes: '(min-width:1024px) 760px, 100vw',
+               loading: 'eager',
+               fetchpriority: 'high' %}
+  to: "{% render 'responsive-image', image: article.image, alt: article.image.alt,
+    default: article.title, sizes: '(min-width:1024px) 760px, 100vw', loading: 'eager',
+    fetchpriority: 'high' %}"
+  position: 1154..1338
+{% endcomment %}

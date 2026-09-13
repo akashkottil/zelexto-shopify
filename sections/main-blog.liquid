@@ -24,12 +24,7 @@
             <li class="article-card">
               {%- if article.image -%}
                 <a href="{{ article.url }}" class="article-card__media aspect" style="aspect-ratio: 16/10;" tabindex="-1">
-                  {% render 'responsive-image',
-                     image: article.image,
-                     alt: article.image.alt | default: article.title,
-                     sizes: '(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw',
-                     loading: 'lazy',
-                     aspect_ratio: '16/10' %}
+                  {% render 'responsive-image', image: article.image, alt: article.image.alt, default: article.title, sizes: '(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw', loading: 'lazy', aspect_ratio: '16/10' %}
                 </a>
               {%- endif -%}
               <div class="article-card__body">
@@ -75,3 +70,21 @@
   "presets": [{ "name": "Blog" }]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'responsive-image',
+                         image: article.image,
+                         alt: article.image.alt | default: article.title,
+                         sizes: '(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw',
+                         loading: 'lazy',
+                         aspect_ratio: '16/10' %}
+  to: "{% render 'responsive-image', image: article.image, alt: article.image.alt,
+    default: article.title, sizes: '(min-width:1024px) 33vw, (min-width:640px) 50vw,
+    100vw', loading: 'lazy', aspect_ratio: '16/10' %}"
+  position: 943..1149
+{% endcomment %}

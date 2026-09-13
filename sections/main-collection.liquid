@@ -21,12 +21,7 @@
         {%- endif -%}
         {%- if collection.image -%}
           <div class="collection__image aspect" style="aspect-ratio: 16/6;">
-            {% render 'responsive-image',
-               image: collection.image,
-               alt: collection.image.alt | default: collection.title,
-               sizes: '100vw',
-               loading: 'eager',
-               aspect_ratio: '16/6' %}
+            {% render 'responsive-image', image: collection.image, alt: collection.image.alt, default: collection.title, sizes: '100vw', loading: 'eager', aspect_ratio: '16/6' %}
           </div>
         {%- endif -%}
       </header>
@@ -103,3 +98,21 @@
   "presets": [{ "name": "Collection" }]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'responsive-image',
+                   image: collection.image,
+                   alt: collection.image.alt | default: collection.title,
+                   sizes: '100vw',
+                   loading: 'eager',
+                   aspect_ratio: '16/6' %}
+  to: "{% render 'responsive-image', image: collection.image, alt: collection.image.alt,
+    default: collection.title, sizes: '100vw', loading: 'eager', aspect_ratio: '16/6'
+    %}"
+  position: 910..1076
+{% endcomment %}

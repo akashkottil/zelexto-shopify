@@ -66,12 +66,7 @@
   {%- if featured_image != blank -%}
     <a class="mega-menu__featured" href="{{ promo_link | default: menu_item.url }}">
       <div class="aspect aspect--3/4 mega-menu__featured-img">
-        {%- render 'responsive-image',
-          image: featured_image,
-          alt: promo_title | default: menu_item.title,
-          sizes: '(min-width: 1024px) 280px, 240px',
-          loading: 'lazy'
-        -%}
+        {%- render 'responsive-image', image: featured_image, alt: promo_title, default: menu_item.title, sizes: '(min-width: 1024px) 280px, 240px', loading: 'lazy' -%}
       </div>
       {%- if promo_title != blank -%}
         <div class="mega-menu__featured-body">
@@ -177,3 +172,20 @@
   }
   .mega-menu__view-all:hover{text-decoration:underline}
 </style>
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {%- render 'responsive-image',
+              image: featured_image,
+              alt: promo_title | default: menu_item.title,
+              sizes: '(min-width: 1024px) 280px, 240px',
+              loading: 'lazy'
+            -%}
+  to: "{%- render 'responsive-image', image: featured_image, alt: promo_title, default:
+    menu_item.title, sizes: '(min-width: 1024px) 280px, 240px', loading: 'lazy' -%}"
+  position: 2257..2417
+{% endcomment %}

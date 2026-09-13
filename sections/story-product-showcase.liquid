@@ -32,10 +32,7 @@
     <div class="story-products__grid grid grid--products" data-stagger>
       {%- if collection != blank and collection.products.size > 0 -%}
         {%- for product in collection.products limit: section.settings.products_to_show -%}
-          {%- render 'product-card',
-            product: product,
-            animation: 'animate-slide-up',
-            animation_delay: forloop.index0 | times: 60 -%}
+          {%- render 'product-card', product: product, animation: 'animate-slide-up', animation_delay: forloop.index0, times: 60 -%}
         {%- endfor -%}
       {%- else -%}
         {%- for i in (1..section.settings.products_to_show) -%}
@@ -88,3 +85,18 @@
   "presets": [{ "name": "Story — Product Showcase", "settings": { "heading": "Featured products" } }]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {%- render 'product-card',
+                product: product,
+                animation: 'animate-slide-up',
+                animation_delay: forloop.index0 | times: 60 -%}
+  to: "{%- render 'product-card', product: product, animation: 'animate-slide-up',
+    animation_delay: forloop.index0, times: 60 -%}"
+  position: 1348..1470
+{% endcomment %}

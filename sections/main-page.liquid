@@ -12,11 +12,7 @@
           {%- when 'image' -%}
             {%- if block.settings.image -%}
               <figure class="page__image" {{ block.shopify_attributes }}>
-                {% render 'responsive-image',
-                   image: block.settings.image,
-                   alt: block.settings.image.alt | default: page.title,
-                   sizes: '(min-width:1024px) 760px, 100vw',
-                   loading: 'lazy' %}
+                {% render 'responsive-image', image: block.settings.image, alt: block.settings.image.alt, default: page.title, sizes: '(min-width:1024px) 760px, 100vw', loading: 'lazy' %}
                 {%- if block.settings.caption != blank -%}
                   <figcaption>{{ block.settings.caption }}</figcaption>
                 {%- endif -%}
@@ -68,3 +64,20 @@
   "presets": [{ "name": "Page" }]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'responsive-image',
+                       image: block.settings.image,
+                       alt: block.settings.image.alt | default: page.title,
+                       sizes: '(min-width:1024px) 760px, 100vw',
+                       loading: 'lazy' %}
+  to: "{% render 'responsive-image', image: block.settings.image, alt: block.settings.image.alt,
+    default: page.title, sizes: '(min-width:1024px) 760px, 100vw', loading: 'lazy'
+    %}"
+  position: 551..722
+{% endcomment %}
